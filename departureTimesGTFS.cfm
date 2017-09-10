@@ -16,7 +16,7 @@
 </cffunction>
 <!--- Loaded via ajax or include to show departureTimes table --->
 <cfsetting showdebugoutput="false" />
-<cfsetting requesttimeout="12" />
+<cfsetting requesttimeout="18" />
 <!--- set to 12s as safeguard against runaway recursive function. This page gets really slow, though :(  --->
 
 
@@ -120,7 +120,11 @@ description="Accepts FROM and TO station IDs, and a datetime and outputs a table
 			SELECT trip_id FROM
 			(	(SELECT DISTINCT trip_id FROM vsd.ETS_stop_times
 				WHERE stop_id IN
+					<!--- This is supposed to get the trip ID foor any routes, but this is way too slow.
+					      For now, I know that we only have two lines that meet at Churchill, so I will hard code that in here
 					(<cfoutput query="CommonStops"><cfif currentRow GT 1>,</cfif>#stop_id#</cfoutput>)
+					--->
+					(1691,1876)
 				)
 				UNION ALL
 				(SELECT DISTINCT trip_id FROM vsd.ETS_stop_times
