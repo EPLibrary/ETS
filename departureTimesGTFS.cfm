@@ -76,7 +76,7 @@ description="Accepts FROM and TO station IDs, and a datetime and outputs a table
 	<cfif validTrips.RecordCount IS 0>
 		<!--- Query for a station that has a line present at both the source and destination station --->
 		<!--- I could honestly just hardcode this as Churchill... but what fun would that be? --->
-
+	<!---
 		<cfquery name="CommonStops" dbtype="ODBC" datasource="SecureSource">
 			SELECT stop_id FROM (
 			--All stops on trips that include FROM station
@@ -121,10 +121,11 @@ description="Accepts FROM and TO station IDs, and a datetime and outputs a table
 			(	(SELECT DISTINCT trip_id FROM vsd.ETS_stop_times
 				WHERE stop_id IN
 					<!--- This is supposed to get the trip ID foor any routes, but this is way too slow.
-					      For now, I know that we only have two lines that meet at Churchill, so I will hard code that in here
+					      For now, I know that we only have two lines that meet at Churchill, so I will hard code that in here --->
 					(<cfoutput query="CommonStops"><cfif currentRow GT 1>,</cfif>#stop_id#</cfoutput>)
-					--->
+					<!---
 					(1691,1876)
+					--->
 				)
 				UNION ALL
 				(SELECT DISTINCT trip_id FROM vsd.ETS_stop_times
@@ -150,12 +151,20 @@ description="Accepts FROM and TO station IDs, and a datetime and outputs a table
 			SELECT * FROM vsd.EZLRTStations WHERE
 			stop_id1=#ConnectingStopID.stop_id# OR stop_id2=#ConnectingStopID.stop_id#
 		</cfquery>
+		--->
 
 
-		<!--- all-in-one ConnectingStation query... about 300ms slower this way
+		<!-----------------------   MOTHER QUERY   ------------------------------
+			This massive query will figure out the optimal connecting station.
+			It takes about a second to run, even with indicies that massively slow down
+			The creation/update of some tables, but in the end only returns Churchill.
+			This can be reinstated if, at some point, we have a more complicated transit
+			system where Churchill is not the only connection station that makes sense.
+		--->		
+		<!--- all-in-one ConnectingStation query... may be slower sometimes this way  
 		<cfquery name="ConnectingStation" dbtype="ODBC" datasource="SecureSource">
 
-		--CommonStops (Datasource=SecureSource, Time=47ms, Records=21) in C:\inetpub\apps.epl.ca\Dev\LRT\departureTimesGTFS.cfm @ 10:37:47.047
+		--CommonStops 
 		DECLARE @commonStops TABLE (stop_id INT);
 		INSERT INTO @commonStops (stop_id)
 			SELECT stop_id FROM (
@@ -206,7 +215,7 @@ description="Accepts FROM and TO station IDs, and a datetime and outputs a table
 				GROUP BY trip_id HAVING count(*)=2
 			)
 		)
-		--ConnectingStopID (Datasource=SecureSource, Time=172ms, Records=1) in C:\inetpub\apps.epl.ca\Dev\LRT\departureTimesGTFS.cfm @ 10:37:48.048
+		--ConnectingStopID 
 		DECLARE @connectingStopID INT = (
 			SELECT TOP 1 stop_id FROM vsd.ETS_stop_times WHERE trip_id=@exampleTrip
 			AND stop_sequence > (SELECT MAX(stop_sequence) FROM vsd.ETS_stop_times WHERE trip_id=@exampleTrip AND stop_id IN (#fromStation.stop_id1#,#fromStation.stop_id2#))
@@ -214,13 +223,18 @@ description="Accepts FROM and TO station IDs, and a datetime and outputs a table
 			ORDER BY stop_sequence
 		)
 				
-		--ConnectingStation (Datasource=SecureSource, Time=0ms, Records=1) in C:\inetpub\apps.epl.ca\Dev\LRT\departureTimesGTFS.cfm @ 10:37:48.048
+		--ConnectingStation 
 		SELECT * FROM vsd.EZLRTStations WHERE
 		stop_id1 = @connectingStopID OR stop_id2 = @connectingStopID 
 
 		</cfquery> END giant connectingstation query --->
 
 
+		<!--- This simple query is only valid if Churchill is the only connection station between lines.
+		This may not be true in the future, in which case we can use the above "MotherQuery" --->
+		<cfquery name="ConnectingStation" dbtype="ODBC" datasource="SecureSource">
+			SELECT * FROM vsd.EZLRTStations WHERE stop_id1=1691	OR stop_id2=1876
+		</cfquery>
 
 
 
