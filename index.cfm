@@ -1123,7 +1123,8 @@ function bindShowArrival() {
 	$('.departures tr').click(function(){
 		if ($(this).next().is(":visible")) $(this).next().hide()
 		else {
-			$('.dR').hide();
+			//This localizes the hiding to the current table for multi-leg routes
+			$(this).parent().children('.dR').hide();
 			$(this).next().show();
 		}
 	});
