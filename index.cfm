@@ -596,9 +596,9 @@
 </cfif>
 
 <cfif isDefined('url.fromStop')>
-	<span class="selectedMode">Bus Stop Times</span>	
+	<span class="selectedMode">Bus Stops</span>	
 <cfelse>
-	<a href="?fromStop">Bus Stop Times</a>	
+	<a href="?fromStop">Bus Stops</a>	
 </cfif>
 
 <cfif isDefined('url.rid')>
