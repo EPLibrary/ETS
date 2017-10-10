@@ -1,4 +1,4 @@
-<cfsetting showdebugoutput="false">
+<cfsetting showdebugoutput="true">
 
 <cfset opType="LRT Schedule" />
 <cfif isDefined('url.fromStop')><cfset opType="Bus Stop Schedule" />
@@ -20,7 +20,7 @@
 <cfif cgi.SCRIPT_NAME contains "EXEC(" OR cgi.PATH_INFO contains "EXEC(" OR cgi.QUERY_STRING contains "EXEC("><cfabort></cfif>
 
 <!--- Actual HTML Page Begins --->
-<!DOCTYPE html>	
+<!DOCTYPE html>
 <html>
 <head>
 	<meta http-equiv="x-ua-compatible" content="IE=Edge" />
@@ -403,6 +403,7 @@
 
 	.opMode {
 		margin-top:5px;
+		margin-bottom:8px;
 		display:flex;
 		justify-content:space-around;
 		max-width:400px;
@@ -585,6 +586,32 @@
 
 </style>
 
+<div class="opMode">
+<cfoutput>
+
+<cfif NOT isDefined('url.fromStop') AND NOT isDefined('url.rid')>
+	<span class="selectedMode" href="?">LRT Schedule</span>
+<cfelse>
+	<a href="?">LRT Schedule</a>
+</cfif>
+
+<cfif isDefined('url.fromStop')>
+	<span class="selectedMode">Bus Stop Times</span>	
+<cfelse>
+	<a href="?fromStop">Bus Stop Times</a>	
+</cfif>
+
+<cfif isDefined('url.rid')>
+	<span class="selectedMode">Bus Routes</span>
+<cfelse>
+	<a href="?rid">Bus Routes</a>
+</cfif>
+
+</cfoutput>
+
+</div><!--.opMode-->
+
+
 <!--- The most basic operation of this app will let you select a source and destination station
 	and a Day and Time and it will show you the next times a train will stop there --->
 
@@ -597,12 +624,20 @@
 </cfquery>
 
 
+<!--- Choose the active database to use. --->
+<cfquery name="activedb" dbtype="ODBC" datasource="SecureSource">
+	SELECT TOP 1 * FROM vsd.ETS_activeDB WHERE active = 1
+</cfquery>
+
+<cfset dbprefix = activedb.prefix />
+
+
 <form class="w2Form" id="fromToForm">
 
 <cfif isDefined('url.fromStop')>
 <!--- 6500 stops! --->
 <cfquery name="Stops" dbtype="ODBC" datasource="SecureSource">
-	SELECT * FROM vsd.ETS_stops
+	SELECT * FROM vsd.#dbprefix#_stops
 </cfquery>
 <!--- This makes for a massive 6500 item select --->
 <label for="fromStop" id="fromStopLabel" class="selectizeLabel"><a href="javascript:void(0);" id="departLabelText" title="Click to sort stops based on your location">Bus Stops <svg id="geoIcon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 960"><path d="M500 258.6l-490 245 9.6 1.2c5.2.5 107 8.2 226 16.8 133 9.8 217.5 16.5 218.8 18 1.2 1.2 8.3 87 18 219.6 8.5 119.7 16.4 221.3 17 226 1.3 7.7 6.3-1.8 246-482 135-269.4 245-490 244.6-489.7l-490 245z" /></svg><span id="nearestLink">Set Nearest Four Stops</span></a>
@@ -618,7 +653,7 @@
 <cfelseif isDefined('url.rid')>
 
 <cfquery name="Routes" dbtype="ODBC" datasource="SecureSource">
-	SELECT * FROM vsd.ETS_routes ORDER BY route_id
+	SELECT * FROM vsd.#dbprefix#_routes ORDER BY route_id
 </cfquery>
 <!--- This makes for a massive 6500 item select --->
 <label for="rid" id="ridLabel" class="selectizeLabel">Bus Route
@@ -716,33 +751,6 @@
 <p style="font-size:13px;color:#555;"><b>Note:</b> Times may vary by 2 minutes.</p>
 
 
-<div class="opMode">
-<cfoutput>
-
-<cfif NOT isDefined('url.fromStop') AND NOT isDefined('url.rid')>
-	<span class="selectedMode" href="?">LRT Schedule</span>
-<cfelse>
-	<a href="?">LRT Schedule</a>
-</cfif>
-
-<cfif isDefined('url.fromStop')>
-	<span class="selectedMode">Bus Stop Times</span>	
-<cfelse>
-	<a href="?fromStop">Bus Stop Times</a>	
-</cfif>
-
-<cfif isDefined('url.rid')>
-	<span class="selectedMode">Bus Routes</span>
-<cfelse>
-	<a href="?rid">Bus Routes</a>
-</cfif>
-
-</cfoutput>
-
-
-
-
-</div>
 <div class="opMode">
 <p id="nightModeLink">
 	<cfif isDefined('cookie.lrt_dark') AND cookie.lrt_dark IS true>

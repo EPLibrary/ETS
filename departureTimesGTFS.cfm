@@ -58,11 +58,11 @@ description="Accepts FROM and TO station IDs, and a datetime and outputs a table
 	<!--- This query checks to see if our to and from stations connect. If not, we have to find a connecting station --->
 	<cfquery name="validTrips" dbtype="ODBC" datasource="SecureSource">
 		SELECT trip_id FROM 
-			(SELECT trip_id, min(stop_id) as minStop FROM vsd.ETS_stop_times
+			(SELECT trip_id, min(stop_id) as minStop FROM vsd.#dbprefix#_stop_times
 			WHERE stop_id IN (#fromStation.stop_id1#,#fromStation.stop_id2#)
 			GROUP  BY trip_id
 			UNION ALL
-			SELECT trip_id, min(stop_id) as minStop FROM vsd.ETS_stop_times
+			SELECT trip_id, min(stop_id) as minStop FROM vsd.#dbprefix#_stop_times
 			WHERE stop_id IN (#toStation.stop_id1#,#toStation.stop_id2#)
 		GROUP BY trip_id) stt
 		GROUP BY trip_id HAVING COUNT(*) > 1
@@ -81,11 +81,11 @@ description="Accepts FROM and TO station IDs, and a datetime and outputs a table
 			SELECT stop_id FROM (
 			--All stops on trips that include FROM station
 			SELECT DISTINCT stop_id--, stop_sequence
-			FROM vsd.ETS_stop_times WHERE trip_id IN (SELECT trip_ID from  vsd.ETS_stop_times WHERE stop_id IN (#fromStation.stop_id1#, #fromStation.stop_id2#) )
+			FROM vsd.#dbprefix#_stop_times WHERE trip_id IN (SELECT trip_ID from  vsd.#dbprefix#_stop_times WHERE stop_id IN (#fromStation.stop_id1#, #fromStation.stop_id2#) )
 			UNION ALL
 			--All stops on trips that include TO station
 			SELECT DISTINCT stop_id--, stop_sequence
-			FROM vsd.ETS_stop_times WHERE trip_id IN (SELECT trip_ID from  vsd.ETS_stop_times WHERE stop_id IN (#toStation.stop_id1#, #toStation.stop_id2#) )
+			FROM vsd.#dbprefix#_stop_times WHERE trip_id IN (SELECT trip_ID from  vsd.#dbprefix#_stop_times WHERE stop_id IN (#toStation.stop_id1#, #toStation.stop_id2#) )
 			) AS bothRouteStops
 			GROUP BY bothRouteStops.stop_id
 			HAVING count(stop_id)=2
@@ -94,15 +94,15 @@ description="Accepts FROM and TO station IDs, and a datetime and outputs a table
 
 		<!--- Get a max sequence for the example trip to be sure we get a trip that has the full set of stops --->
 		<cfquery name="MaxTrip" dbtype="ODBC" datasource="SecureSource">
-			SELECT MAX(stop_sequence) AS max_stops FROM vsd.ETS_stop_times stimes WHERE trip_id IN (
+			SELECT MAX(stop_sequence) AS max_stops FROM vsd.#dbprefix#_stop_times stimes WHERE trip_id IN (
 				--list of trips with our from and connecting stations
 				SELECT trip_id FROM
-				(	(SELECT DISTINCT trip_id FROM vsd.ETS_stop_times
+				(	(SELECT DISTINCT trip_id FROM vsd.#dbprefix#_stop_times
 					WHERE stop_id IN
 						(<cfoutput query="CommonStops"><cfif currentRow GT 1>,</cfif>#stop_id#</cfoutput>)
 					)
 					UNION ALL
-					(SELECT DISTINCT trip_id FROM vsd.ETS_stop_times
+					(SELECT DISTINCT trip_id FROM vsd.#dbprefix#_stop_times
 					WHERE stop_id IN
 					--From station (#fromStation.StationCode# in this case)
 					(#fromStation.stop_id1#, #fromStation.stop_id2#)
@@ -115,10 +115,10 @@ description="Accepts FROM and TO station IDs, and a datetime and outputs a table
 
 		<cfquery name="ExampleTrip" dbtype="ODBC" datasource="SecureSource">
 		-- This seems to work efficiently to get a trip ID
-		SELECT MAX(trip_id) AS trip_id FROM vsd.ETS_stop_times WHERE trip_id IN (
+		SELECT MAX(trip_id) AS trip_id FROM vsd.#dbprefix#_stop_times WHERE trip_id IN (
 			--list of trips with our from and connecting stations
 			SELECT trip_id FROM
-			(	(SELECT DISTINCT trip_id FROM vsd.ETS_stop_times
+			(	(SELECT DISTINCT trip_id FROM vsd.#dbprefix#_stop_times
 				WHERE stop_id IN
 					<!--- This is supposed to get the trip ID foor any routes, but this is way too slow.
 					      For now, I know that we only have two lines that meet at Churchill, so I will hard code that in here --->
@@ -128,7 +128,7 @@ description="Accepts FROM and TO station IDs, and a datetime and outputs a table
 					--->
 				)
 				UNION ALL
-				(SELECT DISTINCT trip_id FROM vsd.ETS_stop_times
+				(SELECT DISTINCT trip_id FROM vsd.#dbprefix#_stop_times
 				WHERE stop_id IN
 				--From station (Clareview in this example)
 				(#fromStation.stop_id1#, #fromStation.stop_id2#)
@@ -141,8 +141,8 @@ description="Accepts FROM and TO station IDs, and a datetime and outputs a table
 
 
 		<cfquery name="ConnectingStopID" dbtype="ODBC" datasource="SecureSource">
-			SELECT TOP 1 stop_id FROM vsd.ETS_stop_times WHERE trip_id=#ExampleTrip.trip_id#
-			AND stop_sequence > (SELECT MAX(stop_sequence) FROM vsd.ETS_stop_times WHERE trip_id=#ExampleTrip.trip_id# AND stop_id IN (#fromStation.stop_id1#,#fromStation.stop_id2#))
+			SELECT TOP 1 stop_id FROM vsd.#dbprefix#_stop_times WHERE trip_id=#ExampleTrip.trip_id#
+			AND stop_sequence > (SELECT MAX(stop_sequence) FROM vsd.#dbprefix#_stop_times WHERE trip_id=#ExampleTrip.trip_id# AND stop_id IN (#fromStation.stop_id1#,#fromStation.stop_id2#))
 			AND stop_id in (<cfoutput query="CommonStops"><cfif currentRow GT 1>,</cfif>#stop_id#</cfoutput>)
 			ORDER BY stop_sequence
 		</cfquery>
@@ -170,24 +170,24 @@ description="Accepts FROM and TO station IDs, and a datetime and outputs a table
 			SELECT stop_id FROM (
 			--All stops on trips that include FROM station
 			SELECT DISTINCT stop_id--, stop_sequence
-			FROM vsd.ETS_stop_times WHERE trip_id IN (SELECT trip_ID from  vsd.ETS_stop_times WHERE stop_id IN (#fromStation.stop_id1#,#fromStation.stop_id2#) )
+			FROM vsd.#dbprefix#_stop_times WHERE trip_id IN (SELECT trip_ID from  vsd.#dbprefix#_stop_times WHERE stop_id IN (#fromStation.stop_id1#,#fromStation.stop_id2#) )
 			UNION ALL
 			--All stops on trips that include TO station
 			SELECT DISTINCT stop_id--, stop_sequence
-			FROM vsd.ETS_stop_times WHERE trip_id IN (SELECT trip_ID from  vsd.ETS_stop_times WHERE stop_id IN (#toStation.stop_id1#,#toStation.stop_id2#) )
+			FROM vsd.#dbprefix#_stop_times WHERE trip_id IN (SELECT trip_ID from  vsd.#dbprefix#_stop_times WHERE stop_id IN (#toStation.stop_id1#,#toStation.stop_id2#) )
 			) AS bothRouteStops
 			GROUP BY bothRouteStops.stop_id
 			HAVING count(stop_id)=2
 
 		--maxStops
 		DECLARE @maxStops INT = (
-		SELECT MAX(stop_sequence) AS max_stops FROM vsd.ETS_stop_times stimes WHERE trip_id IN (
+		SELECT MAX(stop_sequence) AS max_stops FROM vsd.#dbprefix#_stop_times stimes WHERE trip_id IN (
 			--list of trips with our from and connecting stations
 			SELECT trip_id FROM
 			(
-				(SELECT DISTINCT trip_id FROM vsd.ETS_stop_times WHERE stop_id IN (SELECT stop_id FROM @commonStops) )
+				(SELECT DISTINCT trip_id FROM vsd.#dbprefix#_stop_times WHERE stop_id IN (SELECT stop_id FROM @commonStops) )
 				UNION ALL
-				(SELECT DISTINCT trip_id FROM vsd.ETS_stop_times
+				(SELECT DISTINCT trip_id FROM vsd.#dbprefix#_stop_times
 				WHERE stop_id IN --From station
 				(#fromStation.stop_id1#,#fromStation.stop_id2#)
 				) 
@@ -198,15 +198,15 @@ description="Accepts FROM and TO station IDs, and a datetime and outputs a table
 				
 		--ExampleTrip trip_id
 		DECLARE @exampleTrip INT = (
-			SELECT MAX(trip_id) AS trip_id FROM vsd.ETS_stop_times WHERE trip_id IN (
+			SELECT MAX(trip_id) AS trip_id FROM vsd.#dbprefix#_stop_times WHERE trip_id IN (
 				--list of trips with our from and connecting stations
 				SELECT trip_id FROM
-				(	(SELECT DISTINCT trip_id FROM vsd.ETS_stop_times
+				(	(SELECT DISTINCT trip_id FROM vsd.#dbprefix#_stop_times
 					WHERE stop_id IN
 						(SELECT stop_id FROM @commonStops)
 					)
 					UNION ALL
-					(SELECT DISTINCT trip_id FROM vsd.ETS_stop_times
+					(SELECT DISTINCT trip_id FROM vsd.#dbprefix#_stop_times
 					WHERE stop_id IN --From station
 					(#fromStation.stop_id1#,#fromStation.stop_id2#)
 					)
@@ -217,8 +217,8 @@ description="Accepts FROM and TO station IDs, and a datetime and outputs a table
 		)
 		--ConnectingStopID 
 		DECLARE @connectingStopID INT = (
-			SELECT TOP 1 stop_id FROM vsd.ETS_stop_times WHERE trip_id=@exampleTrip
-			AND stop_sequence > (SELECT MAX(stop_sequence) FROM vsd.ETS_stop_times WHERE trip_id=@exampleTrip AND stop_id IN (#fromStation.stop_id1#,#fromStation.stop_id2#))
+			SELECT TOP 1 stop_id FROM vsd.#dbprefix#_stop_times WHERE trip_id=@exampleTrip
+			AND stop_sequence > (SELECT MAX(stop_sequence) FROM vsd.#dbprefix#_stop_times WHERE trip_id=@exampleTrip AND stop_id IN (#fromStation.stop_id1#,#fromStation.stop_id2#))
 			AND stop_id IN (SELECT stop_id FROM @commonStops)
 			ORDER BY stop_sequence
 		)
@@ -248,10 +248,10 @@ description="Accepts FROM and TO station IDs, and a datetime and outputs a table
 			<!--- And url.from stays the same, obviously --->
 
 			<cfquery name="Route1" dbtype="ODBC" datasource="SecureSource">
-				SELECT * FROM vsd.ETS_routes WHERE route_id=
+				SELECT * FROM vsd.#dbprefix#_routes WHERE route_id=
 				(
-					SELECT MAX(t.route_id) AS Route_ID FROM vsd.ETS_stop_times stime
-					JOIN vsd.ETS_trips t ON stime.trip_id=t.trip_id
+					SELECT MAX(t.route_id) AS Route_ID FROM vsd.#dbprefix#_stop_times stime
+					JOIN vsd.#dbprefix#_trips t ON stime.trip_id=t.trip_id
 					WHERE stop_id IN (#fromStation.stop_id1#,#fromStation.stop_id2#)
 				)
 			</cfquery>
@@ -261,9 +261,9 @@ description="Accepts FROM and TO station IDs, and a datetime and outputs a table
 			</cfquery>
 
 			<cfquery name="Route2" dbtype="ODBC" datasource="SecureSource">
-				SELECT * FROM vsd.ETS_routes WHERE route_id=(
-					SELECT MAX(t.route_id) AS Route_ID FROM vsd.ETS_stop_times stime
-					JOIN vsd.ETS_trips t ON stime.trip_id=t.trip_id
+				SELECT * FROM vsd.#dbprefix#_routes WHERE route_id=(
+					SELECT MAX(t.route_id) AS Route_ID FROM vsd.#dbprefix#_stop_times stime
+					JOIN vsd.#dbprefix#_trips t ON stime.trip_id=t.trip_id
 					WHERE stop_id IN (#toStation2.stop_id1#,#toStation2.stop_id2#)
 				)
 			</cfquery>
@@ -290,25 +290,25 @@ description="Accepts FROM and TO station IDs, and a datetime and outputs a table
 	<cfquery name="DepartureTimes" dbtype="ODBC" datasource="SecureSource">
 		SELECT
 		<cfif isDefined('url.destTime')>( -- As cool as it is to get the destination arrival time, it makes queries 10x slower :(
-			SELECT TOP 1 sdt2.ActualDateTime FROM vsd.ETS_trip_stop_datetimes sdt2
+			SELECT TOP 1 sdt2.ActualDateTime FROM vsd.#dbprefix#_trip_stop_datetimes sdt2
 			WHERE (stop_id=#toStation.stop_id1# OR stop_id=#toStation.stop_id2#)
 			AND trip_id=sdt.trip_id
 			AND stop_sequence > sdt.stop_sequence
 			AND ActualDateTime > #CurrentTime#
 			ORDER BY sdt2.ActualDateTime
 		) AS dest_arrival_datetime, </cfif>
-		* FROM vsd.ETS_trip_stop_datetimes sdt
+		* FROM vsd.#dbprefix#_trip_stop_datetimes sdt
 		WHERE pickup_type=0 AND (stop_id=#fromStation.stop_id1# OR stop_id=#fromStation.stop_id2#) --FROM station #fromStation.StationCode#, North OR South
-		AND trip_id IN (SELECT DISTINCT trip_id from vsd.ETS_stop_times stime2	WHERE stime2.stop_id=#toStation.stop_id1# OR stime2.stop_id=#toStation.stop_id2#) --TO station #toStation.StationCode#, North OR South
+		AND trip_id IN (SELECT DISTINCT trip_id from vsd.#dbprefix#_stop_times stime2	WHERE stime2.stop_id=#toStation.stop_id1# OR stime2.stop_id=#toStation.stop_id2#) --TO station #toStation.StationCode#, North OR South
 		AND ActualDateTime > #CurrentTime# AND ActualDateTime < #MaxFutureTime#
 		AND EXISTS --stop for destination station from same trip
-		(SELECT stop_sequence FROM vsd.ETS_stop_times stime3
+		(SELECT stop_sequence FROM vsd.#dbprefix#_stop_times stime3
 			WHERE (stop_id=#toStation.stop_id1# OR stop_id=#toStation.stop_id2#)
 			AND trip_id=sdt.trip_id
 			AND stop_sequence > sdt.stop_sequence
 			-- This clause is necessary to determine ensure we only get trains going the right direction
 			AND sdt.stop_sequence = (
-				SELECT max(stop_sequence) FROM vsd.ETS_stop_times
+				SELECT max(stop_sequence) FROM vsd.#dbprefix#_stop_times
 				WHERE trip_id=sdt.trip_id AND (stop_id=#fromStation.stop_id1# OR stop_id=#fromStation.stop_id2#)
 				AND stop_sequence < stime3.stop_sequence
 			)
@@ -322,15 +322,15 @@ description="Accepts FROM and TO station IDs, and a datetime and outputs a table
 		<!--- Query to calculate trip times. Should only add a few ms --->
 		<cfquery name="TripDurationHelper" dbtype="ODBC" datasource="SecureSource">
 			SELECT TOP 3 arrival_time, trip_id, stop_id, stop_sequence, stop_headsign,
-			(SELECT TOP 1 arrival_time FROM vsd.ETS_stop_times
+			(SELECT TOP 1 arrival_time FROM vsd.#dbprefix#_stop_times
 			WHERE trip_id=#validTrips.trip_id# --from validTrips
 				AND stop_id IN (#toStation.stop_id1#,#toStation.stop_id2#)
 				AND stop_sequence > sdt.stop_sequence
 				ORDER BY stop_sequence
 			) AS DestTime
-			FROM vsd.ETS_stop_times sdt WHERE trip_id=#validTrips.trip_id#
+			FROM vsd.#dbprefix#_stop_times sdt WHERE trip_id=#validTrips.trip_id#
 			AND stop_id IN (#fromStation.stop_id1#,#fromStation.stop_id2#)
-			AND (SELECT TOP 1 arrival_time FROM vsd.ETS_stop_times
+			AND (SELECT TOP 1 arrival_time FROM vsd.#dbprefix#_stop_times
 			WHERE trip_id=#validTrips.trip_id# --from validTrips
 				AND stop_id IN (#toStation.stop_id1#,#toStation.stop_id2#)
 				AND stop_sequence > sdt.stop_sequence
@@ -440,6 +440,13 @@ description="Accepts FROM and TO station IDs, and a datetime and outputs a table
 		<p class="gone">You have selected the same stations for your source and destination.<br /><br />Please select a different station.</p>
 	
 	<cfelse>
+		<!--- Choose the active database to use. --->
+		<cfquery name="activedb" dbtype="ODBC" datasource="SecureSource">
+			SELECT TOP 1 * FROM vsd.ETS_activeDB WHERE active = 1
+		</cfquery>
+
+		<cfset dbprefix = activedb.prefix />
+
 		<!--- Setting date variables for DepartureTimes query --->
 		<!--- Set the Day of Week. Sunday is 1, Saturday is 7 --->
 		<cfif isDefined('url.dow') AND len(url.dow) GTE 3>

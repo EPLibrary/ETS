@@ -41,41 +41,78 @@
 <!--- DO NOT include stop_times at the end of this list. We handle it separately --->
 <cfset gtfsFiles="agency,calendar_dates,routes,shapes,stops,trips,transfers,stop_times" />
 
-<cfquery name="BulkInsert" dbtype="ODBC" datasource="ReadWriteSource">
-
-<cfloop list="#gtfsFilesRev#" index="fileBase">
-DELETE FROM vsd.ETS_#fileBase#
-</cfloop>
-<cfloop list="#gtfsFiles#" index="fileBase">
-	BULK INSERT vsd.ETS_#fileBase# FROM '\\web6\gtfs$\#fileBase#_noheader.txt'
-	WITH (
-	FIRSTROW=1,
-	FIELDTERMINATOR = ',',
-	ROWTERMINATOR = '\n',
-	FORMATFILE = '\\web6\gtfs$\#fileBase#.fmt'
-	);
-</cfloop>
+<cftry>
+	<!--- Choose the inactive database to be updated. --->
+	<cfquery name="updatedb" dbtype="ODBC" datasource="SecureSource">
+		SELECT TOP 1 * FROM vsd.ETS_activeDB WHERE active = 0
+	</cfquery>
 
 
-</cfquery>
+	<cfset dbprefix = updatedb.prefix />
+
+
+	<cfquery name="BulkInsert" dbtype="ODBC" datasource="ReadWriteSource">
+
+	<cfloop list="#gtfsFilesRev#" index="fileBase">
+	DELETE FROM vsd.#dbprefix#_#fileBase#
+	</cfloop>
+	<cfloop list="#gtfsFiles#" index="fileBase">
+		BULK INSERT vsd.#dbprefix#_#fileBase# FROM '\\web6\gtfs$\#fileBase#_noheader.txt'
+		WITH (
+		FIRSTROW=1,
+		FIELDTERMINATOR = ',',
+		ROWTERMINATOR = '\n',
+		FORMATFILE = '\\web6\gtfs$\#fileBase#.fmt'
+		);
+	</cfloop>
+	</cfquery>
+
+	<cfcatch type="any">
+<h1>ERROR: Update Failed</h1>		
+		<cfdump var="#cfcatch#">
+		<cfmail to="jlien@epl.ca, vflores@epl.ca" subject="Error Updating ETS Database" from="noreply@epl.ca">
+An attempt to update GTFS transit data from City of Edmonton failed.
+Please check that the vsd.ETS databases are functional and investigate this problem.
+
+Typically this type of error occurs because the data provided by ETS has been changed in format such that it is no longer compatible with the existing database structure. Fixing his requires rebuilding the database with new field types.
+
+The following messages have been returned from the server:
+
+<cfoutput>#cfcatch.message#
+#cfcatch.detail#</cfoutput>
+</cfmail>
+	<cfabort>
+	</cfcatch>
+
+
+
+</cftry>
 
 <!--- There are a few stray double-quotes that I want to get rid of --->
 <cfquery name="CleanUp" dbtype="ODBC" datasource="ReadWriteSource">
 	<!--- only LRT route short names have double quotes ("Capital", "Metro"). Remove them. --->
-	UPDATE vsd.ETS_routes SET route_short_name=REPLACE(route_short_name, '"', '')
+	UPDATE vsd.#dbprefix#_routes SET route_short_name=REPLACE(route_short_name, '"', '')
 	--run this after the update process runs to set a bit indicating which stops are LRT stations
-	UPDATE vsd.ETS_stops SET is_lrt=1
+	UPDATE vsd.#dbprefix#_stops SET is_lrt=1
 	WHERE stop_id IN (
 		SELECT s.stop_id
-		FROM vsd.ETS_stop_times stime
-		JOIN vsd.ETS_trips t ON t.trip_id=stime.trip_id
-		JOIN vsd.ETS_calendar_dates c ON c.service_id=t.service_id
-		JOIN vsd.ETS_stops s ON stime.stop_id=s.stop_id
-		JOIN vsd.ETS_routes r ON r.route_id=t.route_id
+		FROM vsd.#dbprefix#_stop_times stime
+		JOIN vsd.#dbprefix#_trips t ON t.trip_id=stime.trip_id
+		JOIN vsd.#dbprefix#_calendar_dates c ON c.service_id=t.service_id
+		JOIN vsd.#dbprefix#_stops s ON stime.stop_id=s.stop_id
+		JOIN vsd.#dbprefix#_routes r ON r.route_id=t.route_id
 		WHERE r.route_type=0
 		GROUP BY s.stop_id
 	)	
 </cfquery>
 
 
-<p>GTFS Data has been updated.</p>
+<!--- If everything seems to be working, now let's switch the active database to the newly updated one. --->
+
+<cfquery name="SwapDBs" dbtype="ODBC" datasource="ReadWriteSource">
+	UPDATE vsd.ETS_activeDB SET active=1, updated=GETDATE() WHERE dbid=#updatedb.dbid#
+	UPDATE vsd.ETS_activeDB SET active=0 WHERE dbid!=#updatedb.dbid#
+</cfquery>
+
+
+<p>GTFS Data has been updated successfully in <cfoutput>#dbprefix#</cfoutput>.</p>

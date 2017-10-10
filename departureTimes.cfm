@@ -1,3 +1,4 @@
+<!--- This is the legacy version of departureTimes that uses my hand-scraped schedule data. This has been obsoleted by the GTFS version. --->
 
 <!--- Simple function that accepts a weekday (2 or more letters) and returns the coldfusion weekday integer --->
 <cffunction name="weekdayToNum" returntype="numeric">

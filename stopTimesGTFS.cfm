@@ -48,7 +48,7 @@ description="Accepts FROM stop_id and a datetime and outputs a table with releva
 
 	<!--- Query that should show the relevant schedule times. --->
 	<cfquery name="DepartureTimes" dbtype="ODBC" datasource="SecureSource">
-		SELECT * FROM vsd.ETS_trip_stop_datetimes
+		SELECT * FROM vsd.#dbprefix#_trip_stop_datetimes
 		WHERE stop_id=#fromStop#
 		AND ActualDateTime > #CurrentTime#
 		AND ActualDateTIme < #maxFutureTime#
@@ -58,7 +58,7 @@ description="Accepts FROM stop_id and a datetime and outputs a table with releva
 
 	<!--- This assumes a valid stop is given. I should handle this --->
 	<cfquery name="StopInfo" dbtype="ODBC" datasource="SecureSource">
-		SELECT * FROM vsd.ETS_stops WHERE stop_id=#fromStop#
+		SELECT * FROM vsd.#dbprefix#_stops WHERE stop_id=#fromStop#
 	</cfquery>
 	
 	<cfoutput>
@@ -91,6 +91,14 @@ description="Accepts FROM stop_id and a datetime and outputs a table with releva
 
 
 <cfif isDefined('url.fromStop') AND len(url.fromStop)>
+
+		<!--- Choose the active database to use. --->
+		<cfquery name="activedb" dbtype="ODBC" datasource="SecureSource">
+			SELECT TOP 1 * FROM vsd.ETS_activeDB WHERE active = 1
+		</cfquery>
+
+		<cfset dbprefix = activedb.prefix />
+
 		<!--- Setting date variables for DepartureTimes query --->
 		<!--- Set the Day of Week. Sunday is 1, Saturday is 7 --->
 		<cfif isDefined('url.dow') AND len(url.dow) GTE 3>

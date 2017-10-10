@@ -51,12 +51,12 @@ description="Accepts FROM and TO stop IDs, and a datetime and outputs a table wi
 
 
 	<cfquery name="fromStop" dbtype="ODBC" datasource="SecureSource">
-		SELECT * FROM vsd.ETS_stops WHERE stop_id=#from#
+		SELECT * FROM vsd.#dbprefix#_stops WHERE stop_id=#from#
 	</cfquery>
 	
 	<cfif isDefined('to') AND isNumeric(to)>
 		<cfquery name="toStop" dbtype="ODBC" datasource="SecureSource">
-			SELECT * FROM vsd.ETS_stops WHERE stop_id=#to#
+			SELECT * FROM vsd.#dbprefix#_stops WHERE stop_id=#to#
 		</cfquery>
 	</cfif>
 
@@ -65,14 +65,14 @@ description="Accepts FROM and TO stop IDs, and a datetime and outputs a table wi
 		<cfquery name="DepartureTimes" dbtype="ODBC" datasource="SecureSource">
 			SELECT * FROM (
 			SELECT
-				(SELECT TOP 1 sdt2.ActualDateTime FROM vsd.ETS_trip_stop_datetimes sdt2
+				(SELECT TOP 1 sdt2.ActualDateTime FROM vsd.#dbprefix#_trip_stop_datetimes sdt2
 				WHERE stop_id=#to#
 				AND trip_id=sdt.trip_id
 				AND stop_sequence > sdt.stop_sequence
 				AND ActualDateTime > #CurrentTime#
 				ORDER BY sdt2.ActualDateTime
 			) AS dest_arrival_datetime,
-			* FROM vsd.ETS_trip_stop_datetimes sdt
+			* FROM vsd.#dbprefix#_trip_stop_datetimes sdt
 			WHERE route_id=#rid#
 			AND stop_id=#from#
 			AND ActualDateTime > #CurrentTime# AND ActualDateTime < #MaxFutureTime#
@@ -81,7 +81,7 @@ description="Accepts FROM and TO stop IDs, and a datetime and outputs a table wi
 		</cfquery>	
 	<cfelse>
 		<cfquery name="DepartureTimes" dbtype="ODBC" datasource="SecureSource">
-			SELECT NULL AS dest_arrival_datetime, * FROM vsd.ETS_trip_stop_datetimes sdt
+			SELECT NULL AS dest_arrival_datetime, * FROM vsd.#dbprefix#_trip_stop_datetimes sdt
 			WHERE route_id=#rid#
 			AND stop_id=#from#
 			AND ActualDateTime > #CurrentTime# AND ActualDateTime < #MaxFutureTime#
@@ -130,7 +130,7 @@ description="Accepts FROM and TO stop IDs, and a datetime and outputs a table wi
 
 
 	
-</cffunction><!---getDepartures--->
+</cffunction><!---getRouteDepartures--->
 
 
 <cfif isDefined('url.rid') AND isNumeric(url.rid)
@@ -141,6 +141,12 @@ description="Accepts FROM and TO stop IDs, and a datetime and outputs a table wi
 		<p class="gone">You have selected the same stops for your source and destination.<br /><br />Please select a different stop.</p>
 	
 	<cfelse>
+		<!--- Choose the active database to use. --->
+		<cfquery name="activedb" dbtype="ODBC" datasource="SecureSource">
+			SELECT TOP 1 * FROM vsd.ETS_activeDB WHERE active = 1
+		</cfquery>
+
+		<cfset dbprefix = activedb.prefix />		
 		<!--- Setting date variables for DepartureTimes query --->
 		<!--- Set the Day of Week. Sunday is 1, Saturday is 7 --->
 		<cfif isDefined('url.dow') AND len(url.dow) GTE 3>
