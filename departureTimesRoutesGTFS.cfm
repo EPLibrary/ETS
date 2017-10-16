@@ -94,7 +94,7 @@ description="Accepts FROM and TO stop IDs, and a datetime and outputs a table wi
 
 	<cfoutput>
 	
-	<table class="altColors">
+	<table class="altColors" data-stopid="#from#">
 	<thead>
 		<tr>
 			<th colspan="4">Departures from #fromStop.stop_name#
@@ -113,14 +113,14 @@ description="Accepts FROM and TO stop IDs, and a datetime and outputs a table wi
 	<tbody>
 	<cfloop query="DepartureTimes">
 		<!--- Only show if the time hasn't elapsed --->
-		<tr>
+		<tr data-tripid="#trip_id#">
 			<td class="tN">#UCase(stop_headsign)#</td>
-			<td class="aT" data-datetime="#ActualDateTime#">#TimeFormat(ActualDateTime, "h:mm tt")#</td>
+			<td class="aT" data-scheduled="#ActualDateTime#" data-datetime="#ActualDateTime#">#TimeFormat(ActualDateTime, "h:mm tt")#</td>
 			<td class="cD"></td>
 		</tr>
 		<tr class="dR">
 			<cfif isDefined('to') and isNumeric(to)>
-			<td class="dA" colspan="3">Arrive at #toStop.stop_name# <cfif IsDate(DepartureTimes.dest_arrival_datetime)>at #TimeFormat(dest_arrival_datetime, "h:mm tt")#</cfif></td>
+			<td class="dA" colspan="3">Arrive at #toStop.stop_name# <cfif IsDate(DepartureTimes.dest_arrival_datetime)>at #TimeFormat(dest_arrival_datetime, "h:mm tt")#</cfif><div class="lateness"></div></td>
 			</cfif>
 		</tr>
 	</cfloop>

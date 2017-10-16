@@ -396,7 +396,7 @@ description="Accepts FROM and TO station IDs, and a datetime and outputs a table
 	</div>
 	--->
 	
-	<table class="altColors">
+	<table class="altColors" data-stopid="#departuretimes.stop_id#">
 	<thead>
 		<tr>
 			<th colspan="4">Departures from #fromStation.StationCode# <span class="nowrap">to #toStation.StationCode#</span><!-- after #TimeFormat(CurrentTime, "h:mm tt")#-->
@@ -412,13 +412,13 @@ description="Accepts FROM and TO station IDs, and a datetime and outputs a table
 	<tbody>
 	<cfloop query="DepartureTimes">
 		<!--- Only show if the time hasn't elapsed --->
-		<tr>
+		<tr data-tripid="#trip_id#">
 			<td class="tN">#UCase(stop_headsign)#</td>
-			<td class="aT" data-datetime="#ActualDateTime#">#TimeFormat(ActualDateTime, "h:mm tt")#</td>
+			<td class="aT" data-scheduled="#ActualDateTime#" data-datetime="#ActualDateTime#">#TimeFormat(ActualDateTime, "h:mm tt")#</td>
 			<td class="cD"></td>
 		</tr>
 		<tr class="dR">
-			<td class="dA" colspan="3">Arrive at #toStation.StationCode# <cfif isDefined('url.destTime')>at #TimeFormat(dest_arrival_datetime, "h:mm tt")#<cfelse>at #TimeFormat(DateAdd("n", abs(relTravelTime), ActualDateTime), "h:mm tt")#</cfif></td>
+			<td class="dA" colspan="3">Arrive at #toStation.StationCode# <cfif isDefined('url.destTime')>at #TimeFormat(dest_arrival_datetime, "h:mm tt")#<cfelse>at #TimeFormat(DateAdd("n", abs(relTravelTime), ActualDateTime), "h:mm tt")#</cfif><div class="lateness"></div></td>
 		</tr>
 	</cfloop>
 	</tbody>

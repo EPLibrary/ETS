@@ -365,6 +365,22 @@
 		font-weight:bold;
 	}
 
+	.aT.rtLate {
+		color:#b50202;
+	}
+
+	.aT.rtEarly {
+		color:#158a00;
+	}
+
+	.darkMode .aT.rtLate {
+		color:#ff7878;
+	}
+
+	.darkMode .aT.rtEarly {
+		color:#d6fdcf;
+	}
+
 	.trainName, .tN {
 
 	}
@@ -805,7 +821,10 @@ function refreshStopTimes() {
 		window.history.pushState("", "Bus Stop Schedule", "?fromStop="+fromStop+"&time="+timeVal+"&dow="+dowVal);
 		// Refresh the arrival times so they don't go blank for a couple seconds
 		updateArrivalTimes();
-		// bindShowArrival();
+		bindShowArrival();
+
+		// Update the times with GTFS RealTime data
+		updateTrips();
 	});
 
 }
@@ -844,8 +863,6 @@ function refreshRouteStops() {
 		</cfif>
 			newLoad=false;
 
-			// I think I just need to do this on page load...
-			refreshRouteDepartureTimes();
 		}
 
 	});
@@ -860,6 +877,7 @@ function refreshRouteToStops(stopId) {
 		if (stopId) {
 			routeToSelectize.addItem(stopId);
 		}
+
 
 	});
 }
@@ -895,6 +913,8 @@ function refreshRouteDepartureTimes() {
 		// Refresh the arrival times so they don't go blank for a couple seconds
 		updateArrivalTimes();
 		bindShowArrival();
+		// Update the times with GTFS RealTime data
+		updateTrips();
 	});
 }
 
@@ -1165,6 +1185,108 @@ function toggleDarkMode() {
 $('#nightModeLink a').click(function(){
 	toggleDarkMode();
 });
+
+
+function formatTime(date) {
+  var hours = date.getHours();
+  var minutes = date.getMinutes();
+  var seconds = date.getSeconds();
+  var ampm = hours >= 12 ? 'PM' : 'AM';
+  hours = hours % 12;
+  hours = hours ? hours : 12; // the hour '0' should be '12'
+  minutes = minutes < 10 ? '0'+minutes : minutes;
+  var strTime = hours + ':' + minutes + ' ' + ampm;
+  //return date.getMonth()+1 + "/" + date.getDate() + "/" + date.getFullYear() + "  " + strTime;
+  return strTime;
+}
+
+function formatDate(date) {
+  var hours = date.getHours();
+  var minutes = date.getMinutes();
+  var seconds = date.getSeconds();
+  // var ampm = hours >= 12 ? 'PM' : 'AM';
+  // hours = hours % 12;
+  // hours = hours ? hours : 12; // the hour '0' should be '12'
+  minutes = minutes < 10 ? '0'+minutes : minutes;
+  var strTime = hours + ':' + minutes + ':' + seconds + ".0";
+  return date.getFullYear() + "-" + (date.getMonth()+1) + "-" + date.getDate() + " " + strTime;
+ 
+}
+
+
+// Experimenting with GTFS TripUpdates
+function updateTrips() {
+	$('table[data-stopid]').each(function(index) {
+		var stopid = $(this).attr('data-stopid');
+		var trips = [];
+		$('tr[data-tripid]').each(function(index) {
+			trips.push($(this).attr('data-tripid'));
+		});
+
+		$.post('tripUpdate.cfm', {"tid":trips.join(", "), "stopid":stopid}).done(function(data) {
+
+			//Now inject this data into the page somehow or another
+			$.each(data.message.entity, function(index, value) {
+				$.each(value.trip_update.stop_time_update, function(stindex, stvalue) {
+					// either departure or arrival might be defined. I think we usually use departure here
+					var utcSeconds = stvalue.departure.time;
+					var d = new Date(0); // The 0 here sets the date to the epoch
+					d.setUTCSeconds(utcSeconds);
+					//Update the datetime attribute with the estimated actual time
+					$('table[data-stopid="'+stvalue.stop_id+'"] tr[data-tripid="'+value.id+'"] .aT').attr('data-datetime', formatDate(d));
+					//Update the display time
+					$('table[data-stopid="'+stvalue.stop_id+'"] tr[data-tripid="'+value.id+'"] .aT').html(formatTime(d));
+
+					//Calculate how late/early the bus is
+					var estTime = $('table[data-stopid="'+stvalue.stop_id+'"] tr[data-tripid="'+value.id+'"] .aT').attr('data-datetime');
+					var schTime = $('table[data-stopid="'+stvalue.stop_id+'"] tr[data-tripid="'+value.id+'"] .aT').attr('data-scheduled');
+					//Here are a bunch of hacks to get Safari to create a valid date
+					estTime = estTime.replace('-', '/');
+					estTime = estTime.replace('-', '/');
+					estTime = estTime.replace('.0', '');
+
+					schTime = schTime.replace('-', '/');
+					schTime = schTime.replace('-', '/');
+					schTime = schTime.replace('.0', '');
+
+					var estDate = new Date(estTime);
+					var schDate = new Date(schTime);
+
+					var secondsLate = (estDate-schDate)/1000;
+
+					// Now insert the seconds into the other field
+					var timeString = Math.abs(Math.floor(secondsLate/60)) + " min";
+					if (Math.abs(secondsLate) < 100 ) timeString = Math.abs(secondsLate) + " sec";
+					if (secondsLate < 0) timeString += " early";
+					else if (secondsLate > 0) timeString += " late";
+
+					if (secondsLate < -30 || (secondsLate > 30)) {
+						$('table[data-stopid="'+stvalue.stop_id+'"] tr[data-tripid="'+value.id+'"]+tr.dR .lateness').html(timeString);
+
+						$('table[data-stopid="'+stvalue.stop_id+'"] tr[data-tripid="'+value.id+'"] .aT').removeClass('rtLate rtEarly');
+						if (secondsLate < 0) {
+							$('table[data-stopid="'+stvalue.stop_id+'"] tr[data-tripid="'+value.id+'"] .aT').addClass('rtEarly');
+						}
+						if (secondsLate > 0) {
+							$('table[data-stopid="'+stvalue.stop_id+'"] tr[data-tripid="'+value.id+'"] .aT').addClass('rtLate');
+						}						
+					}
+
+					
+				});//each stop_time_update
+			});
+
+		});
+	});
+}//updateTrips()
+
+// Update using realtime data after this page is loaded.
+$(document).ready(function() {
+	updateTrips();
+});
+
+//Update Trip schedule every two minutes
+setInterval(function(){updateTrips();}, 120000);
 
 </script>
 

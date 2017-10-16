@@ -62,7 +62,7 @@ description="Accepts FROM stop_id and a datetime and outputs a table with releva
 	</cfquery>
 	
 	<cfoutput>
-	<table class="altColors">
+	<table class="altColors" data-stopid="#fromStop#">
 	<thead>
 		<tr>
 			<th colspan="4">Departures from ###fromStop#<br />#StopInfo.stop_name#</th>
@@ -71,15 +71,14 @@ description="Accepts FROM stop_id and a datetime and outputs a table with releva
 	<tbody>
 	<cfloop query="DepartureTimes">
 		<!--- Only show if the time hasn't elapsed --->
-		<tr>
+		<tr data-tripid="#trip_id#">
 			<td class="tN">#UCase(stop_headsign)#</td>
-			<td class="aT" data-datetime="#ActualDateTime#">#TimeFormat(ActualDateTime, "h:mm tt")#</td>
+			<td class="aT" data-scheduled="#ActualDateTime#" data-datetime="#ActualDateTime#">#TimeFormat(ActualDateTime, "h:mm tt")#</td>
 			<td class="cD"></td>
 		</tr>
 		<tr class="dR">
-			<!--- This does nothing when I'm just showing stop times
-			<td class="dA" colspan="3">Arrive at #toStation.StationCode# <cfif isDefined('url.destTime')>at #TimeFormat(dest_arrival_datetime, "h:mm tt")#<cfelse>at #TimeFormat(DateAdd("n", abs(relTravelTime), ActualDateTime), "h:mm tt")#</cfif></td>
-			--->
+			<!--- This does little when I'm just showing stop times --->
+			<td class="dA" colspan="3"><div class="lateness"></div></td>
 		</tr>
 	</cfloop>
 	</tbody>

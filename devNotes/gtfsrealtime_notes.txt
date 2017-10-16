@@ -1,0 +1,20 @@
+gtfsrealtime notes
+
+Step
+1.	Get all the tripids out of the regular schedule page somehow
+2.	Request from some coldfusion page that then runs cfexecute on the gtfsrealtime parser thing I made
+3.	loop through the elements and insert any relevant data into the page.
+
+Sigh. I've got my work cut out for me.	
+
+
+112, 7, 8 are taking lots of detours
+
+
+
+
+- replace the displayed time and datetime fields
+- the time calculation should automatically update
+- if the schedule relationship is SKIPPED, show SKIPPED in lieu of time (make sure the ETA doesn't show anything)
+- If the bus is late or early, show this status in the hidden row
+- change the class of the field to reflect late or early, and I will style it differently to reflect this
