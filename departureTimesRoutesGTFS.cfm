@@ -77,6 +77,7 @@ description="Accepts FROM and TO stop IDs, and a datetime and outputs a table wi
 			AND stop_id=#from#
 			AND ActualDateTime > #CurrentTime# AND ActualDateTime < #MaxFutureTime#
 			) AS stops WHERE dest_arrival_datetime IS NOT NULL
+			AND pickup_type = 0
 			ORDER BY ActualDateTime
 		</cfquery>	
 	<cfelse>
@@ -85,6 +86,7 @@ description="Accepts FROM and TO stop IDs, and a datetime and outputs a table wi
 			WHERE route_id=#rid#
 			AND stop_id=#from#
 			AND ActualDateTime > #CurrentTime# AND ActualDateTime < #MaxFutureTime#
+			AND pickup_type = 0
 			ORDER BY ActualDateTime
 		</cfquery>		
 	</cfif>
@@ -114,7 +116,7 @@ description="Accepts FROM and TO stop IDs, and a datetime and outputs a table wi
 	<cfloop query="DepartureTimes">
 		<!--- Only show if the time hasn't elapsed --->
 		<tr data-tripid="#trip_id#">
-			<td class="tN">#UCase(stop_headsign)#</td>
+			<td class="tN">#(stop_headsign)#</td>
 			<td class="aT" data-scheduled="#ActualDateTime#" data-datetime="#ActualDateTime#">#TimeFormat(ActualDateTime, "h:mm tt")#</td>
 			<td class="cD"></td>
 		</tr>

@@ -73,7 +73,7 @@ description="Accepts FROM stop_id and a datetime and outputs a table with releva
 	<cfloop query="DepartureTimes">
 		<!--- Only show if the time hasn't elapsed --->
 		<tr data-tripid="#trip_id#">
-			<td class="tN">#UCase(stop_headsign)#</td>
+			<td class="tN">#(stop_headsign)#</td>
 			<td class="aT" data-scheduled="#ActualDateTime#" data-datetime="#ActualDateTime#">#TimeFormat(ActualDateTime, "h:mm tt")#</td>
 			<td class="cD"></td>
 		</tr>
