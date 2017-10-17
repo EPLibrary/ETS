@@ -51,7 +51,7 @@ description="Accepts FROM stop_id and a datetime and outputs a table with releva
 		SELECT * FROM vsd.#dbprefix#_trip_stop_datetimes
 		WHERE stop_id=#fromStop# 
 		AND ActualDateTime > #CurrentTime#
-		AND ActualDateTIme < #maxFutureTime#
+		AND ActualDateTime < #maxFutureTime#
 		AND pickup_type = 0
 		ORDER BY ActualDateTime
 	</cfquery>
