@@ -119,9 +119,12 @@ description="Accepts FROM and TO stop IDs, and a datetime and outputs a table wi
 			<td class="cD"></td>
 		</tr>
 		<tr class="dR">
-			<cfif isDefined('to') and isNumeric(to)>
-			<td class="dA" colspan="3">Arrive at #toStop.stop_name# <cfif IsDate(DepartureTimes.dest_arrival_datetime)>at #TimeFormat(dest_arrival_datetime, "h:mm tt")#</cfif><div class="lateness"></div></td>
-			</cfif>
+			
+			<td class="dA" colspan="3">
+				<cfif isDefined('to') and isNumeric(to)>Arrive at #toStop.stop_name# <cfif IsDate(DepartureTimes.dest_arrival_datetime)>at #TimeFormat(dest_arrival_datetime, "h:mm tt")#</cfif></cfif>
+			<div class="lateness"></div>
+			</td>
+			
 		</tr>
 	</cfloop>
 	</tbody>

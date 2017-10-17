@@ -381,8 +381,12 @@
 		color:#d6fdcf;
 	}
 
-	.trainName, .tN {
+	.skipped {
+		opacity: 0.6;
+	}
 
+	.skipped .aT {
+		text-decoration: line-through;
 	}
 
 	.due {
@@ -758,6 +762,8 @@
 <cfif isDefined('url.fromStop')>
 	<cfinclude template="stopTimesGTFS.cfm" />	
 <cfelseif isDefined('url.rid')>
+	<cfset url.from = url.routeFrom />
+	<cfset url.to = url.routeTo />
 	<cfinclude template="departureTimesRoutesGTFS.cfm" />
 <cfelse>
 	<cfinclude template="departureTimesGTFS.cfm" />
@@ -966,7 +972,7 @@ $('#timeLabelText').click(function(){
 
 
 function updateArrivalTimes() {
-	$('.aT').each(function() {
+	$('tr:not(.skipped) .aT').each(function() {
 		var thisTime = $(this).html();
 		//Here are a bunch of hacks to get Safari to create a valid date
 		var thisDate = $(this).attr('data-datetime').replace('-', '/');
@@ -1222,13 +1228,17 @@ function updateTrips() {
 		$('tr[data-tripid]').each(function(index) {
 			trips.push($(this).attr('data-tripid'));
 		});
-
+		if (trips.length > 0)
 		$.post('tripUpdate.cfm', {"tid":trips.join(", "), "stopid":stopid}).done(function(data) {
 
 			//Now inject this data into the page somehow or another
 			$.each(data.message.entity, function(index, value) {
+				// console.log(value.trip_update);
 				$.each(value.trip_update.stop_time_update, function(stindex, stvalue) {
+					// Removed the "skipped" class in case this changes
+					$('table[data-stopid="'+stvalue.stop_id+'"] tr[data-tripid="'+value.id+'"]').removeClass('skipped');
 					// either departure or arrival might be defined. I think we usually use departure here
+					var schedRel = stvalue.schedule_relationship;
 					var utcSeconds = stvalue.departure.time;
 					var d = new Date(0); // The 0 here sets the date to the epoch
 					d.setUTCSeconds(utcSeconds);
@@ -1239,6 +1249,7 @@ function updateTrips() {
 
 					//Calculate how late/early the bus is
 					var estTime = $('table[data-stopid="'+stvalue.stop_id+'"] tr[data-tripid="'+value.id+'"] .aT').attr('data-datetime');
+
 					var schTime = $('table[data-stopid="'+stvalue.stop_id+'"] tr[data-tripid="'+value.id+'"] .aT').attr('data-scheduled');
 					//Here are a bunch of hacks to get Safari to create a valid date
 					estTime = estTime.replace('-', '/');
@@ -1270,6 +1281,14 @@ function updateTrips() {
 						if (secondsLate > 0) {
 							$('table[data-stopid="'+stvalue.stop_id+'"] tr[data-tripid="'+value.id+'"] .aT').addClass('rtLate');
 						}						
+					}
+
+					// Now if the schedule relationship is "SKIPPED" we show that here
+					if (schedRel == "SKIPPED") {
+						$('table[data-stopid="'+stvalue.stop_id+'"] tr[data-tripid="'+value.id+'"]+tr.dR .lateness').html('Stop will be skipped');
+						$('table[data-stopid="'+stvalue.stop_id+'"] tr[data-tripid="'+value.id+'"]').addClass('skipped');
+						$('table[data-stopid="'+stvalue.stop_id+'"] tr[data-tripid="'+value.id+'"] .cD').html('Skipped');
+						
 					}
 
 					
