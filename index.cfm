@@ -762,8 +762,8 @@
 <cfif isDefined('url.fromStop')>
 	<cfinclude template="stopTimesGTFS.cfm" />	
 <cfelseif isDefined('url.rid')>
-	<cfset url.from = url.routeFrom />
-	<cfset url.to = url.routeTo />
+	<cfif isDefined('url.RouteFrom')><cfset url.from = url.routeFrom /></cfif>
+	<cfif isDefined('url.RouteTo')><cfset url.to = url.routeTo /></cfif>
 	<cfinclude template="departureTimesRoutesGTFS.cfm" />
 <cfelse>
 	<cfinclude template="departureTimesGTFS.cfm" />
