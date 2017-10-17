@@ -49,9 +49,10 @@ description="Accepts FROM stop_id and a datetime and outputs a table with releva
 	<!--- Query that should show the relevant schedule times. --->
 	<cfquery name="DepartureTimes" dbtype="ODBC" datasource="SecureSource">
 		SELECT * FROM vsd.#dbprefix#_trip_stop_datetimes
-		WHERE stop_id=#fromStop#
+		WHERE stop_id=#fromStop# 
 		AND ActualDateTime > #CurrentTime#
 		AND ActualDateTIme < #maxFutureTime#
+		AND pickup_type = 0
 		ORDER BY ActualDateTime
 	</cfquery>
 
