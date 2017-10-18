@@ -441,6 +441,10 @@ table td.dA {
 		border:1px solid #888;
 	}
 
+	.darkMode .selectize-input.full {
+		background-color:transparent;
+	}
+
 	.darkMode .selectize-control.single .selectize-input.input-active {
 		background: black;
 	}

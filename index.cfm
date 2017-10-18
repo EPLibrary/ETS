@@ -43,7 +43,7 @@
 
 	<!--- Custom Stylesheet for www2.epl.ca --->
 	<link rel="stylesheet" href="/w2.css" type="text/css"/>
-	<link rel="stylesheet" href="ets.css" type="text/css"/>
+	<link rel="stylesheet" href="ets.css?v=1" type="text/css"/>
 
 
 	<title><cfoutput>#PageTitleHead#</cfoutput></title>
