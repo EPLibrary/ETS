@@ -710,63 +710,64 @@ function updateTrips() {
 			$.each(data.message.entity, function(index, value) {
 				// console.log(value.trip_update);
 				$.each(value.trip_update.stop_time_update, function(stindex, stvalue) {
-					// Removed the "skipped" class in case this changes
-					$('table[data-stopid="'+stvalue.stop_id+'"] tr[data-tripid="'+value.id+'"]').removeClass('skipped');
-					// either departure or arrival might be defined. I think we usually use departure here
-					var schedRel = stvalue.schedule_relationship;
-					var utcSeconds = stvalue.departure.time;
-					var d = new Date(0); // The 0 here sets the date to the epoch
-					d.setUTCSeconds(utcSeconds);
-					//Update the datetime attribute with the estimated actual time
-					$('table[data-stopid="'+stvalue.stop_id+'"] tr[data-tripid="'+value.id+'"] .aT').attr('data-datetime', formatDate(d));
-					//Update the display time
-					$('table[data-stopid="'+stvalue.stop_id+'"] tr[data-tripid="'+value.id+'"] .aT').html(formatTime(d));
+					if (stvalue.departure) {
+						// Removed the "skipped" class in case this changes
+						$('table[data-stopid="'+stvalue.stop_id+'"] tr[data-tripid="'+value.id+'"]').removeClass('skipped');
+						// either departure or arrival might be defined. I think we usually use departure here
+						var schedRel = stvalue.schedule_relationship;
+						var utcSeconds = stvalue.departure.time;
+						var d = new Date(0); // The 0 here sets the date to the epoch
+						d.setUTCSeconds(utcSeconds);
+						//Update the datetime attribute with the estimated actual time
+						$('table[data-stopid="'+stvalue.stop_id+'"] tr[data-tripid="'+value.id+'"] .aT').attr('data-datetime', formatDate(d));
+						//Update the display time
+						$('table[data-stopid="'+stvalue.stop_id+'"] tr[data-tripid="'+value.id+'"] .aT').html(formatTime(d));
 
-					//Calculate how late/early the bus is
-					var estTime = $('table[data-stopid="'+stvalue.stop_id+'"] tr[data-tripid="'+value.id+'"] .aT').attr('data-datetime');
+						//Calculate how late/early the bus is
+						var estTime = $('table[data-stopid="'+stvalue.stop_id+'"] tr[data-tripid="'+value.id+'"] .aT').attr('data-datetime');
 
-					var schTime = $('table[data-stopid="'+stvalue.stop_id+'"] tr[data-tripid="'+value.id+'"] .aT').attr('data-scheduled');
-					//Here are a bunch of hacks to get Safari to create a valid date
-					estTime = estTime.replace('-', '/');
-					estTime = estTime.replace('-', '/');
-					estTime = estTime.replace('.0', '');
+						var schTime = $('table[data-stopid="'+stvalue.stop_id+'"] tr[data-tripid="'+value.id+'"] .aT').attr('data-scheduled');
+						//Here are a bunch of hacks to get Safari to create a valid date
+						estTime = estTime.replace('-', '/');
+						estTime = estTime.replace('-', '/');
+						estTime = estTime.replace('.0', '');
 
-					schTime = schTime.replace('-', '/');
-					schTime = schTime.replace('-', '/');
-					schTime = schTime.replace('.0', '');
+						schTime = schTime.replace('-', '/');
+						schTime = schTime.replace('-', '/');
+						schTime = schTime.replace('.0', '');
 
-					var estDate = new Date(estTime);
-					var schDate = new Date(schTime);
+						var estDate = new Date(estTime);
+						var schDate = new Date(schTime);
 
-					var secondsLate = (estDate-schDate)/1000;
+						var secondsLate = (estDate-schDate)/1000;
 
-					// Now insert the seconds into the other field
-					var timeString = Math.abs(Math.floor(secondsLate/60)) + " min";
-					if (Math.abs(secondsLate) < 100 ) timeString = Math.abs(secondsLate) + " sec";
-					if (secondsLate < 0) timeString += " early";
-					else if (secondsLate > 0) timeString += " late";
+						// Now insert the seconds into the other field
+						var timeString = Math.abs(Math.floor(secondsLate/60)) + " min";
+						if (Math.abs(secondsLate) < 100 ) timeString = Math.abs(secondsLate) + " sec";
+						if (secondsLate < 0) timeString += " early";
+						else if (secondsLate > 0) timeString += " late";
 
-					if (secondsLate < -30 || (secondsLate > 30)) {
-						$('table[data-stopid="'+stvalue.stop_id+'"] tr[data-tripid="'+value.id+'"]+tr.dR .lateness').html(timeString);
+						if (secondsLate < -30 || (secondsLate > 30)) {
+							$('table[data-stopid="'+stvalue.stop_id+'"] tr[data-tripid="'+value.id+'"]+tr.dR .lateness').html(timeString);
 
-						$('table[data-stopid="'+stvalue.stop_id+'"] tr[data-tripid="'+value.id+'"] .aT').removeClass('rtLate rtEarly');
-						if (secondsLate < 0) {
-							$('table[data-stopid="'+stvalue.stop_id+'"] tr[data-tripid="'+value.id+'"] .aT').addClass('rtEarly');
+							$('table[data-stopid="'+stvalue.stop_id+'"] tr[data-tripid="'+value.id+'"] .aT').removeClass('rtLate rtEarly');
+							if (secondsLate < 0) {
+								$('table[data-stopid="'+stvalue.stop_id+'"] tr[data-tripid="'+value.id+'"] .aT').addClass('rtEarly');
+							}
+							if (secondsLate > 0) {
+								$('table[data-stopid="'+stvalue.stop_id+'"] tr[data-tripid="'+value.id+'"] .aT').addClass('rtLate');
+							}						
 						}
-						if (secondsLate > 0) {
-							$('table[data-stopid="'+stvalue.stop_id+'"] tr[data-tripid="'+value.id+'"] .aT').addClass('rtLate');
-						}						
-					}
 
-					// Now if the schedule relationship is "SKIPPED" we show that here
-					if (schedRel == "SKIPPED") {
-						$('table[data-stopid="'+stvalue.stop_id+'"] tr[data-tripid="'+value.id+'"]+tr.dR .lateness').html('Stop will be skipped');
-						$('table[data-stopid="'+stvalue.stop_id+'"] tr[data-tripid="'+value.id+'"]').addClass('skipped');
-						$('table[data-stopid="'+stvalue.stop_id+'"] tr[data-tripid="'+value.id+'"] .cD').html('Skipped');
-						
-					}
+						// Now if the schedule relationship is "SKIPPED" we show that here
+						if (schedRel == "SKIPPED") {
+							$('table[data-stopid="'+stvalue.stop_id+'"] tr[data-tripid="'+value.id+'"]+tr.dR .lateness').html('Stop will be skipped');
+							$('table[data-stopid="'+stvalue.stop_id+'"] tr[data-tripid="'+value.id+'"]').addClass('skipped');
+							$('table[data-stopid="'+stvalue.stop_id+'"] tr[data-tripid="'+value.id+'"] .cD').html('Skipped');
+							
+						}
 
-					
+					}//end if stvalue.departure
 				});//each stop_time_update
 			});
 

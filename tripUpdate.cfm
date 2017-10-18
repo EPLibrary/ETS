@@ -8,6 +8,9 @@ This is queried from ETSRealTime.exe, which is a Windows command line app made w
 <cfobject name="gtfsRealtime" component="gtfsRealtime">
 <!--- <cfdump var="#server.gtfsrealtime#"> --->
 
+<cfif isDefined('url.tid')><cfset form.tid=url.tid /></cfif>
+<cfif isDefined('url.stopid')><cfset form.stopid=url.stopid /></cfif>
+
 <cfif isDefined('form.tid') AND isDefined('form.stopID')>
 
 	<!--- Get the filename for the TripUpdates.PB --->
