@@ -1,6 +1,25 @@
+/* Style for the ETS schedule app */
+
+/* Style for desktop view over 450 pixels */
+@media (min-width: 450px) {
+	/*Center all the things instead of left justify */
+	.pageTitle, .opMode, .w2Contents p {
+		margin:0 auto;
+		text-align: center;
+	}
+	.w2Form label, .w2Form .formItem, .departures {
+		margin:0 auto;
+	}
+}
+
+
 body {
 	color: #3f4344;
+	font-family: "Open Sans",sans-serif;
+	background-color: #cccac8;
+	margin:5px;
 }
+
 
 select {
 	/*-webkit-appearance:none;*/
@@ -232,6 +251,7 @@ a {
 	color:#555;
 	text-decoration: none;
 }
+
 
 @media (max-width: 450px) {
 	#nearestLink {
