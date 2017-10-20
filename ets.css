@@ -10,6 +10,11 @@
 	.w2Form label, .w2Form .formItem, .departures {
 		margin:0 auto;
 	}
+
+	#swapButtonLabel {
+		margin-top:15px !important;
+		margin-bottom:15px;
+	}
 }
 
 
