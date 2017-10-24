@@ -42,8 +42,8 @@
 
 
 	<!--- Custom Stylesheet for www2.epl.ca --->
-	<link rel="stylesheet" href="/w2.css" type="text/css"/>
-	<link rel="stylesheet" href="ets.css?v=3" type="text/css"/>
+	<link rel="stylesheet" href="/w2.css?v=0" type="text/css"/>
+	<link rel="stylesheet" href="ets.css?v=0" type="text/css"/>
 	<link href="/Javascript/selectize/dist/css/selectize.css" type="text/css" rel="stylesheet" />
 
 
