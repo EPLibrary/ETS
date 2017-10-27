@@ -718,45 +718,48 @@ function updateTrips() {
 						var estTime = $('table[data-stopid="'+stvalue.stop_id+'"] tr[data-tripid="'+value.id+'"] .aT').attr('data-datetime');
 
 						var schTime = $('table[data-stopid="'+stvalue.stop_id+'"] tr[data-tripid="'+value.id+'"] .aT').attr('data-scheduled');
-						//Here are a bunch of hacks to get Safari to create a valid date
-						estTime = estTime.replace('-', '/');
-						estTime = estTime.replace('-', '/');
-						estTime = estTime.replace('.0', '');
 
-						schTime = schTime.replace('-', '/');
-						schTime = schTime.replace('-', '/');
-						schTime = schTime.replace('.0', '');
+						if (estTime && schTime) {
+							//Here are a bunch of hacks to get Safari to create a valid date
+							estTime = estTime.replace('-', '/');
+							estTime = estTime.replace('-', '/');
+							estTime = estTime.replace('.0', '');
 
-						var estDate = new Date(estTime);
-						var schDate = new Date(schTime);
+							schTime = schTime.replace('-', '/');
+							schTime = schTime.replace('-', '/');
+							schTime = schTime.replace('.0', '');
 
-						var secondsLate = (estDate-schDate)/1000;
+							var estDate = new Date(estTime);
+							var schDate = new Date(schTime);
 
-						// Now insert the seconds into the other field
-						var timeString = Math.abs(Math.floor(secondsLate/60)) + " min";
-						if (Math.abs(secondsLate) < 100 ) timeString = Math.abs(secondsLate) + " sec";
-						if (secondsLate < 0) timeString += " early";
-						else if (secondsLate > 0) timeString += " late";
+							var secondsLate = (estDate-schDate)/1000;
 
-						if (secondsLate < -30 || (secondsLate > 30)) {
-							$('table[data-stopid="'+stvalue.stop_id+'"] tr[data-tripid="'+value.id+'"]+tr.dR .lateness').html(timeString);
+							// Now insert the seconds into the other field
+							var timeString = Math.abs(Math.floor(secondsLate/60)) + " min";
+							if (Math.abs(secondsLate) < 100 ) timeString = Math.abs(secondsLate) + " sec";
+							if (secondsLate < 0) timeString += " early";
+							else if (secondsLate > 0) timeString += " late";
+							// Don't bother updating unless the time difference is bigger than 20 seconds but NOT greater than 8 hours
+							if ( (secondsLate < -20 || secondsLate > 20) && secondsLate < 28800 && secondsLate > -28800 ) {
+								$('table[data-stopid="'+stvalue.stop_id+'"] tr[data-tripid="'+value.id+'"]+tr.dR .lateness').html(timeString);
 
-							$('table[data-stopid="'+stvalue.stop_id+'"] tr[data-tripid="'+value.id+'"] .aT').removeClass('rtLate rtEarly');
-							if (secondsLate < 0) {
-								$('table[data-stopid="'+stvalue.stop_id+'"] tr[data-tripid="'+value.id+'"] .aT').addClass('rtEarly');
+								$('table[data-stopid="'+stvalue.stop_id+'"] tr[data-tripid="'+value.id+'"] .aT').removeClass('rtLate rtEarly');
+								if (secondsLate < 0) {
+									$('table[data-stopid="'+stvalue.stop_id+'"] tr[data-tripid="'+value.id+'"] .aT').addClass('rtEarly');
+								}
+								if (secondsLate > 0) {
+									$('table[data-stopid="'+stvalue.stop_id+'"] tr[data-tripid="'+value.id+'"] .aT').addClass('rtLate');
+								}						
 							}
-							if (secondsLate > 0) {
-								$('table[data-stopid="'+stvalue.stop_id+'"] tr[data-tripid="'+value.id+'"] .aT').addClass('rtLate');
-							}						
-						}
 
-						// Now if the schedule relationship is "SKIPPED" we show that here
-						if (schedRel == "SKIPPED") {
-							$('table[data-stopid="'+stvalue.stop_id+'"] tr[data-tripid="'+value.id+'"]+tr.dR .lateness').html('Stop will be skipped');
-							$('table[data-stopid="'+stvalue.stop_id+'"] tr[data-tripid="'+value.id+'"]').addClass('skipped');
-							$('table[data-stopid="'+stvalue.stop_id+'"] tr[data-tripid="'+value.id+'"] .cD').html('Skipped');
-							
-						}
+							// Now if the schedule relationship is "SKIPPED" we show that here
+							if (schedRel == "SKIPPED") {
+								$('table[data-stopid="'+stvalue.stop_id+'"] tr[data-tripid="'+value.id+'"]+tr.dR .lateness').html('Stop will be skipped');
+								$('table[data-stopid="'+stvalue.stop_id+'"] tr[data-tripid="'+value.id+'"]').addClass('skipped');
+								$('table[data-stopid="'+stvalue.stop_id+'"] tr[data-tripid="'+value.id+'"] .cD').html('Skipped');
+								
+							}
+						}//end if estTime && schTime
 
 					}//end if stvalue.departure
 				});//each stop_time_update
