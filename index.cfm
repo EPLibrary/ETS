@@ -223,6 +223,12 @@
 
 </form>
 
+<!--- This is where the map showing the stop will go, I suppose... there can be more than one, though --->
+<div style="clear:both">&nbsp;</div>
+<div id="mainMap"></div>
+<div id="closeMap"><a href="javascript:void(0);">Close Map</a></div>
+<div id="mapNotice">Tap times to see details &amp; maps. &#x1f5fa;</div>
+
 <div class="departures" id="departures">
 <!--- this is where the tables will go --->
 <cfif isDefined('url.fromStop')>
@@ -276,6 +282,11 @@ function refreshDepartureTimes() {
 		// Refresh the arrival times so they don't go blank for a couple seconds
 		updateArrivalTimes();
 		bindShowArrival();
+
+		//Close the map
+		$('#mainMap').hide();
+		$('#closeMap').hide();
+
 	});
 }
 
@@ -626,7 +637,17 @@ function bindShowArrival() {
 			//This localizes the hiding to the current table for multi-leg routes
 			$(this).parent().children('.dR').hide();
 			$(this).next().show();
+
+			var thisStopID = $(this).parents('table').attr('data-stopid');
+			var thisTripID = $(this).attr('data-tripid');
+			var thisSequence = $(this).attr('data-sequence');
+			// Show the map with this trip on it
+			if ($('#routeTo').val()) initMap(thisStopID, thisTripID, thisSequence, $('#routeTo').val());
+			else if ($('#to').val()) initMap(thisStopID, thisTripID, thisSequence, $('#to').val());
+			else initMap(thisStopID, thisTripID);
 		}
+
+
 	});
 }
 bindShowArrival();
@@ -686,7 +707,7 @@ function formatDate(date) {
 }
 
 
-// Experimenting with GTFS TripUpdates
+// GTFS TripUpdates
 function updateTrips() {
 	$('table[data-stopid]').each(function(index) {
 		var stopid = $(this).attr('data-stopid');
@@ -777,9 +798,125 @@ $(document).ready(function() {
 //Update Trip schedule every two minutes
 setInterval(function(){updateTrips();}, 120000);
 
+//Google maps
+var map;
+
+var iconBase = 'https://www2.epl.ca/images/map/';
+
+// Initializes the google map - stop is required
+// trip is optional and will show a route if a valid trip is specified.
+// Filling in the seq and dest will allow subsequent stops on the trip to be shown
+function initMap(stop, trip, seq, dest) {
+	// Make ajax call to get stop coordinates and name from the stop parameter
+$.get('stopInfo.cfm?stopid='+stop+'&trip='+trip+'&seq='+seq+'&dest='+dest).done(function(data){
+	var stopPos = {lat: data.stop.stop_lat, lng: data.stop.stop_lon};
+	map = new google.maps.Map(document.getElementById('mainMap'), {
+	center: stopPos,
+	//mapTypeId: 'hybrid',
+	zoom: 17
+	});
+
+	var icons = {
+	  stopBlue: {
+	    icon: {
+	        url: iconBase + 'stop_icon_blue.svg',
+	        scaledSize: new google.maps.Size(60, 55),
+	        origin: new google.maps.Point(0,0)
+	    }
+	  },
+	  stopRed: {
+	    icon: {
+	        url: iconBase + 'stop_icon_red.svg',
+	        scaledSize: new google.maps.Size(55, 55),
+	        origin: new google.maps.Point(0,0)
+	    }
+	  },
+	  stopGreen: {
+	    icon: {
+	        url: iconBase + 'stop_icon_green.svg',
+	        scaledSize: new google.maps.Size(60, 55),
+	        origin: new google.maps.Point(0,0)
+	    }
+	  }
+	  //,library: {icon: iconBase + 'library_icon.png'}
+	};
+
+	stopLabel = data.stop.stop_id;
+	if (data.stop.sc.length) {
+		stopLabel = data.stop.sc;
+	}
+	var marker = new google.maps.Marker({
+	  position: stopPos,
+	  label: ""+stopLabel,
+	  title: data.stop.stop_name,
+	  icon: icons["stopRed"].icon,
+	  map: map
+	});
+
+	if (typeof trip !== "undefined") {
+		var busRoute = new google.maps.Polyline({
+	      path: data.trip,
+	      geodesic: true,
+	      strokeColor: '#FF3333',
+	      strokeOpacity: .4,
+	      strokeWeight: 6
+	    });
+
+    	busRoute.setMap(map);
+
+    	var lastStop;
+		var thisStopSeq=0;
+		// Add markers for subsequent stops
+		for (i=0;i<data.next.length;i++) {
+			if (lastStop == data.next[i].stop_id) continue;
+			thisStopSeq++;
+			stopLabel = data.next[i].stop_id;
+			if (data.next[i].sc.length) {
+				stopLabel = data.next[i].sc;
+			}
+			if (i+1 == data.next.length) {
+				nextStopMarker = new google.maps.Marker({
+					position: {lat: data.next[i].stop_lat, lng: data.next[i].stop_lon},
+					label: thisStopSeq+": "+stopLabel,
+					title: data.next[i].stop_name,
+					icon: icons["stopGreen"].icon,
+					map: map
+				});				
+			} else {
+				nextStopMarker = new google.maps.Marker({
+					position: {lat: data.next[i].stop_lat, lng: data.next[i].stop_lon},
+					label: thisStopSeq+": "+stopLabel,
+					title: data.next[i].stop_name,
+					icon: icons["stopBlue"].icon,
+					map: map
+				});
+			}
+			lastStop = data.next[i].stop_id;
+		}
+
+	}
+
+	//Show the actual map
+	$('#mainMap').show();
+	$('#closeMap').show();
+	$('#mapNotice').hide();
+
+});
+
+
+
+};//initmap
+
+$('#closeMap').click(function(){
+	$('#mainMap').hide();
+	$('#closeMap').hide();
+	$('#mapNotice').show();
+
+});
+  
 </script>
-
-
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyA9cke0k8wuLrcme-z2TqJgXUf3tButKyQ"
+async defer></script>
 
 
 

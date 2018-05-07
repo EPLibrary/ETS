@@ -387,6 +387,30 @@ table td.dA {
 	border-radius:4px;
 }
 
+.stopMap {
+	height:200px;
+}
+
+#mainMap {
+	margin-top:20px;
+	width:100%;
+	height:80vh;
+	max-height:600px;
+	display:none;
+}
+
+#closeMap {
+	display:none;
+	text-align: center;
+	margin-top:3px;
+}
+
+#mapNotice {
+	clear:both;
+	text-align: center;
+	margin-top:5px;
+}
+
 /* Dark Mode styles for Night */
 	body.darkMode {
 		background-color:#222;

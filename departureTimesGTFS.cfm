@@ -412,7 +412,7 @@ description="Accepts FROM and TO station IDs, and a datetime and outputs a table
 	<tbody>
 	<cfloop query="DepartureTimes">
 		<!--- Only show if the time hasn't elapsed --->
-		<tr data-tripid="#trip_id#">
+		<tr data-tripid="#trip_id#" data-sequence="#stop_sequence#">
 			<td class="tN">#UCase(stop_headsign)#</td>
 			<td class="aT" data-scheduled="#ActualDateTime#" data-datetime="#ActualDateTime#">#TimeFormat(ActualDateTime, "h:mm tt")#</td>
 			<td class="cD"></td>
