@@ -411,6 +411,23 @@ table td.dA {
 	margin-top:5px;
 }
 
+.mapLink {
+	float:left;
+	font-size:12px;
+	text-decoration: none;
+	/*border:1px solid #0A2D75;*/
+	border-radius:3px;
+	/*padding:2px;*/
+}
+
+.mapLink .icon {
+	font-size:16px;
+}
+
+.mapLink .mapBtnLabel {
+	/*text-decoration: underline;*/
+}
+
 /* Dark Mode styles for Night */
 	body.darkMode {
 		background-color:#222;
@@ -430,6 +447,10 @@ table td.dA {
 
 	.darkMode a {
 		color:rgb(126, 164, 241);
+	}
+
+	.darkMode .mapLink {
+		border-color:rgb(126, 164, 241);
 	}
 
 	.darkMode .w2Contents {

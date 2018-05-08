@@ -79,7 +79,7 @@ description="Accepts FROM stop_id and a datetime and outputs a table with releva
 		</tr>
 		<tr class="dR">
 			<!--- This does little when I'm just showing stop times --->
-			<td class="dA" colspan="3"><div class="lateness"></div></td>
+			<td class="dA" colspan="3"><a class="mapLink" data-tripid="#trip_id#" data-sequence="#stop_sequence#" href="javascript:void(0);"><div class="icon">&##x1f5fa;</div><div class="mapBtnLabel">Map</div></a><div class="lateness"></div></td>
 		</tr>
 	</cfloop>
 	</tbody>

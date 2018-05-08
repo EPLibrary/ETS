@@ -43,7 +43,7 @@
 
 	<!--- Custom Stylesheet for www2.epl.ca --->
 	<link rel="stylesheet" href="/w2.css?v=0" type="text/css"/>
-	<link rel="stylesheet" href="ets.css?v=1" type="text/css"/>
+	<link rel="stylesheet" href="ets.css?v=2" type="text/css"/>
 	<link href="/Javascript/selectize/dist/css/selectize.css" type="text/css" rel="stylesheet" />
 
 
@@ -631,24 +631,25 @@ $('#departLabelText').click(function(){
 
 // Tapping on a row shows the hidden row beneath and hides all others
 function bindShowArrival() {
-	$('.departures tr').click(function(){
+	$('.departures tr[data-tripid]').click(function(){
 		if ($(this).next().is(":visible")) $(this).next().hide()
 		else {
 			//This localizes the hiding to the current table for multi-leg routes
 			$(this).parent().children('.dR').hide();
 			$(this).next().show();
-
-			var thisStopID = $(this).parents('table').attr('data-stopid');
-			var thisTripID = $(this).attr('data-tripid');
-			var thisSequence = $(this).attr('data-sequence');
-			// Show the map with this trip on it
-			if ($('#routeTo').val()) initMap(thisStopID, thisTripID, thisSequence, $('#routeTo').val());
-			else if ($('#to').val()) initMap(thisStopID, thisTripID, thisSequence, $('#to').val());
-			else initMap(thisStopID, thisTripID);
 		}
-
-
 	});
+
+	$('.mapLink').click(function(){
+		var thisStopID = $(this).parents('table').attr('data-stopid');
+		var thisTripID = $(this).attr('data-tripid');
+		var thisSequence = $(this).attr('data-sequence');
+		// Show the map with this trip on it
+		if ($('#routeTo').val()) initMap(thisStopID, thisTripID, thisSequence, $('#routeTo').val());
+		else if ($('#to').val()) initMap(thisStopID, thisTripID, thisSequence, $('#to').val());
+		else initMap(thisStopID, thisTripID);
+	});
+
 }
 bindShowArrival();
 
@@ -982,7 +983,8 @@ async defer></script>
 
             </style>
             <div id="bccms_footer" class="footer-wrapper">
-                <div id="footer_container">
+                <div id="footer_container" style="padding:0px;box-shadow:none;">
+    		<!---
                     <h2 class="a11y-visually-hidden">Footer Menu</h2>
                     <div class="footer_container_12">
                         <div class="footer_grid">
@@ -1131,7 +1133,8 @@ async defer></script>
                             </ul>
                         </div>
                     </div>
-                </div>
+           	--->
+                </div><!-- footer_container -->
                 <div class="clear"></div>
                 <div class="footer-bottom clearfix">
                     <a href="https://www2.epl.ca/ContactEPL/" class="feedback-btn-small">Contact EPL</a>

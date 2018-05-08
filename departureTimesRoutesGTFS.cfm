@@ -122,7 +122,7 @@ description="Accepts FROM and TO stop IDs, and a datetime and outputs a table wi
 		</tr>
 		<tr class="dR">
 			
-			<td class="dA" colspan="3">
+			<td class="dA" colspan="3"><a class="mapLink" data-tripid="#trip_id#" data-sequence="#stop_sequence#" href="javascript:void(0);"><div class="icon">&##x1f5fa;</div><div class="mapBtnLabel">Map</div></a>
 				<cfif isDefined('to') and isNumeric(to)>Arrive at #toStop.stop_name# <cfif IsDate(DepartureTimes.dest_arrival_datetime)>at #TimeFormat(dest_arrival_datetime, "h:mm tt")#</cfif></cfif>
 			<div class="lateness"></div>
 			</td>

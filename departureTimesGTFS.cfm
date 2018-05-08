@@ -418,7 +418,7 @@ description="Accepts FROM and TO station IDs, and a datetime and outputs a table
 			<td class="cD"></td>
 		</tr>
 		<tr class="dR">
-			<td class="dA" colspan="3">Arrive at #toStation.StationCode# <cfif isDefined('url.destTime')>at #TimeFormat(dest_arrival_datetime, "h:mm tt")#<cfelse>at #TimeFormat(DateAdd("n", abs(relTravelTime), ActualDateTime), "h:mm tt")#</cfif><div class="lateness"></div></td>
+			<td class="dA" colspan="3"><a class="mapLink" data-tripid="#trip_id#" data-sequence="#stop_sequence#" href="javascript:void(0);"><div class="icon">&##x1f5fa;</div><div class="mapBtnLabel">Map</div></a>Arrive at #toStation.StationCode# <cfif isDefined('url.destTime')>at #TimeFormat(dest_arrival_datetime, "h:mm tt")#<cfelse>at #TimeFormat(DateAdd("n", abs(relTravelTime), ActualDateTime), "h:mm tt")#</cfif><div class="lateness"></div></td>
 		</tr>
 	</cfloop>
 	</tbody>
