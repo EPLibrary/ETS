@@ -885,9 +885,9 @@ $.get('stopInfo.cfm?stopid='+stop+'&trip='+trip+'&seq='+seq+'&dest='+dest).done(
 			} else {
 				nextStopMarker = new google.maps.Marker({
 					position: {lat: data.next[i].stop_lat, lng: data.next[i].stop_lon},
-					label: thisStopSeq+": "+stopLabel,
+					label: ""+thisStopSeq,
 					title: data.next[i].stop_name,
-					icon: icons["stopBlue"].icon,
+					//icon: icons["stopBlue"].icon,
 					map: map
 				});
 			}

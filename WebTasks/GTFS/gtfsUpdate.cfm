@@ -7,12 +7,12 @@
 
 <!--- Actual filename --->
 <!--- <cfset gtfsActual = "https://data.edmonton.ca/api/views/gzhc-5ss6/files/d646faa2-b520-418a-95e8-8ba53a989daf?filename=gtfs.zip" /> --->
-<!--- 💩 <cfhttp method="get" url="#gtfsUrl#" path="C:\inetpub\temp\gtfs" file="gtfs.zip" timeout="1000" getasbinary="auto"> --->
+<!--- 💩 <cfhttp method="get" url="#gtfsUrl#" path="D:\inetpub\temp\gtfs" file="gtfs.zip" timeout="1000" getasbinary="auto"> --->
 
 <!--- Download COE zip file --->
 
 
-<cfx_http5 url="#gtfsUrl#" ssl="5" async="n" out="C:\inetpub\temp\gtfs\gtfs.zip" file="y">
+<cfx_http5 url="#gtfsUrl#" ssl="5" async="n" out="D:\inetpub\temp\gtfs\gtfs.zip" file="y">
 
 <CFIF STATUS EQ "ER">
    <h2>Server returned error: <CFOUTPUT>#ERRN#</CFOUTPUT></h2>
@@ -22,10 +22,10 @@
    <CFABORT>
 </CFIF>
 <!--- Extract zip into gtfs directory --->
-<cfzip action="unzip" file="C:\inetpub\temp\gtfs\gtfs.zip" overwrite="true" destination="C:\inetpub\temp\gtfs\" />
+<cfzip action="unzip" file="D:\inetpub\temp\gtfs\gtfs.zip" overwrite="true" destination="D:\inetpub\temp\gtfs\" />
 
 <!--- Delete the original zip as we do not need it anymore --->
-<cffile action="delete" file="C:\inetpub\temp\gtfs\gtfs.zip" />
+<cffile action="delete" file="D:\inetpub\temp\gtfs\gtfs.zip" />
 
 
 
@@ -33,7 +33,7 @@
 
 <!--- Remove annoying headers from GTFS files so we can import them easily --->
 <!--- They use the command findstr /V /R "^[a-z].*[a-z]$" stop_times.txt > stop_times_noheader.txt --->
-<cfexecute name='C:\inetpub\www2.epl.ca\WebTasks\GTFS\stripheaders.bat' timeout="10" />
+<cfexecute name='D:\inetpub\www2.epl.ca\WebTasks\GTFS\stripheaders.bat' timeout="10" />
 
 
 
