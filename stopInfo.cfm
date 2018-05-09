@@ -4,7 +4,7 @@
 <cfsetting showdebugoutput="false" />
 <cfheader name="Content-Type" value="application/json">
  
- 	<cfif isDefined('url.stopid') AND isNumeric(url.stopid)>
+ <cfif isDefined('url.stopid') AND isNumeric(url.stopid)>
 	<cfinclude template="/AppsRoot/Includes/functions/QueryToStruct.cfm" />
 	<!--- Choose the active database to use. --->
 	<cfquery name="activedb" dbtype="ODBC" datasource="SecureSource">
@@ -44,8 +44,8 @@
 
 		<!--- We can also get the subsequent stops on the trip --->
 		<cfquery name="nextStops" dbtype="ODBC" datasource="SecureSource">
-			SELECT s.stop_id, s.stop_name, s.stop_lat, s.stop_lon, ls.Abbr as sc FROM vsd.ETS1_stop_times t
-			JOIN vsd.ETS1_stops s ON s.stop_id=t.stop_id
+			SELECT s.stop_id, s.stop_name, s.stop_lat, s.stop_lon, ls.Abbr as sc FROM vsd.#dbprefix#_stop_times t
+			JOIN vsd.#dbprefix#_stops s ON s.stop_id=t.stop_id
 			<!--- Not sure if this works --->
 			LEFT OUTER JOIN vsd.EZLRTStations ls ON ls.stop_id1=s.stop_id OR ls.stop_id2=s.stop_id
 			WHERE trip_id='#url.trip#' AND drop_off_type=0
@@ -53,15 +53,15 @@
 			<cfif isDefined('url.seq') AND isNumeric(url.seq)>
 				#url.seq#
 			<cfelse>
-				(SELECT TOP 1 stop_sequence FROM vsd.ETS1_stop_times WHERE trip_id='#url.trip#' AND stop_id='#url.stopid#' ORDER BY stop_sequence DESC)
+				(SELECT TOP 1 stop_sequence FROM vsd.#dbprefix#_stop_times WHERE trip_id='#url.trip#' AND stop_id='#url.stopid#' ORDER BY stop_sequence DESC)
 			</cfif>
 			<cfif isDefined('url.dest') AND isNumeric(url.dest)>
 				<cfif isDefined('realStopIDs') AND realStopIDs.recordCount>
-				AND stop_sequence <= (ISNULL((SELECT TOP 1 stop_sequence FROM vsd.ETS1_stop_times WHERE trip_id='#url.trip#'
+				AND stop_sequence <= (ISNULL((SELECT TOP 1 stop_sequence FROM vsd.#dbprefix#_stop_times WHERE trip_id='#url.trip#'
 					<cfif isDefined('url.seq') AND isNumeric(url.seq)>AND stop_sequence > #url.seq#</cfif>
 					AND (stop_id=#realStopIDs.stop_id1# OR stop_id=#realStopIDs.stop_id2#) ORDER BY stop_sequence ASC),9999))
 				<cfelse>
-				AND stop_sequence <= (ISNULL((SELECT TOP 1 stop_sequence FROM vsd.ETS1_stop_times WHERE trip_id='#url.trip#' AND stop_id=#url.dest# ORDER BY stop_sequence ASC),9999))
+				AND stop_sequence <= (ISNULL((SELECT TOP 1 stop_sequence FROM vsd.#dbprefix#_stop_times WHERE trip_id='#url.trip#' AND stop_id=#url.dest# ORDER BY stop_sequence ASC),9999))
 				</cfif>
 			</cfif>
 			ORDER BY stop_sequence
