@@ -820,8 +820,8 @@ $.get('stopInfo.cfm?stopid='+stop+'&trip='+trip+'&seq='+seq+'&dest='+dest).done(
 	var icons = {
 	  stopBlue: {
 	    icon: {
-	        url: iconBase + 'stop_icon_blue.svg',
-	        scaledSize: new google.maps.Size(60, 55),
+	        url: iconBase + 'Stop_Icon_Blue_Narrow.svg',
+	        scaledSize: new google.maps.Size(20, 41),
 	        origin: new google.maps.Point(0,0)
 	    }
 	  },
@@ -888,7 +888,7 @@ $.get('stopInfo.cfm?stopid='+stop+'&trip='+trip+'&seq='+seq+'&dest='+dest).done(
 					position: {lat: data.next[i].stop_lat, lng: data.next[i].stop_lon},
 					label: ""+thisStopSeq,
 					title: data.next[i].stop_name,
-					//icon: icons["stopBlue"].icon,
+					icon: icons["stopBlue"].icon,
 					map: map
 				});
 			}
