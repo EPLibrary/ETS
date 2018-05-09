@@ -261,8 +261,9 @@
 
 
 
-
-
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyA9cke0k8wuLrcme-z2TqJgXUf3tButKyQ"
+async defer></script>
+<script src="/javascript/geolocation-marker.js" async defer></script>
 <script>
 
 
@@ -814,7 +815,7 @@ $.get('stopInfo.cfm?stopid='+stop+'&trip='+trip+'&seq='+seq+'&dest='+dest).done(
 	map = new google.maps.Map(document.getElementById('mainMap'), {
 	center: stopPos,
 	//mapTypeId: 'hybrid',
-	zoom: 17
+	zoom: 15
 	});
 
 	var icons = {
@@ -897,16 +898,40 @@ $.get('stopInfo.cfm?stopid='+stop+'&trip='+trip+'&seq='+seq+'&dest='+dest).done(
 
 	}
 
+	// Show user's location on the map
+    var im = iconBase + 'bluecircle.png';
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(function(position) {
+        var pos = {
+          lat: position.coords.latitude,
+          lng: position.coords.longitude
+        };
+
+        // var userMarker = new google.maps.Marker({
+        //     position: pos,
+        //     map: map,
+        //     icon: im
+        // });      	
+		var GeoMarker = new GeolocationMarker(map);
+
+      });
+    }
+
 	//Show the actual map
 	$('#mainMap').show();
 	$('#closeMap').show();
 	$('#mapNotice').hide();
 
-});
+
+
+});//.get().done
+
+
 
 
 
 };//initmap
+
 
 $('#closeMap').click(function(){
 	$('#mainMap').hide();
@@ -916,8 +941,8 @@ $('#closeMap').click(function(){
 });
   
 </script>
-<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyA9cke0k8wuLrcme-z2TqJgXUf3tButKyQ"
-async defer></script>
+
+
 
 
 
