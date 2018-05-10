@@ -261,9 +261,8 @@
 
 
 
-<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyA9cke0k8wuLrcme-z2TqJgXUf3tButKyQ"
-async defer></script>
-<script src="/javascript/geolocation-marker.js" async defer></script>
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyA9cke0k8wuLrcme-z2TqJgXUf3tButKyQ"></script>
+<script src="https://www2.epl.ca/javascript/geolocation-marker.js" async defer></script>
 <script>
 
 
