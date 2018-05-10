@@ -43,7 +43,7 @@
 
 	<!--- Custom Stylesheet for www2.epl.ca --->
 	<link rel="stylesheet" href="/w2.css?v=0" type="text/css"/>
-	<link rel="stylesheet" href="ets.css?v=2" type="text/css"/>
+	<link rel="stylesheet" href="ets.css?v=1" type="text/css"/>
 	<link href="/Javascript/selectize/dist/css/selectize.css" type="text/css" rel="stylesheet" />
 
 
@@ -51,6 +51,9 @@
 
 </head>
 <body class="<cfif isDefined('cookie.lrt_dark') and cookie.lrt_dark IS true>darkMode</cfif>">
+	<!--- These are used for the map display --->
+	<div id="mapModal"><div id="mapCanvas" /></div></div>
+	<div id="closeMap"><a href="javascript:void(0);">Close Map</a></div>
 	<div class="container clearfix">
 	<!--- If a sidebar is defined, it will be inserted here --->
 
@@ -225,8 +228,6 @@
 
 <!--- This is where the map showing the stop will go, I suppose... there can be more than one, though --->
 <div style="clear:both">&nbsp;</div>
-<div id="mainMap"></div>
-<div id="closeMap"><a href="javascript:void(0);">Close Map</a></div>
 <div id="mapNotice">Tap times to see details &amp; maps. &#x1f5fa;</div>
 
 <div class="departures" id="departures">
@@ -284,7 +285,7 @@ function refreshDepartureTimes() {
 		bindShowArrival();
 
 		//Close the map
-		$('#mainMap').hide();
+		$('#mapModal').hide();
 		$('#closeMap').hide();
 
 	});
@@ -637,6 +638,10 @@ function bindShowArrival() {
 			//This localizes the hiding to the current table for multi-leg routes
 			$(this).parent().children('.dR').hide();
 			$(this).next().show();
+			// If the map is visible, update it automatically
+			if ($('#mapModal').is(":visible")) {
+				$(this).next().find('.mapLink').trigger('click');
+			}
 		}
 	});
 
@@ -810,10 +815,12 @@ var iconBase = 'https://www2.epl.ca/images/map/';
 function initMap(stop, trip, seq, dest) {
 	// Make ajax call to get stop coordinates and name from the stop parameter
 $.get('stopInfo.cfm?stopid='+stop+'&trip='+trip+'&seq='+seq+'&dest='+dest).done(function(data){
+
 	var stopPos = {lat: data.stop.stop_lat, lng: data.stop.stop_lon};
-	map = new google.maps.Map(document.getElementById('mainMap'), {
+	map = new google.maps.Map(document.getElementById('mapCanvas'), {
 	center: stopPos,
 	//mapTypeId: 'hybrid',
+	gestureHandling: 'greedy',
 	zoom: 15
 	});
 
@@ -916,16 +923,15 @@ $.get('stopInfo.cfm?stopid='+stop+'&trip='+trip+'&seq='+seq+'&dest='+dest).done(
       });
     }
 
+
 	//Show the actual map
-	$('#mainMap').show();
-	$('#closeMap').show();
-	$('#mapNotice').hide();
-
-
+	$('#mapModal').removeClass('fadeOut');
+	$('#mapModal').css('display', 'block').css('position', 'fixed');
+	$('#mapModal').addClass('fadeIn');
+	$('#closeMap').css('display', 'block').css('position', 'fixed');
+	// $('#mapNotice').hide();
 
 });//.get().done
-
-
 
 
 
@@ -933,12 +939,18 @@ $.get('stopInfo.cfm?stopid='+stop+'&trip='+trip+'&seq='+seq+'&dest='+dest).done(
 
 
 $('#closeMap').click(function(){
-	$('#mainMap').hide();
+	$('#mapModal').removeClass('fadeIn');
+	$('#mapModal').addClass('fadeOut');
+	setTimeout(function(){
+		$('#mapModal').removeClass('fadeOut');
+		$('#mapModal').hide();
+	},300);
 	$('#closeMap').hide();
-	$('#mapNotice').show();
+	// $('#mapNotice').show();
 
 });
-  
+ 
+
 </script>
 
 
