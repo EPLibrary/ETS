@@ -199,6 +199,7 @@ a {
 	margin:0;
 	font-size:17px;
 	width:400px;
+	color:black;
 }
 
 .altColors tr {
@@ -547,6 +548,11 @@ table td.dA {
 	.darkMode .altRow {
 		background-color: rgb(40, 40, 40);
 	}
+
+	.darkMode .departures table {
+		color:#ddd;
+	}
+
 	.darkMode .departures table thead th {
 		/*color:#888;*/
 		background-color:rgb(40, 40, 40);
