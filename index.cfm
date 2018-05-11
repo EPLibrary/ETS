@@ -228,7 +228,7 @@
 
 <!--- This is where the map showing the stop will go, I suppose... there can be more than one, though --->
 <div style="clear:both">&nbsp;</div>
-<div id="mapNotice">Tap times to see details &amp; maps. &#x1f5fa;</div>
+<div id="mapNotice"><!--- &#x2139;  --->Tap times to see details &amp; maps.<!---  &#x1f5fa; ---></div>
 
 <div class="departures" id="departures">
 <!--- this is where the tables will go --->
@@ -925,9 +925,9 @@ $.get('stopInfo.cfm?stopid='+stop+'&trip='+trip+'&seq='+seq+'&dest='+dest).done(
 
 
 	//Show the actual map
-	$('#mapModal').removeClass('fadeOut');
+	$('#mapModal, #closeMap').removeClass('fadeOut');
 	$('#mapModal').css('display', 'block').css('position', 'fixed');
-	$('#mapModal').addClass('fadeIn');
+	$('#mapModal, #closeMap').addClass('fadeIn');
 	$('#closeMap').css('display', 'block').css('position', 'fixed');
 	// $('#mapNotice').hide();
 
@@ -939,7 +939,7 @@ $.get('stopInfo.cfm?stopid='+stop+'&trip='+trip+'&seq='+seq+'&dest='+dest).done(
 
 
 $('#closeMap').click(function(){
-	$('#mapModal').removeClass('fadeIn');
+	$('#mapModal, #closeMap').removeClass('fadeIn');
 	$('#mapModal').addClass('fadeOut');
 	setTimeout(function(){
 		$('#mapModal').removeClass('fadeOut');
@@ -949,7 +949,10 @@ $('#closeMap').click(function(){
 	// $('#mapNotice').show();
 
 });
- 
+
+$('#mapNotice').on('click', function(){
+	$('tr[data-tripid]:first').trigger('click');
+});
 
 </script>
 
