@@ -162,7 +162,7 @@ div#timeLabel {
 #timeLabelText, #departLabelText {
 	text-align: left;
 	margin-top:5px;
-	color:black;
+	color:#3f4344;
 	text-decoration: none;
 }
 
@@ -266,6 +266,12 @@ a {
 	.pageTitle {
 		text-align: center;
 	}
+
+	.departures {
+		width:100%;
+		max-width:none;
+	}
+
 	.departures table {
 		width:100%;
 	}
