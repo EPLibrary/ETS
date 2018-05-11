@@ -857,7 +857,7 @@ $.get('stopInfo.cfm?stopid='+stop+'&trip='+trip+'&seq='+seq+'&dest='+dest).done(
 	  position: stopPos,
 	  label: ""+stopLabel,
 	  title: data.stop.stop_name,
-	  icon: icons["stopRed"].icon,
+	  icon: icons["stopGreen"].icon,
 	  map: map
 	});
 
@@ -887,7 +887,7 @@ $.get('stopInfo.cfm?stopid='+stop+'&trip='+trip+'&seq='+seq+'&dest='+dest).done(
 					position: {lat: data.next[i].stop_lat, lng: data.next[i].stop_lon},
 					label: thisStopSeq+": "+stopLabel,
 					title: data.next[i].stop_name,
-					icon: icons["stopGreen"].icon,
+					icon: icons["stopRed"].icon,
 					map: map
 				});				
 			} else {
