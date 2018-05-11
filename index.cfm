@@ -951,7 +951,10 @@ $('#closeMap').click(function(){
 });
 
 $('#mapNotice').on('click', function(){
-	$('tr[data-tripid]:first').trigger('click');
+	$('tr[data-tripid]:first').addClass('pulse');
+	setTimeout(function(){
+		$('tr[data-tripid]:first').removeClass('pulse');
+	},400);
 });
 
 </script>
