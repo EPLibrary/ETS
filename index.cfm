@@ -571,34 +571,33 @@ function setNearestStation() {
 }
 
 function findClosestStation(position) {
+	// The number of stops to show
+	var stopQty = 4;
     var userLat = position.coords.latitude;
     var userLon = position.coords.longitude;
 
     var closestStation="";
-    var closestStop1, closestStop2, closestStop3, closestStop4 ="";
+
 
     // Default to about the furthest point on earth in meters 21,000 km
     var closestDistance="21000000";
 
     // Loop through all stops
     <cfif isDefined('url.fromStop')>
-	stopCoords.forEach(function(stop){
+	var stopsByDist = stopCoords;
+	stopsByDist.forEach(function(stop){
 		var dist=geoDistance(userLat, userLon, stop.lat, stop.lon);
-		if (dist < closestDistance) {
-			closestDistance=dist;
-			closestStop4=closestStop3;
-			closestStop3=closestStop2;
-			closestStop2=closestStop1;
-			closestStop1=stop.id;
-		}
+		stop.dist=dist;
+	});
+	// Now we should have distances in stopsByDist
+	stopsByDist.sort(function(a, b) {
+		return parseFloat(a.dist) - parseFloat(b.dist);
 	});
 
-var closeStops = new Array();
-	closeStops[0] = closestStop1;
-	closeStops[1] = closestStop2;
-	closeStops[2] = closestStop3;
-	closeStops[3] = closestStop4;
-
+	var closeStops = new Array();
+	for (i=0;i<stopQty;i++) {
+		closeStops[i] = stopsByDist[i].id;
+	}
 
 	selectize.setValue(closeStops);
 	// $('#fromStop').val(closeStops);
@@ -938,7 +937,7 @@ $.get('stopInfo.cfm?stopid='+stop+'&trip='+trip+'&seq='+seq+'&dest='+dest).done(
 };//initmap
 
 
-$('#closeMap').click(function(){
+$('#closeMap a').click(function(){
 	$('#mapModal, #closeMap').removeClass('fadeIn');
 	$('#mapModal').addClass('fadeOut');
 	setTimeout(function(){

@@ -71,7 +71,8 @@
 
 <cfoutput>{"stop":#SerializeJSON(stopInfoStruct)#</cfoutput>
 	<cfif isDefined('routeCoords')>
-<cfoutput>,"trip":#lcase(SerializeJSON(routeCoords))#,"next":#SerializeJSON(nextStopInfoStruct)#</cfoutput>
+<!--- Note that this only works correctly if the Preserve Case on Serialization setting is on in CF Administrator (CF11+), otherwise it could be lcased --->
+<cfoutput>,"trip":#SerializeJSON(routeCoords)#,"next":#SerializeJSON(nextStopInfoStruct)#</cfoutput>
 	</cfif>
 <cfoutput>}</cfoutput>
 <cfelse>
