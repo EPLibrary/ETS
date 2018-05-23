@@ -228,6 +228,7 @@
 
 <!--- This is where the map showing the stop will go, I suppose... there can be more than one, though --->
 <div style="clear:both">&nbsp;</div>
+<cfif isDefined('url.fromStop')><a href="javascript:void(0);" id="closestStations" style="text-decoration:none;">&#x1f5fa; <span style="text-decoration:underline;">Show Nearby Stations</span><br /><span class="tinytip">Tap a stop on the map to show stop times</span></a></cfif>
 <div id="mapNotice"><!--- &#x2139;  --->Tap times to see details &amp; maps.<!---  &#x1f5fa; ---></div>
 
 <div class="departures" id="departures">
@@ -509,6 +510,7 @@ var stationCoords = [
 	<cfoutput query="Stops">
 	<cfif CurrentRow GT 1>,</cfif>{id:#stop_id#, lat:#trim(stop_lat)#, lon:#trim(stop_lon)#}
 	</cfoutput>];
+	var stopsByDist = stopCoords;
 	$(document).ready(function() {
 		// Turns out that there's a bad bug in highlighting that eats characters as you type, so we disable that
 		$fromStopselect = $("#fromStop").selectize({highlight:false});
@@ -570,6 +572,17 @@ function setNearestStation() {
     }
 }
 
+function sortStopsByDist(position) {
+	stopsByDist.forEach(function(stop){
+		var dist=geoDistance(position.coords.latitude, position.coords.longitude, stop.lat, stop.lon);
+		stop.dist=dist;
+	});
+	// Now we should have distances in stopsByDist
+	stopsByDist.sort(function(a, b) {
+		return parseFloat(a.dist) - parseFloat(b.dist);
+	});
+}
+
 function findClosestStation(position) {
 	// The number of stops to show
 	var stopQty = 4;
@@ -584,15 +597,7 @@ function findClosestStation(position) {
 
     // Loop through all stops
     <cfif isDefined('url.fromStop')>
-	var stopsByDist = stopCoords;
-	stopsByDist.forEach(function(stop){
-		var dist=geoDistance(userLat, userLon, stop.lat, stop.lon);
-		stop.dist=dist;
-	});
-	// Now we should have distances in stopsByDist
-	stopsByDist.sort(function(a, b) {
-		return parseFloat(a.dist) - parseFloat(b.dist);
-	});
+    sortStopsByDist(position);
 
 	var closeStops = new Array();
 	for (i=0;i<stopQty;i++) {
@@ -628,6 +633,17 @@ $('#departLabelText').click(function(){
 	setNearestStation();
 });
 
+
+$('#closestStations').click(function(){
+	   if (navigator.geolocation) {
+
+		initClosestStationMap();
+
+
+       } else {
+       	alert("Sorry, your browser does not support geolocation.")
+       }
+});
 
 // Tapping on a row shows the hidden row beneath and hides all others
 function bindShowArrival() {
@@ -935,6 +951,99 @@ $.get('stopInfo.cfm?stopid='+stop+'&trip='+trip+'&seq='+seq+'&dest='+dest).done(
 
 
 };//initmap
+
+
+
+
+function initClosestStationMap() {
+	// Ensure that the stops are sorted by proximity to current position
+
+	navigator.geolocation.getCurrentPosition(function(position) {
+
+		sortStopsByDist(position);
+
+		var pos = {lat: position.coords.latitude, lng: position.coords.longitude};
+
+	   	//Set the closest 40 stops
+	   	var closeStops = new Array();
+	   	for (i=0;i<40;i++) {
+			closeStops[i] = stopsByDist[i];
+		}
+
+		map = new google.maps.Map(document.getElementById('mapCanvas'), {
+		center: pos,
+		//mapTypeId: 'hybrid',
+		gestureHandling: 'greedy',
+		zoom: 17
+		});
+
+		var icons = {
+		  stopBlue: {
+		    icon: {
+		        url: iconBase + 'Stop_Icon_Blue_Narrow.svg',
+		        scaledSize: new google.maps.Size(20, 41),
+		        origin: new google.maps.Point(0,0)
+		    }
+		  },
+		  stopRed: {
+		    icon: {
+		        url: iconBase + 'stop_icon_red.svg',
+		        scaledSize: new google.maps.Size(55, 55),
+		        origin: new google.maps.Point(0,0)
+		    }
+		  },
+		  stopGreen: {
+		    icon: {
+		        url: iconBase + 'stop_icon_green.svg',
+		        scaledSize: new google.maps.Size(60, 55),
+		        origin: new google.maps.Point(0,0)
+		    }
+		  }
+		};
+
+
+		var markers = [];
+
+		// Loop through the stops array and add all the markers
+		closeStops.forEach(function(stop){
+			//console.log(stop);
+		    var marker = new google.maps.Marker({
+			    position: {lat:stop.lat, lng:stop.lon},
+			    label: ""+stop.id,
+				//title: data.stop.stop_name,
+				icon: icons["stopGreen"].icon,
+			    map: map
+		    });
+
+		    marker.addListener('click', function() {
+	          selectize.setValue(marker.getLabel());
+	          $('#closeMap a').trigger('click');
+
+	        });
+		    markers.push(marker);
+		});
+
+
+	    for (var i = 0; i < markers.length; i++) {
+	      markers[i].setMap(map);
+	    }
+
+		// Show user's location on the map
+	    var im = iconBase + 'bluecircle.png';
+	  	
+		var GeoMarker = new GeolocationMarker(map);
+
+
+	});
+
+		//Show the actual map
+		$('#mapModal, #closeMap').removeClass('fadeOut');
+		$('#mapModal').css('display', 'block').css('position', 'fixed');
+		$('#mapModal, #closeMap').addClass('fadeIn');
+		$('#closeMap').css('display', 'block').css('position', 'fixed');
+		// $('#mapNotice').hide();
+
+};//initClosestStationMap
 
 
 $('#closeMap a').click(function(){
