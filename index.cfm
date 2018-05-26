@@ -43,7 +43,7 @@
 
 	<!--- Custom Stylesheet for www2.epl.ca --->
 	<link rel="stylesheet" href="/w2.css?v=0" type="text/css"/>
-	<link rel="stylesheet" href="ets.css?v=3" type="text/css"/>
+	<link rel="stylesheet" href="ets.css?v=4" type="text/css"/>
 	<link href="/Javascript/selectize/dist/css/selectize.css" type="text/css" rel="stylesheet" />
 
 
@@ -129,13 +129,15 @@
 	SELECT * FROM vsd.#dbprefix#_stops
 </cfquery>
 <!--- This makes for a massive 6500 item select --->
-<label for="fromStop" id="fromStopLabel" class="selectizeLabel"><a href="javascript:void(0);" id="departLabelText" title="Click to sort stops based on your location">Bus Stops <svg id="geoIcon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 960"><path d="M500 258.6l-490 245 9.6 1.2c5.2.5 107 8.2 226 16.8 133 9.8 217.5 16.5 218.8 18 1.2 1.2 8.3 87 18 219.6 8.5 119.7 16.4 221.3 17 226 1.3 7.7 6.3-1.8 246-482 135-269.4 245-490 244.6-489.7l-490 245z" /></svg><span id="nearestLink">Set Nearest Four Stops</span></a>
+<label for="fromStop" id="fromStopLabel" class="selectizeLabel"><a href="javascript:void(0);" id="busStopLabelText" title="Click to sort stops based on your location">Bus Stops <!---<svg id="geoIcon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 960"><path d="M500 258.6l-490 245 9.6 1.2c5.2.5 107 8.2 226 16.8 133 9.8 217.5 16.5 218.8 18 1.2 1.2 8.3 87 18 219.6 8.5 119.7 16.4 221.3 17 226 1.3 7.7 6.3-1.8 246-482 135-269.4 245-490 244.6-489.7l-490 245z" /></svg>---><span id="nearestLink">&#x1f5fa; Select a Nearby Stop </span></a>
 	<select name="fromStop" id="fromStop" class="selectizeField" multiple="multiple">
 		<cfoutput query="Stops">
 			<option value="#stop_id#" <cfif listContains(url.fromStop, stop_id)>selected</cfif>>#stop_id# #stop_name#</option>
 		</cfoutput>
 	</select>
 </label>
+
+
 
 
 <!--- If url.rid is specified, we show the interface for selecting a route --->
@@ -154,7 +156,7 @@
 	</select>
 </label>
 
-<label for="routeFrom" id="routeFromLabel" class="selectizeLabel">Departing From
+<label for="routeFrom" id="routeFromLabel" class="selectizeLabel"><a href="javascript:void(0);" id="routeFromLabelText" title="Click to select stops on the above route">Departing From <!---<svg id="geoIcon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 960"><path d="M500 258.6l-490 245 9.6 1.2c5.2.5 107 8.2 226 16.8 133 9.8 217.5 16.5 218.8 18 1.2 1.2 8.3 87 18 219.6 8.5 119.7 16.4 221.3 17 226 1.3 7.7 6.3-1.8 246-482 135-269.4 245-490 244.6-489.7l-490 245z" /></svg>---><span id="nearestLink" class="<cfif isDefined('url.rid') AND url.rid EQ "">eplhidden</cfif>">&#x1f5fa; Select Stop From Map </span></a>
 	<select name="routeFrom" id="routeFrom" class="selectizeField">
 	</select>
 </label>
@@ -174,7 +176,7 @@
 <cfelse>
 
 
-<label for="from" style="margin-bottom:0;"><a href="javascript:void(0);" id="departLabelText" title="Click to set based on your location">Departing From <svg id="geoIcon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 960"><path d="M500 258.6l-490 245 9.6 1.2c5.2.5 107 8.2 226 16.8 133 9.8 217.5 16.5 218.8 18 1.2 1.2 8.3 87 18 219.6 8.5 119.7 16.4 221.3 17 226 1.3 7.7 6.3-1.8 246-482 135-269.4 245-490 244.6-489.7l-490 245z" /></svg><span id="nearestLink">Set Nearest</span></a>
+<label for="from" style="margin-bottom:0;" class="lrtDepart"><a href="javascript:void(0);" id="departLabelText" title="Click to set based on your location">Departing From <svg id="geoIcon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 960"><path d="M500 258.6l-490 245 9.6 1.2c5.2.5 107 8.2 226 16.8 133 9.8 217.5 16.5 218.8 18 1.2 1.2 8.3 87 18 219.6 8.5 119.7 16.4 221.3 17 226 1.3 7.7 6.3-1.8 246-482 135-269.4 245-490 244.6-489.7l-490 245z" /></svg><span id="nearestLink">Set Nearest</span></a>
 	<select name="from" id="from">
 		<cfoutput query="Stations">
 			<option value="#StationID#" <cfif isDefined('url.from') AND url.from IS StationID>selected</cfif>>#StationName#</option>
@@ -201,7 +203,7 @@
 	<select name="time" id="time" style="width:calc(50% - 15px);margin-right:10px">
 		<option value="">Now</option>
 		<!--- <option value="1:00" <cfif isDefined('url.time') AND url.time IS "1:00">selected</cfif>>1:00 AM</option> --->
-		<cfloop from="5" to="23" index="hour"><cfoutput>
+		<cfloop from="1" to="23" index="hour"><cfoutput>
 			<option value="#hour#:00" <cfif isDefined('url.time') AND url.time IS "#hour#:00">selected</cfif>>#timeFormat(hour&":00", "h:mm tt")#</option>
 		</cfoutput></cfloop>
 		<!--- This special option ensures we are using the same day to prevent ambiguity --->
@@ -228,7 +230,6 @@
 
 <!--- This is where the map showing the stop will go, I suppose... there can be more than one, though --->
 <div style="clear:both">&nbsp;</div>
-<cfif isDefined('url.fromStop')><a href="javascript:void(0);" id="closestStations" style="text-decoration:none;">&#x1f5fa; <span style="text-decoration:underline;">Show Nearby Stations</span><br /><span class="tinytip">Tap a stop on the map to show stop times</span></a></cfif>
 <div id="mapNotice"><!--- &#x2139;  --->Tap times to see details &amp; maps.<!---  &#x1f5fa; ---></div>
 
 <div class="departures" id="departures">
@@ -244,6 +245,9 @@
 </cfif>
 
 </div><!--departures-->
+
+<cfif isDefined('url.fromStop')><a href="javascript:void(0);" id="closestStations" style="text-decoration:none;">&#x1f5fa; <span style="text-decoration:underline;">Show Nearby Stations</span><br /><span class="tinytip">Tap a stop on the map to show stop times</span></a></cfif>
+
 <p style="font-size:13px;color:#555;"><b>Note:</b> Times may vary by 2 minutes.</p>
 
 
@@ -333,7 +337,13 @@ function refreshRouteStops() {
 		// 	$('#routeFrom, #routeTo').append('<option value="'+data.DATA[i][0]+'">'+data.DATA[i][0]+' '+data.DATA[i][1]+'</option>');
 		// });
 
+		//Initializes list of stops for the selected route that can be used for map markers
+		stopsByDist = data;
 
+		if (data.length) {
+		// Show the "find stop on map" link after a route is selected
+			$('#nearestLink').show();
+		}
 
 		// $('#routeFrom').selectize({highlight:false});
 		if (newLoad) {
@@ -551,6 +561,7 @@ var routeToSelectize;
 		//selectize = $ridselect[0].selectize; // This stores the selectize object to a variable (with name 'selectize')
 	});
 
+var stopsByDist = [];
 
 </cfif>
 
@@ -568,19 +579,21 @@ function geoDistance(lat1, lon1, lat2, lon2) {
 
 function setNearestStation() {
     if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(findClosestStation);
+        getUserPosition().then((position) => {findClosestStation(position);});
     }
 }
 
 function sortStopsByDist(position) {
-	stopsByDist.forEach(function(stop){
-		var dist=geoDistance(position.coords.latitude, position.coords.longitude, stop.lat, stop.lon);
-		stop.dist=dist;
-	});
-	// Now we should have distances in stopsByDist
-	stopsByDist.sort(function(a, b) {
-		return parseFloat(a.dist) - parseFloat(b.dist);
-	});
+	if (stopsByDist.length) {
+		stopsByDist.forEach(function(stop){
+			var dist=geoDistance(position.coords.latitude, position.coords.longitude, stop.lat, stop.lon);
+			stop.dist=dist;
+		});
+		// Now we should have distances in stopsByDist
+		stopsByDist.sort(function(a, b) {
+			return parseFloat(a.dist) - parseFloat(b.dist);
+		});
+	}
 }
 
 function findClosestStation(position) {
@@ -634,10 +647,10 @@ $('#departLabelText').click(function(){
 });
 
 
-$('#closestStations').click(function(){
+$('#closestStations, #busStopLabelText, #routeFromLabelText').click(function(){
 	   if (navigator.geolocation) {
 
-		initClosestStationMap();
+		initMap();
 
 
        } else {
@@ -824,46 +837,119 @@ var map;
 
 var iconBase = 'https://www2.epl.ca/images/map/';
 
+
+// Do not directly access these variables - they are used as a placeholder by the getUserPosition and getUserPos functions
+// When defined, this stores the geolocation information
+var userPosition;
+
+// This is the simpler lat/lng used by Google maps
+var userPos;
+
+//Updates the userPosition variable whenever the position changes
+function setUserPosition(position) {
+	userPosition = position;
+	userPos = {lat: position.coords.latitude, lng: position.coords.longitude}
+}
+
+//Returns the user position using geolocation in a way that shouldn't break maps and stuff.
+//If geolocation isn't supported we default to Alberta Legislature building.
+var getUserPosition = function() {
+	return new Promise(function (resolve, reject) {
+		var defaultPos = {coords: {latitude: 53.534242, longitude: -113.506374}};
+		if (navigator.geolocation) {
+			if (typeof userPosition !== "undefined") {
+				resolve(userPosition);
+			} else {
+				// Registers handler to keep userPosition updated
+				navigator.geolocation.watchPosition(setUserPosition);
+				// Tells the browser to submit the current position for now
+				// after this we use userPosition
+				navigator.geolocation.getCurrentPosition(resolve, reject);
+			}
+		} else {
+			console.log('Your browser does not support geolocation. Ensure it is enabled in the settings.');
+			resolve(defaultPos);
+		}
+	});
+}//end getUserPosition
+
+var getUserPos = function() {
+	return new Promise(function (resolve, reject) {
+		getUserPosition().then(function(position) {
+			resolve({lat: position.coords.latitude, lng: position.coords.longitude});
+		});
+	});
+}
+
+
+var geomarkerCreated = false;
+
+// Polyline that shows the busroute on the map
+var busRoute;
+
+// An array of all markers to show on Google Map
+var markers = [];
+//Attempting to fix .getCurrentPosition callback only firing once with multiple calls
+
 // Initializes the google map - stop is required
 // trip is optional and will show a route if a valid trip is specified.
 // Filling in the seq and dest will allow subsequent stops on the trip to be shown
 function initMap(stop, trip, seq, dest) {
-	// Make ajax call to get stop coordinates and name from the stop parameter
+
+var needsRefresh = false;
+//Universal stuff for all types of calls
+var icons = {
+  stopBlue: {
+    icon: {
+        url: iconBase + 'Stop_Icon_Blue_Narrow.svg',
+        scaledSize: new google.maps.Size(20, 41),
+        origin: new google.maps.Point(0,0)
+    }
+  },
+  stopRed: {
+    icon: {
+        url: iconBase + 'stop_icon_red.svg',
+        scaledSize: new google.maps.Size(55, 55),
+        origin: new google.maps.Point(0,0)
+    }
+  },
+  stopGreen: {
+    icon: {
+        url: iconBase + 'stop_icon_green.svg',
+        scaledSize: new google.maps.Size(60, 55),
+        origin: new google.maps.Point(0,0)
+    }
+  }
+  //,library: {icon: iconBase + 'library_icon.png'}
+};//end icons
+
+//Initialize basic map
+//Defaults to location of Alberta Legislature
+var defaultPos = {lat: 53.534242, lng: -113.506374};
+if (!map) {
+	map = new google.maps.Map(document.getElementById('mapCanvas'), {
+		center: defaultPos,
+		gestureHandling: 'greedy',
+		zoom: 15
+	});
+} else {
+	needsRefresh = true;
+	if (busRoute) busRoute.setMap(null);
+	// Remove markers
+	for(i=0; i<markers.length; i++){
+        markers[i].setMap(null);
+    }
+    markers = [];
+}
+
+	// If a stop is truthy, make ajax call to get stop coordinates and name from the stop parameter
+if (stop) {
 $.get('stopInfo.cfm?stopid='+stop+'&trip='+trip+'&seq='+seq+'&dest='+dest).done(function(data){
 
 	var stopPos = {lat: data.stop.stop_lat, lng: data.stop.stop_lon};
-	map = new google.maps.Map(document.getElementById('mapCanvas'), {
-	center: stopPos,
-	//mapTypeId: 'hybrid',
-	gestureHandling: 'greedy',
-	zoom: 15
-	});
+	map.setCenter(stopPos);
 
-	var icons = {
-	  stopBlue: {
-	    icon: {
-	        url: iconBase + 'Stop_Icon_Blue_Narrow.svg',
-	        scaledSize: new google.maps.Size(20, 41),
-	        origin: new google.maps.Point(0,0)
-	    }
-	  },
-	  stopRed: {
-	    icon: {
-	        url: iconBase + 'stop_icon_red.svg',
-	        scaledSize: new google.maps.Size(55, 55),
-	        origin: new google.maps.Point(0,0)
-	    }
-	  },
-	  stopGreen: {
-	    icon: {
-	        url: iconBase + 'stop_icon_green.svg',
-	        scaledSize: new google.maps.Size(60, 55),
-	        origin: new google.maps.Point(0,0)
-	    }
-	  }
-	  //,library: {icon: iconBase + 'library_icon.png'}
-	};
-
+	//Add labels to the map
 	stopLabel = data.stop.stop_id;
 	if (data.stop.sc.length) {
 		stopLabel = data.stop.sc;
@@ -875,9 +961,10 @@ $.get('stopInfo.cfm?stopid='+stop+'&trip='+trip+'&seq='+seq+'&dest='+dest).done(
 	  icon: icons["stopGreen"].icon,
 	  map: map
 	});
+	markers.push(marker);
 
 	if (typeof trip !== "undefined") {
-		var busRoute = new google.maps.Polyline({
+		busRoute = new google.maps.Polyline({
 	      path: data.trip,
 	      geodesic: true,
 	      strokeColor: '#FF3333',
@@ -904,7 +991,8 @@ $.get('stopInfo.cfm?stopid='+stop+'&trip='+trip+'&seq='+seq+'&dest='+dest).done(
 					title: data.next[i].stop_name,
 					icon: icons["stopRed"].icon,
 					map: map
-				});				
+				});
+				markers.push(nextStopMarker);				
 			} else {
 				nextStopMarker = new google.maps.Marker({
 					position: {lat: data.next[i].stop_lat, lng: data.next[i].stop_lon},
@@ -913,137 +1001,93 @@ $.get('stopInfo.cfm?stopid='+stop+'&trip='+trip+'&seq='+seq+'&dest='+dest).done(
 					icon: icons["stopBlue"].icon,
 					map: map
 				});
+				markers.push(nextStopMarker);	
 			}
 			lastStop = data.next[i].stop_id;
 		}
 
 	}
 
-	// Show user's location on the map
-    var im = iconBase + 'bluecircle.png';
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(function(position) {
-        var pos = {
-          lat: position.coords.latitude,
-          lng: position.coords.longitude
-        };
 
-        // var userMarker = new google.maps.Marker({
-        //     position: pos,
-        //     map: map,
-        //     icon: im
-        // });      	
-		var GeoMarker = new GeolocationMarker(map);
-
-      });
-    }
-
-
-	//Show the actual map
-	$('#mapModal, #closeMap').removeClass('fadeOut');
-	$('#mapModal').css('display', 'block').css('position', 'fixed');
-	$('#mapModal, #closeMap').addClass('fadeIn');
-	$('#closeMap').css('display', 'block').css('position', 'fixed');
-	// $('#mapNotice').hide();
 
 });//.get().done
+}//end if stop
+//else we show the closest stops, or the stops for the selected route
 
 
+if (navigator.geolocation) {
+	if (!geomarkerCreated) {
+		var GeoMarker = new GeolocationMarker(map);
+		geomarkerCreated = true;
+		// console.log('created geoMarker');
+	}
+}
 
-};//initmap
-
-
-
-
-function initClosestStationMap() {
-	// Ensure that the stops are sorted by proximity to current position
-
-	navigator.geolocation.getCurrentPosition(function(position) {
-
+//This stuff is specific to showing nearby stops
+if (!stop) {
+	getUserPosition().then((position) => {
 		sortStopsByDist(position);
+		map.setCenter({lat: position.coords.latitude, lng: position.coords.longitude});
+		map.setZoom(17);
 
-		var pos = {lat: position.coords.latitude, lng: position.coords.longitude};
-
-	   	//Set the closest 40 stops
+		var maxStops = <cfif isDefined('url.rid')>200<cfelse>50</cfif>;
+	   	//Set the closest stops
+	   	if (stopsByDist.length < maxStops) maxStops = stopsByDist.length;
 	   	var closeStops = new Array();
-	   	for (i=0;i<40;i++) {
+	   	for (i=0;i<maxStops;i++) {
 			closeStops[i] = stopsByDist[i];
 		}
 
-		map = new google.maps.Map(document.getElementById('mapCanvas'), {
-		center: pos,
-		//mapTypeId: 'hybrid',
-		gestureHandling: 'greedy',
-		zoom: 17
-		});
-
-		var icons = {
-		  stopBlue: {
-		    icon: {
-		        url: iconBase + 'Stop_Icon_Blue_Narrow.svg',
-		        scaledSize: new google.maps.Size(20, 41),
-		        origin: new google.maps.Point(0,0)
-		    }
-		  },
-		  stopRed: {
-		    icon: {
-		        url: iconBase + 'stop_icon_red.svg',
-		        scaledSize: new google.maps.Size(55, 55),
-		        origin: new google.maps.Point(0,0)
-		    }
-		  },
-		  stopGreen: {
-		    icon: {
-		        url: iconBase + 'stop_icon_green.svg',
-		        scaledSize: new google.maps.Size(60, 55),
-		        origin: new google.maps.Point(0,0)
-		    }
-		  }
-		};
-
-
-		var markers = [];
-
-		// Loop through the stops array and add all the markers
+		// Loop through the stops array and add all the markers.
+		// I don't know why, but using a for loop doesn't seem to work
 		closeStops.forEach(function(stop){
-			//console.log(stop);
-		    var marker = new google.maps.Marker({
-			    position: {lat:stop.lat, lng:stop.lon},
-			    label: ""+stop.id,
-				//title: data.stop.stop_name,
-				icon: icons["stopGreen"].icon,
-			    map: map
-		    });
+			// console.log(stop);
+			if (typeof stop === "undefined" || typeof stop.lat === "undefined" || typeof stop.lon === "undefined" || typeof stop.id === "undefined") {
+				//Bad stop? Handle error here if necessary				
+			} else {
+			    var marker = new google.maps.Marker({
+				    position: {lat:stop.lat, lng:stop.lon},
+				    label: ""+stop.id,
+					//title: data.stop.stop_name,
+					icon: icons["stopGreen"].icon,
+				    map: map
+			    });
 
-		    marker.addListener('click', function() {
-	          selectize.setValue(marker.getLabel());
-	          $('#closeMap a').trigger('click');
+			    marker.addListener('click', function() {
+		          <cfif isDefined('url.rid')>routeFromSelectize<cfelse>selectize</cfif>.setValue(marker.getLabel());
+		          $('#closeMap a').trigger('click');
 
-	        });
-		    markers.push(marker);
+		        });
+			    markers.push(marker);
+			}
 		});
 
 
-	    for (var i = 0; i < markers.length; i++) {
-	      markers[i].setMap(map);
-	    }
-
-		// Show user's location on the map
-	    var im = iconBase + 'bluecircle.png';
-	  	
-		var GeoMarker = new GeolocationMarker(map);
-
-
+		// This seems redundant. They are already on the map
+	    // for (var i = 0; i < markers.length; i++) {
+	    //   markers[i].setMap(map);
+	    // }
 	});
+}//end if !stop
 
-		//Show the actual map
-		$('#mapModal, #closeMap').removeClass('fadeOut');
-		$('#mapModal').css('display', 'block').css('position', 'fixed');
-		$('#mapModal, #closeMap').addClass('fadeIn');
-		$('#closeMap').css('display', 'block').css('position', 'fixed');
-		// $('#mapNotice').hide();
 
-};//initClosestStationMap
+
+//Show the actual map
+$('#mapModal, #closeMap').removeClass('fadeOut');
+$('#mapModal').css('display', 'block').css('position', 'fixed');
+$('#mapModal, #closeMap').addClass('fadeIn');
+$('#closeMap').css('display', 'block').css('position', 'fixed');
+// $('#mapNotice').hide();
+
+if (needsRefresh) {
+	//Stupid... seems like this won't work if I do it right away.
+	//This is probably not the ideal way to do this...
+	setTimeout(function(){
+		google.maps.event.trigger(map, 'zoom_changed');
+	},300);
+}
+
+};//initmap
 
 
 $('#closeMap a').click(function(){

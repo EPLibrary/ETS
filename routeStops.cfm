@@ -56,7 +56,10 @@ Hopefully this will make it much easier to select the appropriate stop
 <cfloop query="routeStops">
 	<cfset stop = structNew() />
 	<cfset stop["value"]=stop_id />
+	<cfset stop["id"]=stop_id />
 	<cfset stop["text"]="#stop_id# #stop_name#" />
+	<cfset stop["lat"]="#stop_lat#" />
+	<cfset stop["lon"]="#stop_lon#" />
 	<cfset ArrayAppend(stopOptions, stop) />
 </cfloop>
 

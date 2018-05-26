@@ -159,7 +159,7 @@ div#timeLabel {
 	padding-top:5px;
 }
 
-#timeLabelText, #departLabelText {
+#timeLabelText, #departLabelText, #busStopLabelText, #routeFromLabelText {
 	text-align: left;
 	margin-top:5px;
 	color:#3f4344;
@@ -184,7 +184,7 @@ a {
 	</cfif>
 }
 
-#nearestLink {
+.lrtDepart #nearestLink {
 	display:none;
 }
 
@@ -233,14 +233,16 @@ a {
 	white-space:nowrap;
 }
 
-
+#ridLabel {
+	margin-bottom:10px;
+}
 
 #swapFromTo, #swapRouteFromTo {
 	font-size:13px;
 	padding:1px 2px 2px 2px;
 }
 
-	#swapRouteFromTo {
+#swapRouteFromTo {
 	text-align: center;
 	float:none;
 	margin:0 auto;
@@ -259,7 +261,7 @@ a {
 
 
 @media (max-width: 450px) {
-	#nearestLink {
+	#nearestLink, .lrtDepart #nearestLink {
 		display:inline;
 		margin-left:6px;
 	}
@@ -280,6 +282,10 @@ a {
 	#swapFromTo, #swapRouteFromTo {
 		width:50%;
 		padding:1px 10px 2px 10px;
+	}
+
+	#ridLabel {
+		/*padding-bottom:20px;*/
 	}
 
 	#swapButtonLabel {
@@ -580,7 +586,9 @@ table td.dA {
 	}
 
 	.darkMode #timeLabelText, 
-	.darkMode #departLabelText {
+	.darkMode #departLabelText,
+	.darkMode #busStopLabelText,
+	.darkMode #routeFromLabelText {
 		color:#ccc;
 	}
 
