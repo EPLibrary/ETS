@@ -1070,7 +1070,7 @@ if (!stop) {
 
 		//if we're looking at a route's stops, center the map on the closest stop.
 		// But what if we're not using location?
-		if ($('#rid').val().length) {
+		if ($('#rid').length && $('#rid').val().length) {
 			map.setCenter({lat: closeStops[0].lat, lng: closeStops[0].lon});
 		} else {
 			map.setCenter({lat: position.coords.latitude, lng: position.coords.longitude});
