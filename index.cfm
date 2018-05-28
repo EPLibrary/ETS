@@ -129,7 +129,7 @@
 	SELECT * FROM vsd.#dbprefix#_stops
 </cfquery>
 <!--- This makes for a massive 6500 item select --->
-<label for="fromStop" id="fromStopLabel" class="selectizeLabel"><a href="javascript:void(0);" id="busStopLabelText" title="Click to sort stops based on your location">Bus Stops <!---<svg id="geoIcon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 960"><path d="M500 258.6l-490 245 9.6 1.2c5.2.5 107 8.2 226 16.8 133 9.8 217.5 16.5 218.8 18 1.2 1.2 8.3 87 18 219.6 8.5 119.7 16.4 221.3 17 226 1.3 7.7 6.3-1.8 246-482 135-269.4 245-490 244.6-489.7l-490 245z" /></svg>---><span id="nearestLink">&#x1f5fa; Select a Nearby Stop </span></a>
+<label for="fromStop" id="fromStopLabel" class="selectizeLabel"><a href="javascript:void(0);" id="busStopLabelText" class="labelText" title="Click to sort stops based on your location">Bus Stops <!---<svg id="geoIcon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 960"><path d="M500 258.6l-490 245 9.6 1.2c5.2.5 107 8.2 226 16.8 133 9.8 217.5 16.5 218.8 18 1.2 1.2 8.3 87 18 219.6 8.5 119.7 16.4 221.3 17 226 1.3 7.7 6.3-1.8 246-482 135-269.4 245-490 244.6-489.7l-490 245z" /></svg>---><span id="nearestLink">&#x1f5fa; Select a Nearby Stop </span></a>
 	<select name="fromStop" id="fromStop" class="selectizeField" multiple="multiple">
 		<cfoutput query="Stops">
 			<option value="#stop_id#" <cfif listContains(url.fromStop, stop_id)>selected</cfif>>#stop_id# #stop_name#</option>
@@ -147,7 +147,7 @@
 	SELECT * FROM vsd.#dbprefix#_routes ORDER BY route_id
 </cfquery>
 <!--- This makes for a massive 6500 item select --->
-<label for="rid" id="ridLabel" class="selectizeLabel">Bus Route
+<label for="rid" id="ridLabel" class="selectizeLabel"><a href="javascript:void(0);" id="nearbyRouteText"  class="labelText" title="Click to show nearby routes"><span id="mainBusRouteLabel">Bus Route</span> <svg id="geoIcon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 960"><path d="M500 258.6l-490 245 9.6 1.2c5.2.5 107 8.2 226 16.8 133 9.8 217.5 16.5 218.8 18 1.2 1.2 8.3 87 18 219.6 8.5 119.7 16.4 221.3 17 226 1.3 7.7 6.3-1.8 246-482 135-269.4 245-490 244.6-489.7l-490 245z" /></svg><span id="nearestRouteLink">Sort by Nearest</span></a>
 	<select name="rid" id="rid" class="selectizeField">
 		<option></option>
 		<cfoutput query="Routes">
@@ -156,7 +156,7 @@
 	</select>
 </label>
 
-<label for="routeFrom" id="routeFromLabel" class="selectizeLabel"><a href="javascript:void(0);" id="routeFromLabelText" title="Click to select stops on the above route">Departing From <!---<svg id="geoIcon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 960"><path d="M500 258.6l-490 245 9.6 1.2c5.2.5 107 8.2 226 16.8 133 9.8 217.5 16.5 218.8 18 1.2 1.2 8.3 87 18 219.6 8.5 119.7 16.4 221.3 17 226 1.3 7.7 6.3-1.8 246-482 135-269.4 245-490 244.6-489.7l-490 245z" /></svg>---><span id="nearestLink" class="<cfif isDefined('url.rid') AND url.rid EQ "">eplhidden</cfif>">&#x1f5fa; Select Stop From Map </span></a>
+<label for="routeFrom" id="routeFromLabel" class="selectizeLabel"><a href="javascript:void(0);" id="routeFromLabelText" class="labelText" title="Click to select stops on the above route">Departing From <!---<svg id="geoIcon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 960"><path d="M500 258.6l-490 245 9.6 1.2c5.2.5 107 8.2 226 16.8 133 9.8 217.5 16.5 218.8 18 1.2 1.2 8.3 87 18 219.6 8.5 119.7 16.4 221.3 17 226 1.3 7.7 6.3-1.8 246-482 135-269.4 245-490 244.6-489.7l-490 245z" /></svg>---><span id="nearestLink" class="<cfif isDefined('url.rid') AND url.rid EQ "">eplhidden</cfif>">&#x1f5fa; Select Stop From Map </span></a>
 	<select name="routeFrom" id="routeFrom" class="selectizeField">
 	</select>
 </label>
@@ -246,7 +246,7 @@
 
 </div><!--departures-->
 
-<cfif isDefined('url.fromStop')><a href="javascript:void(0);" id="closestStations" style="text-decoration:none;">&#x1f5fa; <span style="text-decoration:underline;">Show Nearby Stations</span><br /><span class="tinytip">Tap a stop on the map to show stop times</span></a></cfif>
+<cfif isDefined('url.fromStop')><a href="javascript:void(0);" id="closestStations" style="text-decoration:none;">&#x1f5fa; <span style="text-decoration:underline;">Show Nearby Stops</span><br /><span class="tinytip">Tap a stop on the map to show times</span></a></cfif>
 
 <p style="font-size:13px;color:#555;"><b>Note:</b> Times may vary by 2 minutes.</p>
 
@@ -320,6 +320,27 @@ function refreshStopTimes() {
 
 //signals brand new load... feels like a crappy hack
 var newLoad = true;
+
+// Updates the list of routes with new routes based on proximity
+function refreshRoutes() {
+	if (navigator.geolocation) {
+		$('#mainBusRouteLabel').html('Loading...');
+        getUserPosition().then((position) => {
+			$.post('nearbyRoutes.cfm', {lat:position.coords.latitude, lon:position.coords.longitude, range:3000}).done(function(data) {
+				ridSelectize.clearOptions();
+				ridSelectize.addOption(data);
+				$('#mainBusRouteLabel').html('Nearby Route');
+				//automatically select the first option. This is more to show that stuff is happening.
+			});
+        });
+    }
+}
+
+//Refresh routes when clicking on the "nearest routes" link
+$('#nearestRouteLink').click(function() {
+	refreshRoutes();
+});
+
 
 // Updates the dropdowns for from/to stops for a route
 function refreshRouteStops() {
@@ -684,7 +705,7 @@ function bindShowArrival() {
 	});
 
 }
-bindShowArrival();
+
 
 function setCookie(key, value) {
 	var expires = new Date();
@@ -824,13 +845,26 @@ function updateTrips() {
 	});
 }//updateTrips()
 
-// Update using realtime data after this page is loaded.
+
+//Initialization tasks
 $(document).ready(function() {
+	bindShowArrival();
+	// Update using realtime data after this page is loaded.
 	updateTrips();
+	//Update Trip schedule every two minutes
+	setInterval(function(){updateTrips();}, 120000);
+
+	// Hide the "Select stop from map" link on Routes page if there's no route selected
+	<cfif isDefined('url.rid') AND url.rid EQ "">
+	$('#nearestLink').hide();
+	</cfif>
+	// Hide the Reset time link if there's no time specified
+	<cfif NOT isDefined('url.time') OR (isDefined('url.time') AND url.time EQ "")>
+	$('#nowLink').hide();
+	</cfif>
 });
 
-//Update Trip schedule every two minutes
-setInterval(function(){updateTrips();}, 120000);
+
 
 //Google maps
 var map;
@@ -1008,8 +1042,6 @@ $.get('stopInfo.cfm?stopid='+stop+'&trip='+trip+'&seq='+seq+'&dest='+dest).done(
 
 	}
 
-
-
 });//.get().done
 }//end if stop
 //else we show the closest stops, or the stops for the selected route
@@ -1027,8 +1059,6 @@ if (navigator.geolocation) {
 if (!stop) {
 	getUserPosition().then((position) => {
 		sortStopsByDist(position);
-		map.setCenter({lat: position.coords.latitude, lng: position.coords.longitude});
-		map.setZoom(17);
 
 		var maxStops = <cfif isDefined('url.rid')>200<cfelse>50</cfif>;
 	   	//Set the closest stops
@@ -1037,6 +1067,17 @@ if (!stop) {
 	   	for (i=0;i<maxStops;i++) {
 			closeStops[i] = stopsByDist[i];
 		}
+
+		//if we're looking at a route's stops, center the map on the closest stop.
+		// But what if we're not using location?
+		if ($('#rid').val().length) {
+			map.setCenter({lat: closeStops[0].lat, lng: closeStops[0].lon});
+		} else {
+			map.setCenter({lat: position.coords.latitude, lng: position.coords.longitude});
+		}
+		map.setZoom(17);
+
+
 
 		// Loop through the stops array and add all the markers.
 		// I don't know why, but using a for loop doesn't seem to work
@@ -1062,7 +1103,6 @@ if (!stop) {
 			}
 		});
 
-
 		// This seems redundant. They are already on the map
 	    // for (var i = 0; i < markers.length; i++) {
 	    //   markers[i].setMap(map);
@@ -1084,10 +1124,10 @@ if (needsRefresh) {
 	//This is probably not the ideal way to do this...
 	setTimeout(function(){
 		google.maps.event.trigger(map, 'zoom_changed');
-	},300);
+	},400);
 }
 
-};//initmap
+};//endinitmap
 
 
 $('#closeMap a').click(function(){

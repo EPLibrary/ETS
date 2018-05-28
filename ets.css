@@ -159,7 +159,7 @@ div#timeLabel {
 	padding-top:5px;
 }
 
-#timeLabelText, #departLabelText, #busStopLabelText, #routeFromLabelText {
+#timeLabelText, .labelText {
 	text-align: left;
 	margin-top:5px;
 	color:#3f4344;
@@ -171,17 +171,13 @@ a {
 	color:#0A2D75;
 }
 
-#nowLink, #nearestLink {
+#nowLink, #nearestLink, #nearestRouteLink {
 	font-size:13px;
 	text-decoration: underline;
 	color:#0A2D75;
 	font-weight:normal;
-	<cfif (isDefined('url.time') AND len(url.time))
-	OR (isDefined('url.dow') AND len(url.dow))>
+	/* nowLink should only be displayed when the time is not now */
 	display:inline;
-	<cfelse>
-	display:none;
-	</cfif>
 }
 
 .lrtDepart #nearestLink {
@@ -261,8 +257,8 @@ a {
 
 
 @media (max-width: 450px) {
-	#nearestLink, .lrtDepart #nearestLink {
-		display:inline;
+	#nearestLink, .lrtDepart #nearestLink, #nearestRouteLink {
+		/*display:inline;*/
 		margin-left:6px;
 	}
 
@@ -569,7 +565,8 @@ table td.dA {
 
 	.darkMode .pageTitle,
 	.darkMode #nowLink,
-	.darkMode #nearestLink {
+	.darkMode #nearestLink,
+	.darkMode #nearestRouteLink {
 		color:rgb(126, 164, 241);
 	}
 
@@ -586,9 +583,7 @@ table td.dA {
 	}
 
 	.darkMode #timeLabelText, 
-	.darkMode #departLabelText,
-	.darkMode #busStopLabelText,
-	.darkMode #routeFromLabelText {
+	.darkMode .labelText {
 		color:#ccc;
 	}
 
