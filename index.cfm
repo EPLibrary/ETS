@@ -1103,7 +1103,7 @@ $.get('stopInfo.cfm?stopid='+stop+'&trip='+trip+'&seq='+seq+'&dest='+dest).done(
 			if (i+1 == data.next.length) {
 				nextStopMarker = new google.maps.Marker({
 					position: {lat: data.next[i].stop_lat, lng: data.next[i].stop_lon},
-					label: thisStopSeq+": "+stopLabel,
+					label: ""+stopLabel,
 					title: data.next[i].stop_name,
 					icon: icons["stopRed"].icon,
 					map: map
