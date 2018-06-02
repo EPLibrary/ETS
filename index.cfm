@@ -1014,7 +1014,7 @@ if (!map) {
 if (stop=="lrt") {
 	// Center on Churchill station
 	map.setCenter({lat: 53.544309, lng: -113.48917});
-	map.setZoom(12);
+	map.setZoom(13);
 
 	stationCoords.forEach(function(station){
 		if (typeof station === "undefined" || typeof station.lat === "undefined" || typeof station.lon === "undefined" || typeof station.id === "undefined") {
