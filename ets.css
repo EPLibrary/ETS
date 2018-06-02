@@ -171,7 +171,7 @@ a {
 	color:#0A2D75;
 }
 
-#nowLink, #nearestLink, #nearestRouteLink {
+#nowLink, #nearestLink, #nearestRouteLink, #lrtMapTo {
 	font-size:13px;
 	text-decoration: underline;
 	color:#0A2D75;
@@ -180,7 +180,7 @@ a {
 	display:inline;
 }
 
-.lrtDepart #nearestLink {
+.lrtDepart #nearestLink, #lrtMapTo {
 	display:none;
 }
 
@@ -257,8 +257,8 @@ a {
 
 
 @media (max-width: 450px) {
-	#nearestLink, .lrtDepart #nearestLink, #nearestRouteLink {
-		/*display:inline;*/
+	#nearestLink, .lrtDepart #nearestLink, #nearestRouteLink, #lrtMapTo {
+		display:inline;
 		margin-left:6px;
 	}
 
@@ -566,7 +566,8 @@ table td.dA {
 	.darkMode .pageTitle,
 	.darkMode #nowLink,
 	.darkMode #nearestLink,
-	.darkMode #nearestRouteLink {
+	.darkMode #nearestRouteLink,
+	.darkMode #lrtMapTo {
 		color:rgb(126, 164, 241);
 	}
 

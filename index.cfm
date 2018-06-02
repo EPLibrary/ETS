@@ -43,7 +43,7 @@
 
 	<!--- Custom Stylesheet for www2.epl.ca --->
 	<link rel="stylesheet" href="/w2.css?v=0" type="text/css"/>
-	<link rel="stylesheet" href="ets.css?v=4" type="text/css"/>
+	<link rel="stylesheet" href="ets.css?v=5" type="text/css"/>
 	<link href="/Javascript/selectize/dist/css/selectize.css" type="text/css" rel="stylesheet" />
 
 
@@ -171,8 +171,6 @@
 </label>
 
 
-
-
 <cfelse>
 
 
@@ -188,7 +186,7 @@
 	<button type="button" id="swapFromTo">&#8593; swap &#8595;</button>
 </label>
 
-<label for="to" id="toLabel">Travelling To
+<label for="to" id="toLabel"><a href="javascript:void(0);" id="toLabelText" class="labelText" title="Click to choose station from map">Travelling To &nbsp; &#x1f5fa;<span id="lrtMapTo">Select From Map</span></a>
 	<select name="to" id="to">
 		<cfoutput query="Stations">
 			<option value="#StationID#" <cfif isDefined('url.to') AND url.to IS StationID>selected<cfelseif NOT isDefined('url.to') AND StationID IS 15>selected</cfif>>#StationName#</option>
@@ -527,12 +525,6 @@ function updateArrivalTimes() {
 updateArrivalTimes();
 setInterval(function(){updateArrivalTimes();}, 2000);
 
-// Create JS object of station coords with coldfusion query loop
-var stationCoords = [
-<cfset c=0><cfoutput query="Stations">
-<cfif c>,</cfif>{id:#StationID#<cfloop list="#coordinates#" index="i">, <cfif c++ MOD 2 IS 0>lat<cfelse>lon</cfif>:#trim(i)#</cfloop>}
-</cfoutput>];
-
 <!--- Include a table of bus stop coordinates if relevant --->
 <cfif isDefined('url.fromStop')>
 	var $fromStopselect;
@@ -584,37 +576,20 @@ var routeToSelectize;
 
 var stopsByDist = [];
 
-</cfif>
+<cfelse>
+<!--- Stuff specific to the LRT mode can go here --->
+// Create JS object of station coords with coldfusion query loop
+var stationCoords = [
+<cfset c=0><cfoutput query="Stations">
+<cfif c>,</cfif>{id:#StationID#<cfloop list="#coordinates#" index="i">, <cfif c++ MOD 2 IS 0>lat<cfelse>lon</cfif>:#trim(i)#</cfloop>, abbr:"#abbr#", name:"#StationName#"}
+</cfoutput>];
 
-
-
-
-// Experimental calculation of distance from stations
-function geoDistance(lat1, lon1, lat2, lon2) {
-    var p1 = new LatLon(Dms.parseDMS(lat1), Dms.parseDMS(lon1));
-    var p2 = new LatLon(Dms.parseDMS(lat2), Dms.parseDMS(lon2));
-    var dist = parseFloat(p1.distanceTo(p2).toPrecision(4));
-    return dist;
-}
 
 
 function setNearestStation() {
     if (navigator.geolocation) {
         getUserPosition().then((position) => {findClosestStation(position);});
     }
-}
-
-function sortStopsByDist(position) {
-	if (stopsByDist.length) {
-		stopsByDist.forEach(function(stop){
-			var dist=geoDistance(position.coords.latitude, position.coords.longitude, stop.lat, stop.lon);
-			stop.dist=dist;
-		});
-		// Now we should have distances in stopsByDist
-		stopsByDist.sort(function(a, b) {
-			return parseFloat(a.dist) - parseFloat(b.dist);
-		});
-	}
 }
 
 function findClosestStation(position) {
@@ -666,6 +641,65 @@ function findClosestStation(position) {
 $('#departLabelText').click(function(){
 	setNearestStation();
 });
+
+$('#toLabelText').click(function(){
+	initMap('lrt');
+});
+
+
+<!--- Returns coordinates for the most complex shapes for each LRT line --->
+<cfquery name="CapitalShape" dbtype="ODBC" datasource="SecureSource">
+  SELECT * FROM vsd.#dbprefix#_shapes
+  WHERE shape_id=(SELECT TOP 1 shape_id AS ptQty FROM vsd.#dbprefix#_shapes 
+  		WHERE shape_id like '501-%' GROUP BY shape_id ORDER BY count(*) DESC
+  )
+</cfquery>
+
+<cfquery name="MetroShape" dbtype="ODBC" datasource="SecureSource">
+  SELECT * FROM vsd.#dbprefix#_shapes
+  WHERE shape_id=(SELECT TOP 1 shape_id AS ptQty FROM vsd.#dbprefix#_shapes 
+  		WHERE shape_id like '502-%' GROUP BY shape_id ORDER BY count(*) DESC
+  )
+</cfquery>
+
+<cfoutput>
+var capitalShape = [<cfloop query="CapitalShape"><cfif currentRow GT 1>,</cfif>{lng:#shape_pt_lon#,lat:#shape_pt_lat#}</cfloop>];
+var metroShape = [<cfloop query="MetroShape"><cfif currentRow GT 1>,</cfif>{lng:#shape_pt_lon#,lat:#shape_pt_lat#}</cfloop>];
+</cfoutput>
+
+
+
+
+</cfif><!--- end mode specific JS --->
+
+
+
+
+// Experimental calculation of distance from stations
+function geoDistance(lat1, lon1, lat2, lon2) {
+    var p1 = new LatLon(Dms.parseDMS(lat1), Dms.parseDMS(lon1));
+    var p2 = new LatLon(Dms.parseDMS(lat2), Dms.parseDMS(lon2));
+    var dist = parseFloat(p1.distanceTo(p2).toPrecision(4));
+    return dist;
+}
+
+
+
+
+function sortStopsByDist(position) {
+	if (stopsByDist.length) {
+		stopsByDist.forEach(function(stop){
+			var dist=geoDistance(position.coords.latitude, position.coords.longitude, stop.lat, stop.lon);
+			stop.dist=dist;
+		});
+		// Now we should have distances in stopsByDist
+		stopsByDist.sort(function(a, b) {
+			return parseFloat(a.dist) - parseFloat(b.dist);
+		});
+	}
+}
+
+
 
 
 $('#closestStations, #busStopLabelText, #routeFromLabelText').click(function(){
@@ -969,6 +1003,7 @@ if (!map) {
 } else {
 	needsRefresh = true;
 	if (busRoute) busRoute.setMap(null);
+	if (capitalLine) capitalLine.setMap(null);
 	// Remove markers
 	for(i=0; i<markers.length; i++){
         markers[i].setMap(null);
@@ -976,8 +1011,55 @@ if (!map) {
     markers = [];
 }
 
-	// If a stop is truthy, make ajax call to get stop coordinates and name from the stop parameter
-if (stop) {
+if (stop=="lrt") {
+	// Center on Churchill station
+	map.setCenter({lat: 53.544309, lng: -113.48917});
+	map.setZoom(12);
+
+	stationCoords.forEach(function(station){
+		if (typeof station === "undefined" || typeof station.lat === "undefined" || typeof station.lon === "undefined" || typeof station.id === "undefined") {
+			//Bad station? Handle error here if necessary				
+		} else {
+		    var marker = new google.maps.Marker({
+			    position: {lat:station.lat, lng:station.lon},
+			    label: ""+station.abbr,
+				title: station.name,
+				icon: icons["stopGreen"].icon,
+			    map: map
+		    });
+
+		    marker.addListener('click', function() {
+	          $('#to').val(station.id);
+	          $('#to').trigger('change');
+	          $('#closeMap a').trigger('click');
+
+	        });
+		    markers.push(marker);
+		}
+	});
+
+	// The above is fabulous, but I want to draw both of the lines on the map. How can I do that?
+		busRoute = new google.maps.Polyline({
+	      path: metroShape,
+	      geodesic: true,
+	      strokeColor: '#FF3333',
+	      strokeOpacity: .4,
+	      strokeWeight: 6
+	    });
+
+		capitalLine = new google.maps.Polyline({
+	      path: capitalShape,
+	      geodesic: true,
+	      strokeColor: '#3333FF',
+	      strokeOpacity: .4,
+	      strokeWeight: 6
+	    });
+
+    	busRoute.setMap(map);
+    	capitalLine.setMap(map);
+
+} else if (stop) {
+// else if a stop is truthy, make ajax call to get stop coordinates and name from the stop parameter
 $.get('stopInfo.cfm?stopid='+stop+'&trip='+trip+'&seq='+seq+'&dest='+dest).done(function(data){
 
 	var stopPos = {lat: data.stop.stop_lat, lng: data.stop.stop_lon};
