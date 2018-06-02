@@ -1002,8 +1002,8 @@ if (!map) {
 	});
 } else {
 	needsRefresh = true;
-	if (busRoute) busRoute.setMap(null);
-	if (capitalLine) capitalLine.setMap(null);
+	if (typeof busRoute !== "undefined") busRoute.setMap(null);
+	if (typeof capitalLine !== "undefined") capitalLine.setMap(null);
 	// Remove markers
 	for(i=0; i<markers.length; i++){
         markers[i].setMap(null);
