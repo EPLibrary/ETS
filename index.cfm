@@ -267,7 +267,7 @@
 
 
 <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyA9cke0k8wuLrcme-z2TqJgXUf3tButKyQ"></script>
-<script src="https://www2.epl.ca/javascript/geolocation-marker.js" async defer></script>
+<script src="https://www2.epl.ca/javascript/geolocation-marker.js?v2" async defer></script>
 <script>
 
 
@@ -957,10 +957,9 @@ var userPos;
 
 //Updates the userPosition variable whenever the position changes
 function setUserPosition(position) {
-	console.log('setting UserPosition...');
+	//console.log('setting UserPosition...');
 	userPosition = position;
 	userPos = {lat: position.coords.latitude, lng: position.coords.longitude}
-	console.log(userPosition);
 }
 
 //Returns the user position using geolocation in a way that shouldn't break maps and stuff.
@@ -972,8 +971,9 @@ var getUserPosition = function() {
 			if (typeof userPosition !== "undefined") {
 				resolve(userPosition);
 			} else {
+				// We rely on GeoMarker to do this now
 				// Registers handler to keep userPosition updated
-				navigator.geolocation.watchPosition(setUserPosition);
+				//navigator.geolocation.watchPosition(setUserPosition);
 				// Tells the browser to submit the current position for now
 				// after this we use userPosition
 				navigator.geolocation.getCurrentPosition(resolve, reject);
@@ -995,6 +995,7 @@ var getUserPos = function() {
 
 
 var geomarkerCreated = false;
+var GeoMarker;
 
 // Polyline that shows the busroute on the map
 var busRoute;
@@ -1053,6 +1054,14 @@ if (!map) {
         markers[i].setMap(null);
     }
     markers = [];
+}
+
+if (navigator.geolocation) {
+	if (!geomarkerCreated) {
+		GeoMarker = new GeolocationMarker(map);
+		geomarkerCreated = true;
+		// console.log('created geoMarker');
+	}
 }
 
 if (stop=="lrt") {
@@ -1224,14 +1233,6 @@ $.get('stopInfo.cfm?stopid='+stop+'&trip='+trip+'&seq='+seq+'&dest='+dest).done(
 //else we show the closest stops, or the stops for the selected route
 
 
-if (navigator.geolocation) {
-	if (!geomarkerCreated) {
-		var GeoMarker = new GeolocationMarker(map);
-		geomarkerCreated = true;
-		// console.log('created geoMarker');
-	}
-}
-
 //This stuff is specific to showing nearby stops
 if (!stop) {
 	getUserPosition().then((position) => {
@@ -1299,7 +1300,6 @@ if (!stop) {
 }//end if !stop
 
 
-
 //Show the actual map
 $('#mapModal, #closeMap').removeClass('fadeOut');
 $('#mapModal').css('display', 'block').css('position', 'fixed');
@@ -1326,6 +1326,9 @@ $('#closeMap a').click(function(){
 		$('#mapModal').hide();
 	},300);
 	$('#closeMap').hide();
+	//Remove the GeoMarker - see if this clears up location bugs
+	// GeoMarker.setMap(null);
+	// geomarkerCreated = false;
 	// $('#mapNotice').show();
 
 });
