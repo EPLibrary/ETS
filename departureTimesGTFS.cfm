@@ -1,19 +1,4 @@
 
-<!--- Simple function that accepts a weekday (2 or more letters) and returns the coldfusion weekday integer --->
-<cffunction name="weekdayToNum" returntype="numeric">
-	<cfargument name="DayName" required="true" type="String">
-	<!--- If passed an int, just return it --->
-	<cfif isNumeric(DayName)><cfreturn DayName></cfif>
-	<cfswitch expression="#Left(DayName, 2)#">
-		<cfcase value="Su">  <cfreturn 1></cfcase>
-		<cfcase value="Mo,M"><cfreturn 2></cfcase>
-		<cfcase value="Tu">  <cfreturn 3></cfcase>
-		<cfcase value="We,W"><cfreturn 4></cfcase>
-		<cfcase value="Th">  <cfreturn 5></cfcase>
-		<cfcase value="Fr,F"><cfreturn 6></cfcase>
-		<cfcase value="Sa">  <cfreturn 7></cfcase>
-	</cfswitch>
-</cffunction>
 <!--- Loaded via ajax or include to show departureTimes table --->
 <cfsetting showdebugoutput="false" />
 <cfsetting requesttimeout="18" />
@@ -434,6 +419,7 @@ description="Accepts FROM and TO station IDs, and a datetime and outputs a table
 </cffunction><!---getDepartures--->
 
 
+<cfinclude template="/AppsRoot/Includes/functions/weekdayToNum.cfm" />
 
 <cfif isDefined('url.from') AND isDefined('url.to')>
 	<cfif url.from IS url.to>

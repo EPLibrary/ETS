@@ -129,7 +129,7 @@
 	SELECT * FROM vsd.#dbprefix#_stops
 </cfquery>
 <!--- This makes for a massive 6500 item select --->
-<label for="fromStop" id="fromStopLabel" class="selectizeLabel"><a href="javascript:void(0);" id="busStopLabelText" class="labelText" title="Click to sort stops based on your location">Bus Stops <!---<svg id="geoIcon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 960"><path d="M500 258.6l-490 245 9.6 1.2c5.2.5 107 8.2 226 16.8 133 9.8 217.5 16.5 218.8 18 1.2 1.2 8.3 87 18 219.6 8.5 119.7 16.4 221.3 17 226 1.3 7.7 6.3-1.8 246-482 135-269.4 245-490 244.6-489.7l-490 245z" /></svg>---><span id="nearestLink">&#x1f5fa; Select a Nearby Stop </span></a>
+<label for="fromStop" id="fromStopLabel" class="selectizeLabel"><a href="javascript:void(0);" id="busStopLabelText" class="labelText" title="Click to sort stops based on your location">Bus Stops <!---<svg id="geoIcon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 960"><path d="M500 258.6l-490 245 9.6 1.2c5.2.5 107 8.2 226 16.8 133 9.8 217.5 16.5 218.8 18 1.2 1.2 8.3 87 18 219.6 8.5 119.7 16.4 221.3 17 226 1.3 7.7 6.3-1.8 246-482 135-269.4 245-490 244.6-489.7l-490 245z" /></svg>---><span class="nearestLink">&#x1f5fa; Select a Nearby Stop </span></a>
 	<select name="fromStop" id="fromStop" class="selectizeField" multiple="multiple">
 		<cfoutput query="Stops">
 			<option value="#stop_id#" <cfif listContains(url.fromStop, stop_id)>selected</cfif>>#stop_id# #stop_name#</option>
@@ -156,7 +156,7 @@
 	</select>
 </label>
 
-<label for="routeFrom" id="routeFromLabel" class="selectizeLabel"><a href="javascript:void(0);" id="routeFromLabelText" class="labelText" title="Click to select stops on the above route">Departing From <!---<svg id="geoIcon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 960"><path d="M500 258.6l-490 245 9.6 1.2c5.2.5 107 8.2 226 16.8 133 9.8 217.5 16.5 218.8 18 1.2 1.2 8.3 87 18 219.6 8.5 119.7 16.4 221.3 17 226 1.3 7.7 6.3-1.8 246-482 135-269.4 245-490 244.6-489.7l-490 245z" /></svg>---><span id="nearestLink" class="<cfif isDefined('url.rid') AND url.rid EQ "">eplhidden</cfif>">&#x1f5fa; Select Stop From Map </span></a>
+<label for="routeFrom" id="routeFromLabel" class="selectizeLabel"><a href="javascript:void(0);" id="routeFromLabelText" class="labelText" title="Click to select stops on the above route">Departing From <!---<svg id="geoIcon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 960"><path d="M500 258.6l-490 245 9.6 1.2c5.2.5 107 8.2 226 16.8 133 9.8 217.5 16.5 218.8 18 1.2 1.2 8.3 87 18 219.6 8.5 119.7 16.4 221.3 17 226 1.3 7.7 6.3-1.8 246-482 135-269.4 245-490 244.6-489.7l-490 245z" /></svg>---><span id="nearestLink" class="nearestLink <cfif isDefined('url.rid') AND url.rid EQ "">eplhidden</cfif>">&#x1f5fa; Select Stop From Map </span></a>
 	<select name="routeFrom" id="routeFrom" class="selectizeField">
 	</select>
 </label>
@@ -165,7 +165,8 @@
 	<button type="button" id="swapRouteFromTo">&#8593; swap &#8595;</button>
 </label>
 
-<label for="routeTo" id="routeToLabel" class="selectizeLabel">Travelling To
+<label for="routeTo" id="routeToLabel" class="selectizeLabel"><a href="javascript:void(0);" id="routeToLabelText" class="labelText" title="Click to select stops on the above route">Travelling To <!---<svg id="geoIcon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 960"><path d="M500 258.6l-490 245 9.6 1.2c5.2.5 107 8.2 226 16.8 133 9.8 217.5 16.5 218.8 18 1.2 1.2 8.3 87 18 219.6 8.5 119.7 16.4 221.3 17 226 1.3 7.7 6.3-1.8 246-482 135-269.4 245-490 244.6-489.7l-490 245z" /></svg>---><span id="selectRouteDestFromMapLink" class="nearestLink" <cfif isDefined('url.rid') AND url.rid EQ "">style="display:none;"</cfif>>&#x1f5fa; Select Stop From Map </span></a>
+
 	<select name="routeTo" id="routeTo" class="selectizeField">
 	</select>
 </label>
@@ -174,7 +175,7 @@
 <cfelse>
 
 
-<label for="from" style="margin-bottom:0;" class="lrtDepart"><a href="javascript:void(0);" id="departLabelText" class="labelText" title="Click to set based on your location">Departing From <svg id="geoIcon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 960"><path d="M500 258.6l-490 245 9.6 1.2c5.2.5 107 8.2 226 16.8 133 9.8 217.5 16.5 218.8 18 1.2 1.2 8.3 87 18 219.6 8.5 119.7 16.4 221.3 17 226 1.3 7.7 6.3-1.8 246-482 135-269.4 245-490 244.6-489.7l-490 245z" /></svg><span id="nearestLink">Set Nearest</span></a>
+<label for="from" style="margin-bottom:0;" class="lrtDepart"><a href="javascript:void(0);" id="departLabelText" class="labelText" title="Click to set based on your location">Departing From <svg id="geoIcon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 960"><path d="M500 258.6l-490 245 9.6 1.2c5.2.5 107 8.2 226 16.8 133 9.8 217.5 16.5 218.8 18 1.2 1.2 8.3 87 18 219.6 8.5 119.7 16.4 221.3 17 226 1.3 7.7 6.3-1.8 246-482 135-269.4 245-490 244.6-489.7l-490 245z" /></svg><span class="nearestLink">Set Nearest</span></a>
 	<select name="from" id="from">
 		<cfoutput query="Stations">
 			<option value="#StationID#" <cfif isDefined('url.from') AND url.from IS StationID>selected</cfif>>#StationName#</option>
@@ -320,15 +321,19 @@ function refreshStopTimes() {
 var newLoad = true;
 
 // Updates the list of routes with new routes based on proximity
-function refreshRoutes() {
+async function refreshRoutes() {
 	if (navigator.geolocation) {
+		var originalRid = $('#rid').val();
 		$('#mainBusRouteLabel').html('Loading...');
         getUserPosition().then((position) => {
-			$.post('nearbyRoutes.cfm', {lat:position.coords.latitude, lon:position.coords.longitude, range:3000}).done(function(data) {
+			$.post('nearbyRoutes.cfm', {lat:position.coords.latitude, lon:position.coords.longitude, range:3000, dow:$('#dow').val(), time:$('#time').val()}).done(function(data) {
 				ridSelectize.clearOptions();
 				ridSelectize.addOption(data);
 				$('#mainBusRouteLabel').html('Nearby Route');
 				//automatically select the first option. This is more to show that stuff is happening.
+				$('#rid').addClass('nearestRoutes');
+				// Try to set the original RID if it's still available in the new list
+				ridSelectize.setValue(originalRid);
 			});
         });
     }
@@ -342,14 +347,18 @@ $('#nearestRouteLink').click(function() {
 
 // Updates the dropdowns for from/to stops for a route
 function refreshRouteStops() {
+	var originalFrom = $('#routeFrom').val();
+	if (newLoad && originalFrom.length == 0) {
+		<cfif isDefined('url.routeFrom') AND len(url.routeFrom)>originalFrom = <cfoutput>#url.routeFrom#</cfoutput>;</cfif>
+	}
 	$.get('routeStops.cfm', {rid:$('#rid').val()}).done(function(data) {
 		// remove existing options
 		// $('#routeFrom, #routeTo').html('');
 		routeFromSelectize.clearOptions();
-		routeToSelectize.clearOptions();
+		// routeToSelectize.clearOptions();
 
 		routeFromSelectize.addOption(data);
-		routeToSelectize.addOption(data);
+		// routeToSelectize.addOption(data);
 		// $('#routeFrom, #routeTo').append('<option></option>');
 		//Loop through data field and add an option for each
 		// $.each(data.DATA, function(i, value) {
@@ -371,29 +380,52 @@ function refreshRouteStops() {
 		</cfif>
 		<cfif isDefined('url.routeTo') AND isNumeric(url.routeTo)>
 			routeToSelectize.addItem(<cfoutput>#url.routeTo#</cfoutput>,true);
-			refreshRouteToStops(<cfoutput>#url.routeTo#</cfoutput>);
+			// refreshRouteToStops(<cfoutput>#url.routeTo#</cfoutput>);
 		<cfelse>
-			refreshRouteToStops();
+			// refreshRouteToStops();
 		</cfif>
-			newLoad=false;
+
 
 		}
+		// Replace the old value, if possible. This will trigger change, and thus refreshRouteToStops()
+		routeFromSelectize.setValue(originalFrom);
+
+		newLoad=false;
 
 	});
 }
 
+
+var routeToCoords = [];
+
 function refreshRouteToStops(stopId) {
-	var routeFrom = $('#routeFrom').val();
-	$.get('routeStops.cfm', {rid:$('#rid').val(), routeFrom:routeFrom}).done(function(data) {
-		routeToSelectize.clearOptions();
-		routeToSelectize.addOption(data);
+	var originalTo = $('#routeTo').val();
+	// console.log('newLoad: '+newLoad);
+	if (newLoad && originalTo.length == 0) {
+		<cfif isDefined('url.routeTo') AND len(url.routeTo)>originalTo = <cfoutput>#url.routeTo#</cfoutput>;</cfif>
+	}
+	var routeTo = $('#routeTo').val();
+	if ($('#routeFrom').val().length) {
+		$.get('routeStops.cfm', {rid:$('#rid').val(), routeFrom:$('#routeFrom').val()}).done(function(data) {
+			if (data.length) {
+			// Show the "find stop on map" link after a route is selected
+				$('#selectRouteDestFromMapLink').show();
+			}
+			routeToSelectize.clearOptions();
+			routeToSelectize.addOption(data);
 
-		if (stopId) {
-			routeToSelectize.addItem(stopId);
-		}
+			//Update routeToCoords which the map can use
+			routeToCoords = data;
+
+			if (stopId) {
+				routeToSelectize.addItem(stopId);
+			}
+
+			routeToSelectize.setValue(originalTo);
 
 
-	});
+		});
+	}//if routeFrom
 }
 
 // loads new route stops into routeFrom/routeTo dropdowns when route is changed
@@ -452,6 +484,12 @@ $('#time, #dow').change(function(){
 <cfelseif isDefined('url.rid')>
 $('#time, #dow').change(function(){
 	refreshRouteDepartureTimes();
+	if ($('#rid').length && $('#rid').hasClass('nearestRoutes')) {
+		// This could either be useful or annoying having the selected route disappear when refreshing
+		var originalRid = $('#rid').val();
+
+		refreshRoutes();
+	}
 });
 <cfelse>
 $('#time, #dow').change(function(){
@@ -713,6 +751,10 @@ $('#closestStations, #busStopLabelText, #routeFromLabelText').click(function(){
        }
 });
 
+$('#routeToLabelText').click(function(){
+	initMap('routeDest');
+});
+
 // Tapping on a row shows the hidden row beneath and hides all others
 function bindShowArrival() {
 	$('.departures tr[data-tripid]').click(function(){
@@ -915,8 +957,10 @@ var userPos;
 
 //Updates the userPosition variable whenever the position changes
 function setUserPosition(position) {
+	console.log('setting UserPosition...');
 	userPosition = position;
 	userPos = {lat: position.coords.latitude, lng: position.coords.longitude}
+	console.log(userPosition);
 }
 
 //Returns the user position using geolocation in a way that shouldn't break maps and stuff.
@@ -1058,6 +1102,57 @@ if (stop=="lrt") {
     	busRoute.setMap(map);
     	capitalLine.setMap(map);
 
+} else if (stop=="routeDest") {
+	// Handle selecting a route destination.
+	map.setZoom(15);
+	if (routeToCoords.length) {
+		// This picks a stop in the middle of the list, but they aren't sorted by stop_sequence anyways (which is tricky to do)
+		var midStop = routeToCoords[Math.floor(routeToCoords.length/2)];
+
+		map.setCenter({lat: midStop.lat, lng: midStop.lon});
+
+		//Draw the bus route
+		$.get("routeShape.cfm", {rid:$('#rid').val()}).done(function(data){
+			busRoute = new google.maps.Polyline({
+			path: data.shape,
+			geodesic: true,
+			strokeColor: '#FF3333',
+			strokeOpacity: .4,
+			strokeWeight: 6
+			});
+			busRoute.setMap(map);
+		});
+
+	}
+
+
+	//Get the route stops so I can plot all the points
+	// Where should the center be? The median stop
+
+
+
+	routeToCoords.forEach(function(stop){
+		if (typeof stop === "undefined" || typeof stop.lat === "undefined" || typeof stop.lon === "undefined" || typeof stop.id === "undefined") {
+			//Bad stop? Handle error here if necessary				
+		} else {
+		    var marker = new google.maps.Marker({
+			    position: {lat:stop.lat, lng:stop.lon},
+			    label: ""+stop.id,
+				icon: icons["stopGreen"].icon,
+			    map: map
+		    });
+
+		    marker.addListener('click', function() {
+	          routeToSelectize.setValue(stop.id);
+	          $('#closeMap a').trigger('click');
+
+	        });
+		    markers.push(marker);
+		}
+	});
+
+
+
 } else if (stop) {
 // else if a stop is truthy, make ajax call to get stop coordinates and name from the stop parameter
 $.get('stopInfo.cfm?stopid='+stop+'&trip='+trip+'&seq='+seq+'&dest='+dest).done(function(data){
@@ -1154,6 +1249,17 @@ if (!stop) {
 		// But what if we're not using location?
 		if ($('#rid').length && $('#rid').val().length) {
 			map.setCenter({lat: closeStops[0].lat, lng: closeStops[0].lon});
+			// Here I could draw the route on the map the way I do with LRT routes
+			$.get("routeShape.cfm", {rid:$('#rid').val()}).done(function(data){
+				busRoute = new google.maps.Polyline({
+				path: data.shape,
+				geodesic: true,
+				strokeColor: '#FF3333',
+				strokeOpacity: .4,
+				strokeWeight: 6
+	    		});
+				busRoute.setMap(map);
+			});
 		} else {
 			map.setCenter({lat: position.coords.latitude, lng: position.coords.longitude});
 		}

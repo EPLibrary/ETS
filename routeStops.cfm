@@ -40,7 +40,8 @@ Hopefully this will make it much easier to select the appropriate stop
 	-- Does the current route have any instances
 	-- where it is in the same trip as the routeFrom
 	-- and has a stop_sequence that is higher?
-	AND stop_sequence > (SELECT stop_sequence FROM vsd.#dbprefix#_stop_times WHERE trip_id = sdt.trip_id AND stop_id=#url.routeFrom#)
+	AND stop_sequence > (SELECT TOP 1 stop_sequence FROM vsd.#dbprefix#_stop_times WHERE trip_id = sdt.trip_id AND stop_id=#url.routeFrom#)
+	-- ORDER BY stop_sequence
 </cfquery>
 <cfelse>
 
@@ -48,6 +49,7 @@ Hopefully this will make it much easier to select the appropriate stop
 	SELECT DISTINCT sdt.stop_id, stop_name, stop_lat, stop_lon FROM vsd.#dbprefix#_trip_stop_datetimes sdt
 	JOIN vsd.#dbprefix#_stops s ON s.stop_id=sdt.stop_id
 	WHERE route_id=#url.rid#
+	-- ORDER BY stop_sequence
 </cfquery>
 
 </cfif>
