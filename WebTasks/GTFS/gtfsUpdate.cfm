@@ -194,6 +194,51 @@ The following messages have been returned from the server:
 	)	
 </cfquery>
 
+<!--- Clean up Strathcona Stops and flag stops that are exclusively Strathcona and not ETS --->
+<cfquery name="CleanOutsideStops" dbtype="ODBC" datasource="ReadWriteSource">
+--This will ensure that the stop_name of stops with same ID and similar coordinates (within about ten metres) match exactly
+UPDATE vsd.#dbprefix#_stops_Strathcona SET stop_name = (SELECT stop_name FROM vsd.#dbprefix#_stops WHERE stop_id=vsd.#dbprefix#_stops_Strathcona.stop_id)
+WHERE vsd.#dbprefix#_stops_Strathcona.stop_id IN (SELECT stop_id FROM vsd.#dbprefix#_stops)
+AND vsd.#dbprefix#_stops_Strathcona.stop_lat-.0001 < (SELECT s.stop_lat FROM vsd.#dbprefix#_stops s WHERE stop_id=vsd.#dbprefix#_stops_Strathcona.stop_id)
+AND vsd.#dbprefix#_stops_Strathcona.stop_lat+.0001 > (SELECT s.stop_lat FROM vsd.#dbprefix#_stops s WHERE stop_id=vsd.#dbprefix#_stops_Strathcona.stop_id)
+AND vsd.#dbprefix#_stops_Strathcona.stop_lon-.0001 < (SELECT s.stop_lon FROM vsd.#dbprefix#_stops s WHERE stop_id=vsd.#dbprefix#_stops_Strathcona.stop_id)
+AND vsd.#dbprefix#_stops_Strathcona.stop_lon+.0001 > (SELECT s.stop_lon FROM vsd.#dbprefix#_stops s WHERE stop_id=vsd.#dbprefix#_stops_Strathcona.stop_id)
+
+--This misses about 12. I need to refine this to match stops with the same ID but are within ~3 10,000ths of a degree on each axis
+--Should have 37 matches.
+
+--Clean up strathcona street and avenue abbreviations
+UPDATE vsd.#dbprefix#_stops_Strathcona SET stop_name = REPLACE(stop_name, ' St ', ' Street ') WHERE stop_name like '% St %'
+UPDATE vsd.#dbprefix#_stops_Strathcona SET stop_name = REPLACE(stop_name, ' St', ' Street') WHERE stop_name like '% St'
+UPDATE vsd.#dbprefix#_stops_Strathcona SET stop_name = REPLACE(stop_name, ' St. ', ' Street ') WHERE stop_name like '% St. %'
+UPDATE vsd.#dbprefix#_stops_Strathcona SET stop_name = REPLACE(stop_name, ' St.', ' Street') WHERE stop_name like '% St.'
+UPDATE vsd.#dbprefix#_stops_Strathcona SET stop_name = REPLACE(stop_name, ' Av ', ' Avenue ') WHERE stop_name like '% Av %'
+UPDATE vsd.#dbprefix#_stops_Strathcona SET stop_name = REPLACE(stop_name, ' Av', ' Avenue') WHERE stop_name like '% Av'
+UPDATE vsd.#dbprefix#_stops_Strathcona SET stop_name = REPLACE(stop_name, ' Ave ', ' Avenue ') WHERE stop_name like '% Ave %'
+UPDATE vsd.#dbprefix#_stops_Strathcona SET stop_name = REPLACE(stop_name, ' Ave', ' Avenue') WHERE stop_name like '% Ave'
+UPDATE vsd.#dbprefix#_stops_Strathcona SET stop_name = REPLACE(stop_name, ' Ave. ', ' Avenue ') WHERE stop_name like '% Ave. %'
+UPDATE vsd.#dbprefix#_stops_Strathcona SET stop_name = REPLACE(stop_name, ' Ave.', ' Avenue') WHERE stop_name like '% Ave.'
+-- Replace and with ampersand to be consistent with 99.5% of other records
+UPDATE vsd.#dbprefix#_stops_Strathcona SET stop_name = REPLACE(stop_name, ' and ', ' & ') WHERE stop_name like '% and %'
+
+UPDATE vsd.#dbprefix#_stops_Strathcona SET exclusive=1
+
+--Set the exclusive flag to 0 for strathcona stops that are actually ETS stops
+UPDATE vsd.#dbprefix#_stops_Strathcona SET exclusive=0
+WHERE stop_id IN (SELECT stop_id FROM vsd.#dbprefix#_stops)
+AND vsd.#dbprefix#_stops_Strathcona.stop_name=(SELECT stop_name FROM vsd.#dbprefix#_stops WHERE stop_id = vsd.#dbprefix#_stops_Strathcona.stop_id)
+
+--Looks like St. Albert is a lot better about using their own stop IDs, so this is way easier...
+UPDATE vsd.#dbprefix#_stops_StAlbert SET exclusive=1
+UPDATE vsd.#dbprefix#_stops_StAlbert SET exclusive=0
+WHERE stop_id IN (SELECT stop_id FROM vsd.#dbprefix#_stops)
+AND vsd.#dbprefix#_stops_StAlbert.stop_name=(SELECT stop_name FROM vsd.#dbprefix#_stops WHERE stop_id = vsd.#dbprefix#_stops_StAlbert.stop_id)
+
+--For now, we consider all ETS stops exclusive - we want to show them all in the view of all stops
+UPDATE vsd.#dbprefix#_stops SET exclusive=1
+</cfquery>
+
+
 
 <!--- If everything seems to be working, now let's switch the active database to the newly updated one. --->
 
