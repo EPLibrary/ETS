@@ -1,16 +1,33 @@
 @echo off
-C:\Windows\System32\findstr.exe /V /R "^[a-z].*[a-z]$" D:\inetpub\temp\gtfs\stop_times.txt > D:\inetpub\temp\gtfs\stop_times_noheader.txt
+rem This file only gets part of the job done, removing headers from Edmonton GTFS files only.
+rem To strip headers for all cities, execute the stripheaders.ps1 powershell script which will execute this code bat file.
+rem City of Edmonton
+C:\Windows\System32\findstr.exe /V /R "^[a-z].*[a-z]$" D:\inetpub\temp\gtfs\Edmonton\stop_times.txt > D:\inetpub\temp\gtfs\Edmonton\stop_times_noheader.txt
+C:\Windows\System32\findstr.exe /V /R "^[a-z].*[a-z]$" D:\inetpub\temp\gtfs\Edmonton\shapes.txt > D:\inetpub\temp\gtfs\Edmonton\shapes_noheader.txt
+C:\Windows\System32\findstr.exe /V /R "^[a-z].*[a-z]$" D:\inetpub\temp\gtfs\Edmonton\trips.txt > D:\inetpub\temp\gtfs\Edmonton\trips_noheader.txt
+C:\Windows\System32\findstr.exe /V /R "^[a-z].*[a-z]$" D:\inetpub\temp\gtfs\Edmonton\calendar_dates.txt > D:\inetpub\temp\gtfs\Edmonton\calendar_dates_noheader.txt
+C:\Windows\System32\findstr.exe /V /R "^[a-z].*[a-z]$" D:\inetpub\temp\gtfs\Edmonton\stops.txt > D:\inetpub\temp\gtfs\Edmonton\stops_noheader.txt
+C:\Windows\System32\findstr.exe /V /R "^[a-z].*[a-z]$" D:\inetpub\temp\gtfs\Edmonton\transfers.txt > D:\inetpub\temp\gtfs\Edmonton\transfers_noheader.txt
+C:\Windows\System32\findstr.exe /V /R "^[a-z].*[a-z]$" D:\inetpub\temp\gtfs\Edmonton\routes.txt > D:\inetpub\temp\gtfs\Edmonton\routes_noheader.txt
+C:\Windows\System32\findstr.exe /V /R "^[a-z].*[a-z]$" D:\inetpub\temp\gtfs\Edmonton\agency.txt > D:\inetpub\temp\gtfs\Edmonton\agency_noheader.txt
 
-C:\Windows\System32\findstr.exe /V /R "^[a-z].*[a-z]$" D:\inetpub\temp\gtfs\shapes.txt > D:\inetpub\temp\gtfs\shapes_noheader.txt
-
-C:\Windows\System32\findstr.exe /V /R "^[a-z].*[a-z]$" D:\inetpub\temp\gtfs\trips.txt > D:\inetpub\temp\gtfs\trips_noheader.txt
-
-C:\Windows\System32\findstr.exe /V /R "^[a-z].*[a-z]$" D:\inetpub\temp\gtfs\calendar_dates.txt > D:\inetpub\temp\gtfs\calendar_dates_noheader.txt
-
-C:\Windows\System32\findstr.exe /V /R "^[a-z].*[a-z]$" D:\inetpub\temp\gtfs\stops.txt > D:\inetpub\temp\gtfs\stops_noheader.txt
-
-C:\Windows\System32\findstr.exe /V /R "^[a-z].*[a-z]$" D:\inetpub\temp\gtfs\transfers.txt > D:\inetpub\temp\gtfs\transfers_noheader.txt
-
-C:\Windows\System32\findstr.exe /V /R "^[a-z].*[a-z]$" D:\inetpub\temp\gtfs\routes.txt > D:\inetpub\temp\gtfs\routes_noheader.txt
-
-C:\Windows\System32\findstr.exe /V /R "^[a-z].*[a-z]$" D:\inetpub\temp\gtfs\agency.txt > D:\inetpub\temp\gtfs\agency_noheader.txt
+rem The following files don't lose their headers this way because the values are quoted.
+rem Strathcona County
+rem C:\Windows\System32\findstr.exe /V /R "^[a-z].*[a-z]$" D:\inetpub\temp\gtfs\Strathcona\stop_times.txt > D:\inetpub\temp\gtfs\Strathcona\stop_times_noheader.txt
+rem C:\Windows\System32\findstr.exe /V /R "^[a-z].*[a-z]$" D:\inetpub\temp\gtfs\Strathcona\shapes.txt > D:\inetpub\temp\gtfs\Strathcona\shapes_noheader.txt
+rem C:\Windows\System32\findstr.exe /V /R "^[a-z].*[a-z]$" D:\inetpub\temp\gtfs\Strathcona\trips.txt > D:\inetpub\temp\gtfs\Strathcona\trips_noheader.txt
+rem C:\Windows\System32\findstr.exe /V /R "^[a-z].*[a-z]$" D:\inetpub\temp\gtfs\Strathcona\calendar_dates.txt > D:\inetpub\temp\gtfs\Strathcona\calendar_dates_noheader.txt
+rem C:\Windows\System32\findstr.exe /V /R "^[a-z].*[a-z]$" D:\inetpub\temp\gtfs\Strathcona\stops.txt > D:\inetpub\temp\gtfs\Strathcona\stops_noheader.txt
+rem C:\Windows\System32\findstr.exe /V /R "^[a-z].*[a-z]$" D:\inetpub\temp\gtfs\Strathcona\transfers.txt > D:\inetpub\temp\gtfs\Strathcona\transfers_noheader.txt
+rem C:\Windows\System32\findstr.exe /V /R "^[a-z].*[a-z]$" D:\inetpub\temp\gtfs\Strathcona\routes.txt > D:\inetpub\temp\gtfs\Strathcona\routes_noheader.txt
+rem C:\Windows\System32\findstr.exe /V /R "^[a-z].*[a-z]$" D:\inetpub\temp\gtfs\Strathcona\agency.txt > D:\inetpub\temp\gtfs\Strathcona\agency_noheader.txt
+rem 
+rem rem St. Albert
+rem C:\Windows\System32\findstr.exe /V /R "^[a-z].*[a-z]$" D:\inetpub\temp\gtfs\StAlbert\stop_times.txt > D:\inetpub\temp\gtfs\StAlbert\stop_times_noheader.txt
+rem C:\Windows\System32\findstr.exe /V /R "^[a-z].*[a-z]$" D:\inetpub\temp\gtfs\StAlbert\shapes.txt > D:\inetpub\temp\gtfs\StAlbert\shapes_noheader.txt
+rem C:\Windows\System32\findstr.exe /V /R "^[a-z].*[a-z]$" D:\inetpub\temp\gtfs\StAlbert\trips.txt > D:\inetpub\temp\gtfs\StAlbert\trips_noheader.txt
+rem C:\Windows\System32\findstr.exe /V /R "^[a-z].*[a-z]$" D:\inetpub\temp\gtfs\StAlbert\calendar_dates.txt > D:\inetpub\temp\gtfs\StAlbert\calendar_dates_noheader.txt
+rem C:\Windows\System32\findstr.exe /V /R "^[a-z].*[a-z]$" D:\inetpub\temp\gtfs\StAlbert\stops.txt > D:\inetpub\temp\gtfs\StAlbert\stops_noheader.txt
+rem C:\Windows\System32\findstr.exe /V /R "^[a-z].*[a-z]$" D:\inetpub\temp\gtfs\StAlbert\transfers.txt > D:\inetpub\temp\gtfs\StAlbert\transfers_noheader.txt
+rem C:\Windows\System32\findstr.exe /V /R "^[a-z].*[a-z]$" D:\inetpub\temp\gtfs\StAlbert\routes.txt > D:\inetpub\temp\gtfs\StAlbert\routes_noheader.txt
+rem C:\Windows\System32\findstr.exe /V /R "^[a-z].*[a-z]$" D:\inetpub\temp\gtfs\StAlbert\agency.txt > D:\inetpub\temp\gtfs\StAlbert\agency_noheader.txt

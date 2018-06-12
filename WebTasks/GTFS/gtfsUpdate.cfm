@@ -12,41 +12,108 @@
 <!--- Download COE zip file --->
 
 
-<cfx_http5 url="#gtfsUrl#" ssl="5" async="n" out="D:\inetpub\temp\gtfs\gtfs.zip" file="y">
+<cfx_http5 url="#gtfsUrl#" ssl="5" async="n" out="D:\inetpub\temp\gtfs\Edmonton\gtfs.zip" file="y">
 
 <CFIF STATUS EQ "ER">
    <h2>Server returned error: <CFOUTPUT>#ERRN#</CFOUTPUT></h2>
    <p><b>Failure to update GTFS Data</b></p>
    <!--- Could email JD here --->
    <CFOUTPUT>#MSG#</CFOUTPUT>
+		<cfmail to="jlien@epl.ca, vflores@epl.ca" subject="Error Downloading GTFS data for ETS Database" from="noreply@epl.ca">
+An attempt to download GTFS transit data from City of Edmonton failed.
+Please check that the relevant URL is functional and investigate this problem.<br />
+<cfoutput>#gtfsUrl#</cfoutput>
+
+The following message was returned from the server:
+
+<cfoutput>#MSG#</cfoutput>
+</cfmail>   
    <CFABORT>
 </CFIF>
+
+
+<!--- Download Strathcona County zip file --->
+<cfset gtfsUrl = "http://webpub2.strathcona.ab.ca/GTFS/Google_Transit.zip" />
+<cfx_http5 url="#gtfsUrl#" ssl="5" async="n" out="D:\inetpub\temp\gtfs\Strathcona\gtfs.zip" file="y">
+
+<CFIF STATUS EQ "ER">
+   <h2>Server returned error: <CFOUTPUT>#ERRN#</CFOUTPUT></h2>
+   <p><b>Failure to update GTFS Data</b></p>
+   <!--- Could email JD here --->
+   <CFOUTPUT>#MSG#</CFOUTPUT>
+		<cfmail to="jlien@epl.ca, vflores@epl.ca" subject="Error Downloading GTFS data for ETS Database" from="noreply@epl.ca">
+An attempt to download GTFS transit data from Strathcona County failed.
+Please check that the relevant URL is functional and investigate this problem.<br />
+<cfoutput>#gtfsUrl#</cfoutput>
+
+The following message was returned from the server:
+
+<cfoutput>#MSG#</cfoutput>
+</cfmail>   
+   <CFABORT>
+</CFIF>
+
+<!--- Download St. Albert zip file --->
+<cfset gtfsUrl = "https://stalbert.ca/uploads/files-zip/google_transit.zip" />
+<cfx_http5 url="#gtfsUrl#" ssl="5" async="n" out="D:\inetpub\temp\gtfs\StAlbert\gtfs.zip" file="y">
+
+<CFIF STATUS EQ "ER">
+   <h2>Server returned error: <CFOUTPUT>#ERRN#</CFOUTPUT></h2>
+   <p><b>Failure to update GTFS Data</b></p>
+   <!--- Could email JD here --->
+   <CFOUTPUT>#MSG#</CFOUTPUT>
+		<cfmail to="jlien@epl.ca, vflores@epl.ca" subject="Error Downloading GTFS data for ETS Database" from="noreply@epl.ca">
+An attempt to download GTFS transit data from St. Albert failed.
+Please check that the relevant URL is functional and investigate this problem.<br />
+<cfoutput>#gtfsUrl#</cfoutput>
+
+The following message was returned from the server:
+
+<cfoutput>#MSG#</cfoutput>
+</cfmail>   
+   <CFABORT>
+</CFIF>
+
+
 <!--- Extract zip into gtfs directory --->
-<cfzip action="unzip" file="D:\inetpub\temp\gtfs\gtfs.zip" overwrite="true" destination="D:\inetpub\temp\gtfs\" />
+<cfzip action="unzip" file="D:\inetpub\temp\gtfs\Edmonton\gtfs.zip" overwrite="true" destination="D:\inetpub\temp\gtfs\Edmonton\" />
 
 <!--- Delete the original zip as we do not need it anymore --->
-<cffile action="delete" file="D:\inetpub\temp\gtfs\gtfs.zip" />
+<cffile action="delete" file="D:\inetpub\temp\gtfs\Edmonton\gtfs.zip" />
 
+<!--- Extract zip into gtfs directory --->
+<cfzip action="unzip" file="D:\inetpub\temp\gtfs\Strathcona\gtfs.zip" overwrite="true" destination="D:\inetpub\temp\gtfs\Strathcona\" />
 
+<!--- Delete the original zip as we do not need it anymore --->
+<cffile action="delete" file="D:\inetpub\temp\gtfs\Strathcona\gtfs.zip" />
+
+<!--- Extract zip into gtfs directory --->
+<cfzip action="unzip" file="D:\inetpub\temp\gtfs\StAlbert\gtfs.zip" overwrite="true" destination="D:\inetpub\temp\gtfs\StAlbert\" />
+
+<!--- Delete the original zip as we do not need it anymore --->
+<cffile action="delete" file="D:\inetpub\temp\gtfs\StAlbert\gtfs.zip" />
 
 <!--- List of files. First in reverse order for deleting without violating constraints --->
 
 <!--- Remove annoying headers from GTFS files so we can import them easily --->
 <!--- They use the command findstr /V /R "^[a-z].*[a-z]$" stop_times.txt > stop_times_noheader.txt --->
-<cfexecute name='D:\inetpub\www2.epl.ca\WebTasks\GTFS\stripheaders.bat' timeout="10" />
+<!--- <cfexecute name='D:\inetpub\www2.epl.ca\WebTasks\GTFS\stripheaders.bat' timeout="10" /> --->
+<!--- This new powershell script should work on other cities, but it's pretty slow --->
+<cfexecute name="C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe" arguments="D:\inetpub\www2.epl.ca\WebTasks\GTFS\stripheaders.ps1" timeout="20" />
 
 
 
 <cfset gtfsFilesRev="stop_times,transfers,trips,stops,shapes,routes,calendar_dates,agency" />
-<!--- DO NOT include stop_times at the end of this list. We handle it separately --->
 <cfset gtfsFiles="agency,calendar_dates,routes,shapes,stops,trips,transfers,stop_times" />
+
+<!--- <cfset gtfsFilesRev="agency" />
+<cfset gtfsFiles="agency" /> --->
 
 <cftry>
 	<!--- Choose the inactive database to be updated. --->
 	<cfquery name="updatedb" dbtype="ODBC" datasource="SecureSource">
 		SELECT TOP 1 * FROM vsd.ETS_activeDB WHERE active = 0
 	</cfquery>
-
 
 	<cfset dbprefix = updatedb.prefix />
 
@@ -55,15 +122,36 @@
 
 	<cfloop list="#gtfsFilesRev#" index="fileBase">
 	DELETE FROM vsd.#dbprefix#_#fileBase#
+	DELETE FROM vsd.#dbprefix#_#fileBase#_StAlbert
+	DELETE FROM vsd.#dbprefix#_#fileBase#_Strathcona
 	</cfloop>
 	<cfloop list="#gtfsFiles#" index="fileBase">
-		BULK INSERT vsd.#dbprefix#_#fileBase# FROM '\\web6\gtfs$\#fileBase#_noheader.txt'
+		BULK INSERT vsd.#dbprefix#_#fileBase# FROM '\\epl-cf\gtfs$\Edmonton\#fileBase#_noheader.txt'
 		WITH (
 		FIRSTROW=1,
 		FIELDTERMINATOR = ',',
 		ROWTERMINATOR = '\n',
-		FORMATFILE = '\\web6\gtfs$\#fileBase#.fmt'
+		FORMATFILE = '\\epl-cf\gtfs$\Edmonton\#fileBase#.fmt'
 		);
+
+	<cfif FileExists('\\epl-cf\gtfs$\StAlbert\#fileBase#_noheader.txt')>
+		BULK INSERT vsd.#dbprefix#_#fileBase#_StAlbert FROM '\\epl-cf\gtfs$\StAlbert\#fileBase#_noheader.txt'
+		WITH (
+		FIRSTROW=1,
+		FIELDTERMINATOR = ',',
+		ROWTERMINATOR = '\n',
+		FORMATFILE = '\\epl-cf\gtfs$\StAlbert\#fileBase#.fmt'
+		);
+	</cfif>	
+	<cfif FileExists('\\epl-cf\gtfs$\Strathcona\#fileBase#_noheader.txt')>
+		BULK INSERT vsd.#dbprefix#_#fileBase#_Strathcona FROM '\\epl-cf\gtfs$\Strathcona\#fileBase#_noheader.txt'
+		WITH (
+		FIRSTROW=1,
+		FIELDTERMINATOR = ',',
+		ROWTERMINATOR = '\n',
+		FORMATFILE = '\\epl-cf\gtfs$\Strathcona\#fileBase#.fmt'
+		);
+	</cfif>
 	</cfloop>
 	</cfquery>
 
