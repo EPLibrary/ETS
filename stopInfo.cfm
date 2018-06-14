@@ -4,7 +4,9 @@
 <cfsetting showdebugoutput="false" />
 <cfheader name="Content-Type" value="application/json">
  
- <cfif isDefined('url.stopid') AND isNumeric(url.stopid)>
+ <cfif isDefined('url.stopid')>
+	<!--- If the url.stopid is not an int, make a version that has only the numeric part --->
+	<cfset stopidInt = REREplaceNoCase(url.stopid, "\D*(\d+)", "\1") /> 	
 	<cfinclude template="/AppsRoot/Includes/functions/QueryToStruct.cfm" />
 	<!--- Choose the active database to use. --->
 	<cfquery name="activedb" dbtype="ODBC" datasource="SecureSource">
@@ -12,17 +14,25 @@
 	</cfquery>
 	<cfset dbprefix = activedb.prefix />
 	<cfquery name="stopInfo" dbtype="ODBC" datasource="SecureSource">
-		SELECT stop_id, stop_name, stop_lat, stop_lon, abbr as sc FROM vsd.#dbprefix#_stops s
+		<cfif isNumeric(url.stopid)>
+		SELECT stop_id, stop_name, stop_lat, stop_lon, abbr AS sc FROM vsd.#dbprefix#_stops s
 		LEFT OUTER JOIN vsd.EZLRTStations ls ON ls.stop_id1=s.stop_id OR ls.stop_id2=s.stop_id
 		WHERE stop_id=#url.stopid#
+		<cfelseif left(url.stopid, 3) EQ "Str">
+		SELECT stop_id, stop_name, stop_lat, stop_lon, '' AS sc FROM vsd.#dbprefix#_stops_Strathcona s
+		WHERE stop_id=#Mid(url.stopid, 4, 99)#
+		<cfelse>
+		SELECT stop_id, stop_name, stop_lat, stop_lon, '' AS sc FROM vsd.#dbprefix#_stops_StAlbert s
+		WHERE stop_id=#Mid(url.stopid, 4, 99)#
+		</cfif>
 	</cfquery>
 	<cfset stopInfoStruct = QueryToStruct(stopInfo) />
 
 	<!--- If there's a trip, we get the shape and convert it into JSON coordinates for Google Maps --->
-	<cfif isDefined('url.trip') AND isNumeric(url.trip)>
+	<cfif isDefined('url.trip')>
 		<cfquery name="shape" dbtype="ODBC" datasource="SecureSource">
-			SELECT * FROM vsd.#dbprefix#_trips t
-			JOIN vsd.#dbprefix#_shapes s ON t.shape_id=s.shape_id
+			SELECT * FROM vsd.#dbprefix#_trips_all_agencies t
+			JOIN vsd.#dbprefix#_shapes_all_agencies s ON t.shape_id=s.shape_id AND t.agency_id=s.agency_id
 			WHERE trip_id='#url.trip#'
 			ORDER BY shape_pt_sequence
 		</cfquery>
@@ -36,7 +46,8 @@
 		</cfloop>
 
 		<!--- If the number is small, then this must be an ID from my own LRT stations, so get the real station IDs--->
-		<cfif isDefined('url.dest') AND isNumeric(url.dest) AND url.dest LT 1000>
+		<!--- Note: St. Albert also uses single digit numbers for stop ids, so this complicates things --->
+		<cfif isDefined('url.dest') AND isNumeric(url.dest) AND url.dest LT 25>
 			<cfquery name="realStopIDs" dbtype="ODBC" datasource="SecureSource">
 				SELECT * FROM vsd.EZLRTStations WHERE StationID=#url.dest#
 			</cfquery>
@@ -44,8 +55,8 @@
 
 		<!--- We can also get the subsequent stops on the trip --->
 		<cfquery name="nextStops" dbtype="ODBC" datasource="SecureSource">
-			SELECT s.stop_id, s.stop_name, s.stop_lat, s.stop_lon, ls.Abbr as sc FROM vsd.#dbprefix#_stop_times t
-			JOIN vsd.#dbprefix#_stops s ON s.stop_id=t.stop_id
+			SELECT s.stop_id, s.stop_name, s.stop_lat, s.stop_lon, ls.Abbr as sc FROM vsd.#dbprefix#_stop_times_all_agencies t
+			JOIN vsd.#dbprefix#_stops_all_agencies_unique s ON s.stop_id=t.stop_id
 			<!--- Not sure if this works --->
 			LEFT OUTER JOIN vsd.EZLRTStations ls ON ls.stop_id1=s.stop_id OR ls.stop_id2=s.stop_id
 			WHERE trip_id='#url.trip#' AND drop_off_type=0
@@ -53,15 +64,15 @@
 			<cfif isDefined('url.seq') AND isNumeric(url.seq)>
 				#url.seq#
 			<cfelse>
-				(SELECT TOP 1 stop_sequence FROM vsd.#dbprefix#_stop_times WHERE trip_id='#url.trip#' AND stop_id='#url.stopid#' ORDER BY stop_sequence DESC)
+				(SELECT TOP 1 stop_sequence FROM vsd.#dbprefix#_stop_times_all_agencies WHERE trip_id='#url.trip#' AND stop_id='#stopidInt#' ORDER BY stop_sequence DESC)
 			</cfif>
 			<cfif isDefined('url.dest') AND isNumeric(url.dest)>
 				<cfif isDefined('realStopIDs') AND realStopIDs.recordCount>
-				AND stop_sequence <= (ISNULL((SELECT TOP 1 stop_sequence FROM vsd.#dbprefix#_stop_times WHERE trip_id='#url.trip#'
+				AND stop_sequence <= (ISNULL((SELECT TOP 1 stop_sequence FROM vsd.#dbprefix#_stop_times_all_agencies WHERE trip_id='#url.trip#'
 					<cfif isDefined('url.seq') AND isNumeric(url.seq)>AND stop_sequence > #url.seq#</cfif>
 					AND (stop_id=#realStopIDs.stop_id1# OR stop_id=#realStopIDs.stop_id2#) ORDER BY stop_sequence ASC),9999))
 				<cfelse>
-				AND stop_sequence <= (ISNULL((SELECT TOP 1 stop_sequence FROM vsd.#dbprefix#_stop_times WHERE trip_id='#url.trip#' AND stop_id=#url.dest# ORDER BY stop_sequence ASC),9999))
+				AND stop_sequence <= (ISNULL((SELECT TOP 1 stop_sequence FROM vsd.#dbprefix#_stop_times_all_agencies WHERE trip_id='#url.trip#' AND stop_id=#url.dest# ORDER BY stop_sequence ASC),9999))
 				</cfif>
 			</cfif>
 			ORDER BY stop_sequence

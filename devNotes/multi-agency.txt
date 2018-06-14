@@ -1,1 +1,6 @@
-Okay, 
+Okay, I have a problem.
+
+I can't just cram the data from multiple agencies into the same database tables, because there will be conflicting primary keys.
+
+Probably what I'll need to do is to create another set of tables each for Strathcona and St. Albert. Then I'll have to create some kind of view containing all the stops for Edmonton, Strathcona, and St. Albert.
+

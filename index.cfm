@@ -126,13 +126,13 @@
 <cfif isDefined('url.fromStop')>
 <!--- 6500 stops! --->
 <cfquery name="Stops" dbtype="ODBC" datasource="SecureSource">
-	SELECT * FROM vsd.#dbprefix#_stops
+SELECT * FROM vsd.#dbprefix#_stops_all_agencies_unique ORDER BY astop_id
 </cfquery>
 <!--- This makes for a massive 6500 item select --->
-<label for="fromStop" id="fromStopLabel" class="selectizeLabel"><a href="javascript:void(0);" id="busStopLabelText" class="labelText" title="Click to sort stops based on your location">Bus Stops <!---<svg id="geoIcon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 960"><path d="M500 258.6l-490 245 9.6 1.2c5.2.5 107 8.2 226 16.8 133 9.8 217.5 16.5 218.8 18 1.2 1.2 8.3 87 18 219.6 8.5 119.7 16.4 221.3 17 226 1.3 7.7 6.3-1.8 246-482 135-269.4 245-490 244.6-489.7l-490 245z" /></svg>---><span class="nearestLink">&#x1f5fa; Select a Nearby Stop </span></a>
+<label for="fromStop" id="fromStopLabel" class="selectizeLabel"><a href="javascript:void(0);" id="busStopLabelText" class="labelText" title="Click to show stops near your location">Bus Stops <!---<svg id="geoIcon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 960"><path d="M500 258.6l-490 245 9.6 1.2c5.2.5 107 8.2 226 16.8 133 9.8 217.5 16.5 218.8 18 1.2 1.2 8.3 87 18 219.6 8.5 119.7 16.4 221.3 17 226 1.3 7.7 6.3-1.8 246-482 135-269.4 245-490 244.6-489.7l-490 245z" /></svg>---><span class="nearestLink">&#x1f5fa; Select a Nearby Stop </span></a>
 	<select name="fromStop" id="fromStop" class="selectizeField" multiple="multiple">
 		<cfoutput query="Stops">
-			<option value="#stop_id#" <cfif listContains(url.fromStop, stop_id)>selected</cfif>>#stop_id# #stop_name#</option>
+			<option value="#astop_id#" <cfloop list="#url.fromStop#" index="i"><cfif i EQ astop_id>selected</cfif></cfloop>>#astop_id# #stop_name#</option>
 		</cfoutput>
 	</select>
 </label>
@@ -144,7 +144,7 @@
 <cfelseif isDefined('url.rid')>
 
 <cfquery name="Routes" dbtype="ODBC" datasource="SecureSource">
-	SELECT * FROM vsd.#dbprefix#_routes ORDER BY route_id
+	SELECT * FROM vsd.#dbprefix#_routes_all_agencies ORDER BY route_id
 </cfquery>
 <!--- This makes for a massive 6500 item select --->
 <label for="rid" id="ridLabel" class="selectizeLabel"><a href="javascript:void(0);" id="nearbyRouteText"  class="labelText" title="Click to show nearby routes"><span id="mainBusRouteLabel">Bus Route</span> <svg id="geoIcon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 960"><path d="M500 258.6l-490 245 9.6 1.2c5.2.5 107 8.2 226 16.8 133 9.8 217.5 16.5 218.8 18 1.2 1.2 8.3 87 18 219.6 8.5 119.7 16.4 221.3 17 226 1.3 7.7 6.3-1.8 246-482 135-269.4 245-490 244.6-489.7l-490 245z" /></svg><span id="nearestRouteLink">Sort by Nearest</span></a>
@@ -349,7 +349,7 @@ $('#nearestRouteLink').click(function() {
 function refreshRouteStops() {
 	var originalFrom = $('#routeFrom').val();
 	if (newLoad && originalFrom.length == 0) {
-		<cfif isDefined('url.routeFrom') AND len(url.routeFrom)>originalFrom = <cfoutput>#url.routeFrom#</cfoutput>;</cfif>
+		<cfif isDefined('url.routeFrom') AND len(url.routeFrom)>originalFrom = <cfoutput>"#url.routeFrom#"</cfoutput>;</cfif>
 	}
 	$.get('routeStops.cfm', {rid:$('#rid').val()}).done(function(data) {
 		// remove existing options
@@ -376,10 +376,10 @@ function refreshRouteStops() {
 		// $('#routeFrom').selectize({highlight:false});
 		if (newLoad) {
 		<cfif isDefined('url.routeFrom') AND isNumeric(url.routeFrom)>
-			routeFromSelectize.addItem(<cfoutput>#url.routeFrom#</cfoutput>,true);
+			routeFromSelectize.addItem(<cfoutput>"#url.routeFrom#"</cfoutput>,true);
 		</cfif>
 		<cfif isDefined('url.routeTo') AND isNumeric(url.routeTo)>
-			routeToSelectize.addItem(<cfoutput>#url.routeTo#</cfoutput>,true);
+			routeToSelectize.addItem(<cfoutput>"#url.routeTo#"</cfoutput>,true);
 			// refreshRouteToStops(<cfoutput>#url.routeTo#</cfoutput>);
 		<cfelse>
 			// refreshRouteToStops();
@@ -402,7 +402,7 @@ function refreshRouteToStops(stopId) {
 	var originalTo = $('#routeTo').val();
 	// console.log('newLoad: '+newLoad);
 	if (newLoad && originalTo.length == 0) {
-		<cfif isDefined('url.routeTo') AND len(url.routeTo)>originalTo = <cfoutput>#url.routeTo#</cfoutput>;</cfif>
+		<cfif isDefined('url.routeTo') AND len(url.routeTo)>originalTo = <cfoutput>"#url.routeTo#"</cfoutput>;</cfif>
 	}
 	var routeTo = $('#routeTo').val();
 	if ($('#routeFrom').val().length) {
@@ -569,7 +569,7 @@ setInterval(function(){updateArrivalTimes();}, 2000);
 	var selectize;
 	var stopCoords = [
 	<cfoutput query="Stops">
-	<cfif CurrentRow GT 1>,</cfif>{id:#stop_id#, lat:#trim(stop_lat)#, lon:#trim(stop_lon)#}
+	<cfif CurrentRow GT 1>,</cfif>{id:"#astop_id#", lat:#trim(stop_lat)#, lon:#trim(stop_lon)#}
 	</cfoutput>];
 	var stopsByDist = stopCoords;
 	$(document).ready(function() {
@@ -967,6 +967,8 @@ function setUserPosition(position) {
 var getUserPosition = function() {
 	return new Promise(function (resolve, reject) {
 		var defaultPos = {coords: {latitude: 53.534242, longitude: -113.506374}};
+		// Central Sherwood Park, for testing
+		// defaultPos = {coords: {latitude: 53.541127, longitude: -113.295562}};
 		if (navigator.geolocation) {
 			if (typeof userPosition !== "undefined") {
 				resolve(userPosition);

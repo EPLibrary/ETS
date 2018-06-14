@@ -22,7 +22,7 @@
 
 <cffunction name="getDepartures" returntype="void"
 description="Accepts FROM stop_id and a datetime and outputs a table with relevant stops at that bus stop">
-	<cfargument name="fromStop" required="true" type="numeric" />
+	<cfargument name="fromStop" required="true" type="string" />
 	<cfargument name="CurrentTime" required="true" type="date" />
 
 
@@ -48,18 +48,44 @@ description="Accepts FROM stop_id and a datetime and outputs a table with releva
 
 	<!--- Query that should show the relevant schedule times. --->
 	<cfquery name="DepartureTimes" dbtype="ODBC" datasource="SecureSource">
-		SELECT * FROM vsd.#dbprefix#_trip_stop_datetimes
-		WHERE stop_id=#fromStop# 
-		AND ActualDateTime > #CurrentTime#
-		AND ActualDateTime < #maxFutureTime#
-		AND pickup_type = 0
-		ORDER BY ActualDateTime
+		<!--- if fromStop is numeric, it's an ETS stop --->
+		<cfif isNumeric(fromStop)>
+			SELECT * FROM (SELECT * FROM vsd.#dbprefix#_trip_stop_datetimes
+			UNION
+			SELECT * FROM vsd.#dbprefix#_trip_stop_datetimes_StAlbert
+			UNION
+			SELECT * FROM vsd.#dbprefix#_trip_stop_datetimes_Strathcona) AS AllDatetimes
+			WHERE stop_id=#fromStop# 
+			AND ActualDateTime > #CurrentTime#
+			AND ActualDateTime < #maxFutureTime#
+			AND pickup_type = 0
+			ORDER BY ActualDateTime
+		<cfelseif left(fromStop, 3) EQ "Str">
+			SELECT * FROM vsd.#dbprefix#_trip_stop_datetimes_Strathcona
+			WHERE stop_id=#Mid(fromStop, 4, 99)# 
+			AND ActualDateTime > #CurrentTime#
+			AND ActualDateTime < #maxFutureTime#
+			AND pickup_type = 0
+			ORDER BY ActualDateTime
+		<cfelse><!--- otherwise it's St. Albert --->
+			SELECT * FROM vsd.#dbprefix#_trip_stop_datetimes_StAlbert
+			WHERE stop_id=#Mid(fromStop, 4, 99)# 
+			AND ActualDateTime > #CurrentTime#
+			AND ActualDateTime < #maxFutureTime#
+			AND pickup_type = 0
+			ORDER BY ActualDateTime
+		</cfif>
 	</cfquery>
-
-
+<!--- <cfdump var="#departureTimes#"> --->
 	<!--- This assumes a valid stop is given. I should handle this --->
 	<cfquery name="StopInfo" dbtype="ODBC" datasource="SecureSource">
+		<cfif isNumeric(fromStop)>
 		SELECT * FROM vsd.#dbprefix#_stops WHERE stop_id=#fromStop#
+		<cfelseif left(fromStop, 3) EQ "Str">
+		SELECT * FROM vsd.#dbprefix#_stops_Strathcona WHERE stop_id=#mid(fromStop, 4, 99)#
+		<cfelse>
+		SELECT * FROM vsd.#dbprefix#_stops_StAlbert WHERE stop_id=#mid(fromStop, 4, 99)#
+		</cfif>
 	</cfquery>
 	
 	<cfoutput>
@@ -78,7 +104,7 @@ description="Accepts FROM stop_id and a datetime and outputs a table with releva
 		<cfloop query="DepartureTimes">
 			<!--- Only show if the time hasn't elapsed --->
 			<tr data-tripid="#trip_id#" data-sequence="#stop_sequence#">
-				<td class="tN">#(stop_headsign)#</td>
+				<td class="tN"><cfif trip_headsign NEQ 1>#route_id# </cfif><cfif len(stop_headsign)>#stop_headsign#<cfelse>#trip_headsign#</cfif></td>
 				<td class="aT" data-scheduled="#ActualDateTime#" data-datetime="#ActualDateTime#">#TimeFormat(ActualDateTime, "h:mm tt")#</td>
 				<td class="cD"></td>
 			</tr>
@@ -135,9 +161,7 @@ description="Accepts FROM stop_id and a datetime and outputs a table with releva
 		<cfset counter=0 />
 		<cfloop list="#url.fromStop#" index="stop">
 			<cfif counter++ GT 0><div style="margin:30px;"></div></cfif>
-			<cfif isNumeric(stop)>
 			#getDepartures(stop, currentTime)#
-			</cfif>
 		</cfloop>
 		</cfoutput>
 

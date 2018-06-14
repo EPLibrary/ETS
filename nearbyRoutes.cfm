@@ -63,6 +63,7 @@ from a given point to the nearest route stop to that point --->
 	--->
 
 <!--- This looks cool but is sorting by route_id, not distance --->
+<!--- The horrifying way this query was done seemed relatively fast compared to other approaches. --->
 	<cfquery name="RouteByNearestStopDist" dbtype="ODBC" datasource="SecureSource">
 		WITH summary AS (
 	SELECT sdt.stop_id, sdt.route_id,
@@ -70,20 +71,52 @@ from a given point to the nearest route stop to that point --->
 	ROW_NUMBER() OVER(PARTITION BY sdt.route_id ORDER BY
 	(6371000*acos(cos(radians(#form.lat#))*cos(radians(stop_lat)) * cos(radians(stop_lon )-radians(#form.lon#))+sin(radians(#form.lat#)) * sin(radians(stop_lat)))) ASC) AS rk
 		FROM vsd.#dbprefix#_trip_stop_datetimes sdt
-		JOIN vsd.#dbprefix#_stops s ON s.stop_id=sdt.stop_id
+		JOIN vsd.#dbprefix#_stops_all_agencies_unique s ON s.stop_id=sdt.stop_id
 		WHERE ActualDateTime > DATEADD(n,-5, '#DateTimeFormat(SpecifiedDateTime, "YYYY-MM-DD HH:NN:SS")#') AND ActualDateTime < DATEADD(n,90, '#DateTimeFormat(SpecifiedDateTime, "YYYY-MM-DD HH:NN:SS")#')
 		<!--- Limiting to stops within a few km is slighly faster, but limits results, obviously. This may usually be desirable --->
 		AND sdt.stop_id IN (
 			SELECT closeStops.stop_id FROM (
 			SELECT closeStopsInner.stop_id, ( 6371000 * acos( cos( radians(#form.lat#) ) * cos( radians( stop_lat ) ) 
 			* cos( radians( stop_lon ) - radians(#form.lon#) ) + sin( radians(#form.lat#) ) * sin(radians(stop_lat)) ) ) AS distance 
-			FROM vsd.#dbprefix#_stops AS closeStopsInner
+			FROM vsd.#dbprefix#_stops_all_agencies_unique AS closeStopsInner
+			) AS closeStops WHERE closeStops.distance < #form.range#
+			)
+	UNION
+		SELECT sdt.stop_id, sdt.route_id,
+	(6371000*acos(cos(radians(#form.lat#))*cos(radians(stop_lat)) * cos(radians(stop_lon )-radians(#form.lon#))+sin(radians(#form.lat#)) * sin(radians(stop_lat)))) AS distance,
+	ROW_NUMBER() OVER(PARTITION BY sdt.route_id ORDER BY
+	(6371000*acos(cos(radians(#form.lat#))*cos(radians(stop_lat)) * cos(radians(stop_lon )-radians(#form.lon#))+sin(radians(#form.lat#)) * sin(radians(stop_lat)))) ASC) AS rk
+		FROM vsd.#dbprefix#_trip_stop_datetimes_StAlbert sdt
+		JOIN vsd.#dbprefix#_stops_all_agencies_unique s ON s.stop_id=sdt.stop_id
+		WHERE ActualDateTime > DATEADD(n,-5, '#DateTimeFormat(SpecifiedDateTime, "YYYY-MM-DD HH:NN:SS")#') AND ActualDateTime < DATEADD(n,90, '#DateTimeFormat(SpecifiedDateTime, "YYYY-MM-DD HH:NN:SS")#')
+		<!--- Limiting to stops within a few km is slighly faster, but limits results, obviously. This may usually be desirable --->
+		AND sdt.stop_id IN (
+			SELECT closeStops.stop_id FROM (
+			SELECT closeStopsInner.stop_id, ( 6371000 * acos( cos( radians(#form.lat#) ) * cos( radians( stop_lat ) ) 
+			* cos( radians( stop_lon ) - radians(#form.lon#) ) + sin( radians(#form.lat#) ) * sin(radians(stop_lat)) ) ) AS distance 
+			FROM vsd.#dbprefix#_stops_all_agencies_unique AS closeStopsInner
+			) AS closeStops WHERE closeStops.distance < #form.range#
+			)
+	UNION
+			SELECT sdt.stop_id, sdt.route_id,
+	(6371000*acos(cos(radians(#form.lat#))*cos(radians(stop_lat)) * cos(radians(stop_lon )-radians(#form.lon#))+sin(radians(#form.lat#)) * sin(radians(stop_lat)))) AS distance,
+	ROW_NUMBER() OVER(PARTITION BY sdt.route_id ORDER BY
+	(6371000*acos(cos(radians(#form.lat#))*cos(radians(stop_lat)) * cos(radians(stop_lon )-radians(#form.lon#))+sin(radians(#form.lat#)) * sin(radians(stop_lat)))) ASC) AS rk
+		FROM vsd.#dbprefix#_trip_stop_datetimes_Strathcona sdt
+		JOIN vsd.#dbprefix#_stops_all_agencies_unique s ON s.stop_id=sdt.stop_id
+		WHERE ActualDateTime > DATEADD(n,-5, '#DateTimeFormat(SpecifiedDateTime, "YYYY-MM-DD HH:NN:SS")#') AND ActualDateTime < DATEADD(n,90, '#DateTimeFormat(SpecifiedDateTime, "YYYY-MM-DD HH:NN:SS")#')
+		<!--- Limiting to stops within a few km is slighly faster, but limits results, obviously. This may usually be desirable --->
+		AND sdt.stop_id IN (
+			SELECT closeStops.stop_id FROM (
+			SELECT closeStopsInner.stop_id, ( 6371000 * acos( cos( radians(#form.lat#) ) * cos( radians( stop_lat ) ) 
+			* cos( radians( stop_lon ) - radians(#form.lon#) ) + sin( radians(#form.lat#) ) * sin(radians(stop_lat)) ) ) AS distance 
+			FROM vsd.#dbprefix#_stops_all_agencies_unique AS closeStopsInner
 			) AS closeStops WHERE closeStops.distance < #form.range#
 			)
 		)
 		SELECT s.route_id as value, CONCAT(s.route_id, ' ', r.route_long_name, ' - ', CAST(s.distance AS int), 'm') AS text --, r.route_short_name, s.distance
 		FROM summary s
-		JOIN vsd.#dbprefix#_routes r ON s.route_id=r.route_id
+		JOIN vsd.#dbprefix#_routes_all_agencies r ON s.route_id=r.route_id
 		WHERE s.rk=1
 		ORDER BY distance
 	</cfquery>

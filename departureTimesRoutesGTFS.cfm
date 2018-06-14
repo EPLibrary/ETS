@@ -51,12 +51,12 @@ description="Accepts FROM and TO stop IDs, and a datetime and outputs a table wi
 
 
 	<cfquery name="fromStop" dbtype="ODBC" datasource="SecureSource">
-		SELECT * FROM vsd.#dbprefix#_stops WHERE stop_id=#from#
+		SELECT * FROM vsd.#dbprefix#_stops_all_agencies_unique WHERE stop_id=#from#
 	</cfquery>
 	
 	<cfif isDefined('to') AND isNumeric(to)>
 		<cfquery name="toStop" dbtype="ODBC" datasource="SecureSource">
-			SELECT * FROM vsd.#dbprefix#_stops WHERE stop_id=#to#
+			SELECT * FROM vsd.#dbprefix#_stops_all_agencies_unique WHERE stop_id=#to#
 		</cfquery>
 	</cfif>
 
@@ -65,15 +65,15 @@ description="Accepts FROM and TO stop IDs, and a datetime and outputs a table wi
 		<cfquery name="DepartureTimes" dbtype="ODBC" datasource="SecureSource">
 			SELECT * FROM (
 			SELECT
-				(SELECT TOP 1 sdt2.ActualDateTime FROM vsd.#dbprefix#_trip_stop_datetimes sdt2
+				(SELECT TOP 1 sdt2.ActualDateTime FROM vsd.#dbprefix#_trip_stop_datetimes#agencysuffix# sdt2
 				WHERE stop_id=#to#
 				AND trip_id=sdt.trip_id
 				AND stop_sequence > sdt.stop_sequence
 				AND ActualDateTime > #CurrentTime#
 				ORDER BY sdt2.ActualDateTime
 			) AS dest_arrival_datetime,
-			* FROM vsd.#dbprefix#_trip_stop_datetimes sdt
-			WHERE route_id=#rid#
+			* FROM vsd.#dbprefix#_trip_stop_datetimes#agencysuffix# sdt
+			WHERE route_id='#rid#'
 			AND stop_id=#from#
 			AND ActualDateTime > #CurrentTime# AND ActualDateTime < #MaxFutureTime#
 			) AS stops WHERE dest_arrival_datetime IS NOT NULL
@@ -82,8 +82,8 @@ description="Accepts FROM and TO stop IDs, and a datetime and outputs a table wi
 		</cfquery>	
 	<cfelse>
 		<cfquery name="DepartureTimes" dbtype="ODBC" datasource="SecureSource">
-			SELECT NULL AS dest_arrival_datetime, * FROM vsd.#dbprefix#_trip_stop_datetimes sdt
-			WHERE route_id=#rid#
+			SELECT NULL AS dest_arrival_datetime, * FROM vsd.#dbprefix#_trip_stop_datetimes#agencysuffix# sdt
+			WHERE route_id='#rid#'
 			AND stop_id=#from#
 			AND ActualDateTime > #CurrentTime# AND ActualDateTime < #MaxFutureTime#
 			AND pickup_type = 0
@@ -116,7 +116,7 @@ description="Accepts FROM and TO stop IDs, and a datetime and outputs a table wi
 	<cfloop query="DepartureTimes">
 		<!--- Only show if the time hasn't elapsed --->
 		<tr data-tripid="#trip_id#" data-sequence="#stop_sequence#">
-			<td class="tN">#(stop_headsign)#</td>
+			<td class="tN"><cfif trip_headsign NEQ 1>#route_id# </cfif><cfif len(stop_headsign)>#stop_headsign#<cfelse>#trip_headsign#</cfif></td>
 			<td class="aT" data-scheduled="#ActualDateTime#" data-datetime="#ActualDateTime#">#TimeFormat(ActualDateTime, "h:mm tt")#</td>
 			<td class="cD"></td>
 		</tr>
@@ -138,7 +138,7 @@ description="Accepts FROM and TO stop IDs, and a datetime and outputs a table wi
 </cffunction><!---getRouteDepartures--->
 
 
-<cfif isDefined('url.rid') AND isNumeric(url.rid)
+<cfif isDefined('url.rid') AND len(url.rid)
 	AND isDefined('url.from') AND isNumeric(url.from)>
 
 	<cfif isDefined('url.to') AND url.from IS url.to>
@@ -151,7 +151,16 @@ description="Accepts FROM and TO stop IDs, and a datetime and outputs a table wi
 			SELECT TOP 1 * FROM vsd.ETS_activeDB WHERE active = 1
 		</cfquery>
 
-		<cfset dbprefix = activedb.prefix />		
+		<cfset dbprefix = activedb.prefix />
+
+		<!--- Get the prefix for the particular agency this route is for --->
+		<cfquery name="RouteAgency" dbtype="ODBC" datasource="SecureSource">
+			SELECT agency_id FROM vsd.#dbprefix#_routes_all_agencies WHERE route_id='#url.rid#'
+		</cfquery>
+		<cfset agencyid = RouteAgency.agency_id />
+		<cfset agencysuffix = "" />
+		<cfif agencyid EQ 2><cfset agencysuffix = "_StAlbert" /></cfif>
+		<cfif agencyid EQ 3><cfset agencySuffix = "_Strathcona" /></cfif>			
 		<!--- Setting date variables for DepartureTimes query --->
 		<!--- Set the Day of Week. Sunday is 1, Saturday is 7 --->
 		<cfif isDefined('url.dow') AND len(url.dow) GTE 3>
