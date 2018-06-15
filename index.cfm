@@ -1086,7 +1086,7 @@ if (stop=="lrt") {
 		    marker.addListener('click', function() {
 	          $('#to').val(station.id);
 	          $('#to').trigger('change');
-	          $('#closeMap a').trigger('click');
+	          closeMap();
 
 	        });
 		    markers.push(marker);
@@ -1155,7 +1155,7 @@ if (stop=="lrt") {
 
 		    marker.addListener('click', function() {
 	          routeToSelectize.setValue(stop.id);
-	          $('#closeMap a').trigger('click');
+	          closeMap();
 
 	        });
 		    markers.push(marker);
@@ -1287,7 +1287,7 @@ if (!stop) {
 
 			    marker.addListener('click', function() {
 		          <cfif isDefined('url.rid')>routeFromSelectize<cfelse>selectize</cfif>.setValue(marker.getLabel());
-		          $('#closeMap a').trigger('click');
+		          closeMap();
 
 		        });
 			    markers.push(marker);
@@ -1317,10 +1317,27 @@ if (needsRefresh) {
 	},400);
 }
 
+
+
+history.pushState(null, null, document.URL);
+window.addEventListener('popstate', backAction);
+
 };//endinitmap
 
 
+//Prevent user from going back while in the map - close map instead
+function backAction(event) {
+    closeMap();
+    window.removeEventListener('popstate', backAction);
+}
+
 $('#closeMap a').click(function(){
+	window.removeEventListener('popstate', backAction);
+	closeMap();
+	window.history.back();
+});
+
+function closeMap() {
 	$('#mapModal, #closeMap').removeClass('fadeIn');
 	$('#mapModal').addClass('fadeOut');
 	setTimeout(function(){
@@ -1331,9 +1348,8 @@ $('#closeMap a').click(function(){
 	//Remove the GeoMarker - see if this clears up location bugs
 	// GeoMarker.setMap(null);
 	// geomarkerCreated = false;
-	// $('#mapNotice').show();
-
-});
+	// $('#mapNotice').show();	
+}
 
 $('#mapNotice').on('click', function(){
 	$('tr[data-tripid]:first').addClass('pulse');
