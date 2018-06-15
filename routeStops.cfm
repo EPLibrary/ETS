@@ -43,20 +43,20 @@ Hopefully this will make it much easier to select the appropriate stop
 <cfif isDefined('url.routeFrom') AND isNumeric(url.routeFrom)>
 
 <cfquery name="routeStops" dbtype="ODBC" datasource="SecureSource">
-	SELECT DISTINCT astop_id, sdt.stop_id, stop_name, stop_lat, stop_lon FROM vsd.#dbprefix#_trip_stop_datetimes#agencysuffix# sdt
-	JOIN vsd.#dbprefix#_stops_all_agencies_unique s ON s.stop_id=sdt.stop_id
+	SELECT DISTINCT sdt.stop_id, stop_name, stop_lat, stop_lon FROM vsd.#dbprefix#_trip_stop_datetimes#agencysuffix# sdt
+	JOIN vsd.#dbprefix#_stops#agencysuffix# s ON s.stop_id=sdt.stop_id
 	WHERE route_id='#url.rid#'
 	-- Does the current route have any instances
 	-- where it is in the same trip as the routeFrom
 	-- and has a stop_sequence that is higher?
-	AND stop_sequence > (SELECT TOP 1 stop_sequence FROM vsd.#dbprefix#_stop_times_all_agencies WHERE trip_id = sdt.trip_id AND stop_id=#url.routeFrom#)
+	AND stop_sequence > (SELECT TOP 1 stop_sequence FROM vsd.#dbprefix#_stop_times#agencysuffix# WHERE trip_id = sdt.trip_id AND stop_id=#url.routeFrom#)
 	-- ORDER BY stop_sequence
 </cfquery>
 <cfelse>
 
 <cfquery name="routeStops" dbtype="ODBC" datasource="SecureSource">
-	SELECT DISTINCT astop_id, sdt.stop_id, stop_name, stop_lat, stop_lon FROM vsd.#dbprefix#_trip_stop_datetimes#agencysuffix# sdt
-	JOIN vsd.#dbprefix#_stops_all_agencies_unique s ON s.stop_id=sdt.stop_id
+	SELECT DISTINCT sdt.stop_id, stop_name, stop_lat, stop_lon FROM vsd.#dbprefix#_trip_stop_datetimes#agencysuffix# sdt
+	JOIN vsd.#dbprefix#_stops#agencysuffix# s ON s.stop_id=sdt.stop_id
 	WHERE route_id='#url.rid#'
 	-- ORDER BY stop_sequence
 </cfquery>
@@ -66,9 +66,9 @@ Hopefully this will make it much easier to select the appropriate stop
 <cfset stopOptions = ArrayNew(1) />
 <cfloop query="routeStops">
 	<cfset stop = structNew() />
-	<cfset stop["value"]=astop_id />
-	<cfset stop["id"]=astop_id />
-	<cfset stop["text"]="#astop_id# #stop_name#" />
+	<cfset stop["value"]=stop_id />
+	<cfset stop["id"]=stop_id />
+	<cfset stop["text"]="#stop_id# #stop_name#" />
 	<cfset stop["lat"]="#stop_lat#" />
 	<cfset stop["lon"]="#stop_lon#" />
 	<cfset ArrayAppend(stopOptions, stop) />

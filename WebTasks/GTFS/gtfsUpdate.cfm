@@ -208,14 +208,14 @@ AND vsd.#dbprefix#_stops_Strathcona.stop_lon+.0001 > (SELECT s.stop_lon FROM vsd
 --Should have 37 matches.
 
 --Clean up strathcona street and avenue abbreviations
-UPDATE vsd.#dbprefix#_stops_Strathcona SET stop_name = REPLACE(stop_name, ' St ', ' Street ') WHERE stop_name like '% St %'
 UPDATE vsd.#dbprefix#_stops_Strathcona SET stop_name = REPLACE(stop_name, ' St', ' Street') WHERE stop_name like '% St'
+UPDATE vsd.#dbprefix#_stops_Strathcona SET stop_name = REPLACE(stop_name, ' St ', ' Street ') WHERE stop_name like '% St %'
 UPDATE vsd.#dbprefix#_stops_Strathcona SET stop_name = REPLACE(stop_name, ' St. ', ' Street ') WHERE stop_name like '% St. %'
 UPDATE vsd.#dbprefix#_stops_Strathcona SET stop_name = REPLACE(stop_name, ' St.', ' Street') WHERE stop_name like '% St.'
-UPDATE vsd.#dbprefix#_stops_Strathcona SET stop_name = REPLACE(stop_name, ' Av ', ' Avenue ') WHERE stop_name like '% Av %'
 UPDATE vsd.#dbprefix#_stops_Strathcona SET stop_name = REPLACE(stop_name, ' Av', ' Avenue') WHERE stop_name like '% Av'
-UPDATE vsd.#dbprefix#_stops_Strathcona SET stop_name = REPLACE(stop_name, ' Ave ', ' Avenue ') WHERE stop_name like '% Ave %'
+UPDATE vsd.#dbprefix#_stops_Strathcona SET stop_name = REPLACE(stop_name, ' Av ', ' Avenue ') WHERE stop_name like '% Av %'
 UPDATE vsd.#dbprefix#_stops_Strathcona SET stop_name = REPLACE(stop_name, ' Ave', ' Avenue') WHERE stop_name like '% Ave'
+UPDATE vsd.#dbprefix#_stops_Strathcona SET stop_name = REPLACE(stop_name, ' Ave ', ' Avenue ') WHERE stop_name like '% Ave %'
 UPDATE vsd.#dbprefix#_stops_Strathcona SET stop_name = REPLACE(stop_name, ' Ave. ', ' Avenue ') WHERE stop_name like '% Ave. %'
 UPDATE vsd.#dbprefix#_stops_Strathcona SET stop_name = REPLACE(stop_name, ' Ave.', ' Avenue') WHERE stop_name like '% Ave.'
 -- Replace and with ampersand to be consistent with 99.5% of other records
