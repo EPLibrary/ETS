@@ -265,7 +265,7 @@ SELECT * FROM vsd.#dbprefix#_stops_all_agencies_unique ORDER BY astop_id
 </div><!--.container .clearfix-->
 
 
-
+<script src="https://www2.epl.ca/javascript/markerclusterer.js"></script>
 <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyA9cke0k8wuLrcme-z2TqJgXUf3tButKyQ"></script>
 <script src="https://www2.epl.ca/javascript/geolocation-marker.js?v2" async defer></script>
 <script>
@@ -1004,6 +1004,9 @@ var busRoute;
 
 // An array of all markers to show on Google Map
 var markers = [];
+var markerCluster;
+
+
 //Attempting to fix .getCurrentPosition callback only firing once with multiple calls
 
 // Initializes the google map - stop is required
@@ -1056,6 +1059,7 @@ if (!map) {
         markers[i].setMap(null);
     }
     markers = [];
+    if (markerCluster) markerCluster.clearMarkers();
 }
 
 if (navigator.geolocation) {
@@ -1065,6 +1069,7 @@ if (navigator.geolocation) {
 		// console.log('created geoMarker');
 	}
 }
+
 
 if (stop=="lrt") {
 	// Center on Churchill station
@@ -1079,8 +1084,7 @@ if (stop=="lrt") {
 			    position: {lat:station.lat, lng:station.lon},
 			    label: ""+station.abbr,
 				title: station.name,
-				icon: icons["stopGreen"].icon,
-			    map: map
+				icon: icons["stopGreen"].icon
 		    });
 
 		    marker.addListener('click', function() {
@@ -1092,6 +1096,7 @@ if (stop=="lrt") {
 		    markers.push(marker);
 		}
 	});
+	markerCluster = new MarkerClusterer(map, markers, {imagePath:iconBase+"m",gridSize:30,maxZoom:16,minimumClusterSize:2});
 
 	// The above is fabulous, but I want to draw both of the lines on the map. How can I do that?
 		busRoute = new google.maps.Polyline({
@@ -1150,7 +1155,7 @@ if (stop=="lrt") {
 			    position: {lat:stop.lat, lng:stop.lon},
 			    label: ""+stop.id,
 				icon: icons["stopGreen"].icon,
-			    map: map
+				map: map
 		    });
 
 		    marker.addListener('click', function() {
@@ -1161,6 +1166,7 @@ if (stop=="lrt") {
 		    markers.push(marker);
 		}
 	});
+	markerCluster = new MarkerClusterer(map, markers, {imagePath:iconBase+"m",gridSize:30,maxZoom:16,minimumClusterSize:2});
 
 
 
@@ -1212,7 +1218,7 @@ $.get('stopInfo.cfm?stopid='+stop+'&trip='+trip+'&seq='+seq+'&dest='+dest).done(
 					label: ""+stopLabel,
 					title: data.next[i].stop_name,
 					icon: icons["stopRed"].icon,
-					map: map
+					map:map
 				});
 				markers.push(nextStopMarker);				
 			} else {
@@ -1221,15 +1227,14 @@ $.get('stopInfo.cfm?stopid='+stop+'&trip='+trip+'&seq='+seq+'&dest='+dest).done(
 					label: ""+thisStopSeq,
 					title: data.next[i].stop_name,
 					icon: icons["stopBlue"].icon,
-					map: map
+					map:map
 				});
-				markers.push(nextStopMarker);	
+				markers.push(nextStopMarker);
 			}
 			lastStop = data.next[i].stop_id;
 		}
 
 	}
-
 });//.get().done
 }//end if stop
 //else we show the closest stops, or the stops for the selected route
@@ -1281,8 +1286,7 @@ if (!stop) {
 				    position: {lat:stop.lat, lng:stop.lon},
 				    label: ""+stop.id,
 					//title: data.stop.stop_name,
-					icon: icons["stopGreen"].icon,
-				    map: map
+					icon: icons["stopGreen"].icon
 			    });
 
 			    marker.addListener('click', function() {
@@ -1298,6 +1302,7 @@ if (!stop) {
 	    // for (var i = 0; i < markers.length; i++) {
 	    //   markers[i].setMap(map);
 	    // }
+markerCluster = new MarkerClusterer(map, markers, {imagePath:iconBase+"m",gridSize:30,maxZoom:16,minimumClusterSize:2});
 	});
 }//end if !stop
 
@@ -1318,11 +1323,32 @@ if (needsRefresh) {
 }
 
 
-
 history.pushState(null, null, document.URL);
 window.addEventListener('popstate', backAction);
 
+
 };//endinitmap
+
+/**
+* Triggers the clusterclick event and zoom's if the option is set.
+*/
+ClusterIcon.prototype.triggerClusterClick = function() {
+var markerClusterer = this.cluster_.getMarkerClusterer();
+
+// Trigger the clusterclick event.
+google.maps.event.trigger(markerClusterer, 'clusterclick', this.cluster_);
+
+if (markerClusterer.isZoomOnClick()) {
+// Zoom into the cluster.
+// this.map_.fitBounds(this.cluster_.getBounds());
+
+// modified zoom in function
+this.map_.setZoom(markerClusterer.getMaxZoom()+1);
+this.map_.setCenter(this.cluster_.getCenter()); // zoom to the cluster center
+
+ }
+};
+
 
 
 //Prevent user from going back while in the map - close map instead
