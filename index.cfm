@@ -326,7 +326,7 @@ async function refreshRoutes() {
 		var originalRid = $('#rid').val();
 		$('#mainBusRouteLabel').html('Loading...');
         getUserPosition().then((position) => {
-			$.post('nearbyRoutes.cfm', {lat:position.coords.latitude, lon:position.coords.longitude, range:4000, dow:$('#dow').val(), time:$('#time').val()}).done(function(data) {
+			$.post('nearbyRoutes.cfm', {lat:position.coords.latitude, lon:position.coords.longitude, dow:$('#dow').val(), time:$('#time').val()}).done(function(data) {
 				ridSelectize.clearOptions();
 				ridSelectize.addOption(data);
 				$('#mainBusRouteLabel').html('Nearby Route');

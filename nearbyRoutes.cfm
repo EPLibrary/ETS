@@ -41,7 +41,7 @@ from a given point to the nearest route stop to that point --->
 <!--- For privacy reasons I'd rather have people submit via post so the location isn't in the URL --->
 <cfif isDefined('form.lat') AND isDefined('form.lon') AND isNumeric(form.lat) AND isNumeric(form.lon)>
 	<!--- Allow the range from the current location to be customized --->
-	<cfparam name="form.range" default="3000" />
+	<cfparam name="form.range" default="0" />
 
 	<cfinclude template="/AppsRoot/Includes/functions/querytostruct.cfm" />
 
@@ -64,7 +64,7 @@ from a given point to the nearest route stop to that point --->
 
 <!--- This looks cool but is sorting by route_id, not distance --->
 <!--- The horrifying way this query was done seemed relatively fast compared to other approaches. --->
-	<cfquery name="RouteByNearestStopDist" dbtype="ODBC" datasource="SecureSource">
+<!--- 	<cfquery name="RouteByNearestStopDist" dbtype="ODBC" datasource="SecureSource">
 		WITH summary AS (
 	SELECT sdt.stop_id, sdt.route_id,
 	(6371000*acos(cos(radians(#form.lat#))*cos(radians(stop_lat)) * cos(radians(stop_lon )-radians(#form.lon#))+sin(radians(#form.lat#)) * sin(radians(stop_lat)))) AS distance,
@@ -119,8 +119,24 @@ from a given point to the nearest route stop to that point --->
 		JOIN vsd.#dbprefix#_routes_all_agencies r ON s.route_id=r.route_id
 		WHERE s.rk=1
 		ORDER BY distance
-	</cfquery>
+	</cfquery> --->
 <!--- Stupid CF capitalizes these which doesn't work with the dropdown plugin --->
+
+<!--- This new query is *much* faster and shows all the routes, but it doesn't account for the current time at all.
+(ie a route that has no trips at this time of the day still shows up) --->
+<cfquery name="RouteByNearestStopDist" dbtype="ODBC" datasource="SecureSource">
+	SELECT *, CONCAT(value, ' ', route_long_name, ' - ', CAST(distance AS int), 'm') AS text FROM (
+	SELECT sr.stop_id, sr.route_id AS value, sr.agency_id, stop_lat, stop_lon, route_long_name,
+	(6371000*acos(cos(radians(#form.lat#))*cos(radians(stop_lat)) * cos(radians(stop_lon)-radians(#form.lon#))+sin(radians(#form.lat#)) * sin(radians(stop_lat)))) AS distance,
+	ROW_NUMBER() OVER(PARTITION BY sr.route_id ORDER BY
+	(6371000*acos(cos(radians(#form.lat#))*cos(radians(stop_lat)) * cos(radians(stop_lon)-radians(#form.lon#))+sin(radians(#form.lat#)) * sin(radians(stop_lat)))) ASC) AS rk
+	 FROM vsd.ETS1_stop_routes_all_agencies sr
+	JOIN vsd.ETS1_stops_all_agencies s ON s.stop_id=sr.stop_id AND s.agency_id=sr.agency_id
+	JOIN vsd.ETS1_routes_all_agencies r ON sr.route_id=r.route_id AND sr.agency_id=r.agency_id
+	) AS ard
+	WHERE rk=1 <cfif range GT 0>AND distance < #form.range#</cfif>
+	ORDER BY distance, value  ASC
+</cfquery>
 
 <cfoutput>#SerializeJSON(QueryToStruct(RouteByNearestStopDist))#</cfoutput>
 <cfelse>

@@ -240,6 +240,16 @@ UPDATE vsd.#dbprefix#_stops SET exclusive=1
 
 
 
+<cfquery name="UpdateRouteStops" dbtype="ODBC" datasource="ReadWriteSource">
+	DELETE FROM vsd.#dbprefix#_stop_routes_all_agencies
+
+	INSERT INTO vsd.#dbprefix#_stop_routes_all_agencies (stop_id, route_id, agency_id)
+	SELECT st.stop_id, t.route_id, t.agency_id FROM vsd.#dbprefix#_routes_all_agencies r
+	JOIN vsd.#dbprefix#_trips_all_agencies t ON r.route_id=t.route_id
+	JOIN vsd.#dbprefix#_stop_times_all_agencies st ON st.trip_id=t.trip_id
+	GROUP BY st.stop_id, t.route_id, t.agency_id
+</cfquery>
+
 <!--- If everything seems to be working, now let's switch the active database to the newly updated one. --->
 
 <cfquery name="SwapDBs" dbtype="ODBC" datasource="ReadWriteSource">
