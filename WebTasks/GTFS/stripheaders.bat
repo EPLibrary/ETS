@@ -11,23 +11,23 @@ C:\Windows\System32\findstr.exe /V /R "^[a-z].*[a-z]$" D:\inetpub\temp\gtfs\Edmo
 C:\Windows\System32\findstr.exe /V /R "^[a-z].*[a-z]$" D:\inetpub\temp\gtfs\Edmonton\routes.txt > D:\inetpub\temp\gtfs\Edmonton\routes_noheader.txt
 C:\Windows\System32\findstr.exe /V /R "^[a-z].*[a-z]$" D:\inetpub\temp\gtfs\Edmonton\agency.txt > D:\inetpub\temp\gtfs\Edmonton\agency_noheader.txt
 
-rem The following files don't lose their headers this way because the values are quoted.
+rem This removes blank lines from the files, which will break the import
 rem Strathcona County
-rem C:\Windows\System32\findstr.exe /V /R "^[a-z].*[a-z]$" D:\inetpub\temp\gtfs\Strathcona\stop_times.txt > D:\inetpub\temp\gtfs\Strathcona\stop_times_noheader.txt
-rem C:\Windows\System32\findstr.exe /V /R "^[a-z].*[a-z]$" D:\inetpub\temp\gtfs\Strathcona\shapes.txt > D:\inetpub\temp\gtfs\Strathcona\shapes_noheader.txt
-rem C:\Windows\System32\findstr.exe /V /R "^[a-z].*[a-z]$" D:\inetpub\temp\gtfs\Strathcona\trips.txt > D:\inetpub\temp\gtfs\Strathcona\trips_noheader.txt
-rem C:\Windows\System32\findstr.exe /V /R "^[a-z].*[a-z]$" D:\inetpub\temp\gtfs\Strathcona\calendar_dates.txt > D:\inetpub\temp\gtfs\Strathcona\calendar_dates_noheader.txt
-rem C:\Windows\System32\findstr.exe /V /R "^[a-z].*[a-z]$" D:\inetpub\temp\gtfs\Strathcona\stops.txt > D:\inetpub\temp\gtfs\Strathcona\stops_noheader.txt
-rem C:\Windows\System32\findstr.exe /V /R "^[a-z].*[a-z]$" D:\inetpub\temp\gtfs\Strathcona\transfers.txt > D:\inetpub\temp\gtfs\Strathcona\transfers_noheader.txt
-rem C:\Windows\System32\findstr.exe /V /R "^[a-z].*[a-z]$" D:\inetpub\temp\gtfs\Strathcona\routes.txt > D:\inetpub\temp\gtfs\Strathcona\routes_noheader.txt
-rem C:\Windows\System32\findstr.exe /V /R "^[a-z].*[a-z]$" D:\inetpub\temp\gtfs\Strathcona\agency.txt > D:\inetpub\temp\gtfs\Strathcona\agency_noheader.txt
-rem 
-rem rem St. Albert
-rem C:\Windows\System32\findstr.exe /V /R "^[a-z].*[a-z]$" D:\inetpub\temp\gtfs\StAlbert\stop_times.txt > D:\inetpub\temp\gtfs\StAlbert\stop_times_noheader.txt
-rem C:\Windows\System32\findstr.exe /V /R "^[a-z].*[a-z]$" D:\inetpub\temp\gtfs\StAlbert\shapes.txt > D:\inetpub\temp\gtfs\StAlbert\shapes_noheader.txt
-rem C:\Windows\System32\findstr.exe /V /R "^[a-z].*[a-z]$" D:\inetpub\temp\gtfs\StAlbert\trips.txt > D:\inetpub\temp\gtfs\StAlbert\trips_noheader.txt
-rem C:\Windows\System32\findstr.exe /V /R "^[a-z].*[a-z]$" D:\inetpub\temp\gtfs\StAlbert\calendar_dates.txt > D:\inetpub\temp\gtfs\StAlbert\calendar_dates_noheader.txt
-rem C:\Windows\System32\findstr.exe /V /R "^[a-z].*[a-z]$" D:\inetpub\temp\gtfs\StAlbert\stops.txt > D:\inetpub\temp\gtfs\StAlbert\stops_noheader.txt
-rem C:\Windows\System32\findstr.exe /V /R "^[a-z].*[a-z]$" D:\inetpub\temp\gtfs\StAlbert\transfers.txt > D:\inetpub\temp\gtfs\StAlbert\transfers_noheader.txt
-rem C:\Windows\System32\findstr.exe /V /R "^[a-z].*[a-z]$" D:\inetpub\temp\gtfs\StAlbert\routes.txt > D:\inetpub\temp\gtfs\StAlbert\routes_noheader.txt
-rem C:\Windows\System32\findstr.exe /V /R "^[a-z].*[a-z]$" D:\inetpub\temp\gtfs\StAlbert\agency.txt > D:\inetpub\temp\gtfs\StAlbert\agency_noheader.txt
+C:\Windows\System32\findstr.exe /V /R "^$" D:\inetpub\temp\gtfs\Strathcona\stop_times.txt > D:\inetpub\temp\gtfs\Strathcona\stop_times_noblank.txt
+C:\Windows\System32\findstr.exe /V /R "^$" D:\inetpub\temp\gtfs\Strathcona\shapes.txt > D:\inetpub\temp\gtfs\Strathcona\shapes_noblank.txt
+C:\Windows\System32\findstr.exe /V /R "^$" D:\inetpub\temp\gtfs\Strathcona\trips.txt > D:\inetpub\temp\gtfs\Strathcona\trips_noblank.txt
+C:\Windows\System32\findstr.exe /V /R "^$" D:\inetpub\temp\gtfs\Strathcona\calendar_dates.txt > D:\inetpub\temp\gtfs\Strathcona\calendar_dates_noblank.txt
+C:\Windows\System32\findstr.exe /V /R "^$" D:\inetpub\temp\gtfs\Strathcona\stops.txt > D:\inetpub\temp\gtfs\Strathcona\stops_noblank.txt
+C:\Windows\System32\findstr.exe /V /R "^$" D:\inetpub\temp\gtfs\Strathcona\transfers.txt > D:\inetpub\temp\gtfs\Strathcona\transfers_noblank.txt
+C:\Windows\System32\findstr.exe /V /R "^$" D:\inetpub\temp\gtfs\Strathcona\routes.txt > D:\inetpub\temp\gtfs\Strathcona\routes_noblank.txt
+C:\Windows\System32\findstr.exe /V /R "^$" D:\inetpub\temp\gtfs\Strathcona\agency.txt > D:\inetpub\temp\gtfs\Strathcona\agency_noblank.txt
+
+rem St. Albert
+C:\Windows\System32\findstr.exe /V /R "^$" D:\inetpub\temp\gtfs\StAlbert\stop_times.txt > D:\inetpub\temp\gtfs\StAlbert\stop_times_noblank.txt
+C:\Windows\System32\findstr.exe /V /R "^$" D:\inetpub\temp\gtfs\StAlbert\shapes.txt > D:\inetpub\temp\gtfs\StAlbert\shapes_noblank.txt
+C:\Windows\System32\findstr.exe /V /R "^$" D:\inetpub\temp\gtfs\StAlbert\trips.txt > D:\inetpub\temp\gtfs\StAlbert\trips_noblank.txt
+C:\Windows\System32\findstr.exe /V /R "^$" D:\inetpub\temp\gtfs\StAlbert\calendar_dates.txt > D:\inetpub\temp\gtfs\StAlbert\calendar_dates_noblank.txt
+C:\Windows\System32\findstr.exe /V /R "^$" D:\inetpub\temp\gtfs\StAlbert\stops.txt > D:\inetpub\temp\gtfs\StAlbert\stops_noblank.txt
+C:\Windows\System32\findstr.exe /V /R "^$" D:\inetpub\temp\gtfs\StAlbert\transfers.txt > D:\inetpub\temp\gtfs\StAlbert\transfers_noblank.txt
+C:\Windows\System32\findstr.exe /V /R "^$" D:\inetpub\temp\gtfs\StAlbert\routes.txt > D:\inetpub\temp\gtfs\StAlbert\routes_noblank.txt
+C:\Windows\System32\findstr.exe /V /R "^$" D:\inetpub\temp\gtfs\StAlbert\agency.txt > D:\inetpub\temp\gtfs\StAlbert\agency_noblank.txt

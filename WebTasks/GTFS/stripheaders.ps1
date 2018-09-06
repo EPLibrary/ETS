@@ -23,21 +23,21 @@
 & "D:\inetpub\www2.epl.ca\WebTasks\GTFS\stripheaders.bat"
 
 # #Strathcona County
-(gc  D:\inetpub\temp\gtfs\Strathcona\stop_times.txt | select -Skip 1) | sc D:\inetpub\temp\gtfs\Strathcona\stop_times_noheader.txt
-(gc  D:\inetpub\temp\gtfs\Strathcona\shapes.txt | select -Skip 1) | sc D:\inetpub\temp\gtfs\Strathcona\shapes_noheader.txt
-(gc  D:\inetpub\temp\gtfs\Strathcona\trips.txt | select -Skip 1) | sc D:\inetpub\temp\gtfs\Strathcona\trips_noheader.txt
-(gc  D:\inetpub\temp\gtfs\Strathcona\calendar_dates.txt | select -Skip 1) | sc D:\inetpub\temp\gtfs\Strathcona\calendar_dates_noheader.txt
-(gc  D:\inetpub\temp\gtfs\Strathcona\stops.txt | select -Skip 1) | sc D:\inetpub\temp\gtfs\Strathcona\stops_noheader.txt
-#(gc  D:\inetpub\temp\gtfs\Strathcona\transfers.txt | select -Skip 1) | sc D:\inetpub\temp\gtfs\Strathcona\transfers_noheader.txt
-(gc  D:\inetpub\temp\gtfs\Strathcona\routes.txt | select -Skip 1) | sc D:\inetpub\temp\gtfs\Strathcona\routes_noheader.txt
-(gc  D:\inetpub\temp\gtfs\Strathcona\agency.txt | select -Skip 1) | sc D:\inetpub\temp\gtfs\Strathcona\agency_noheader.txt
+(gc  D:\inetpub\temp\gtfs\Strathcona\stop_times_noblank.txt | select -Skip 1) | sc D:\inetpub\temp\gtfs\Strathcona\stop_times_noheader.txt
+(gc  D:\inetpub\temp\gtfs\Strathcona\shapes_noblank.txt | select -Skip 1) | sc D:\inetpub\temp\gtfs\Strathcona\shapes_noheader.txt
+(gc  D:\inetpub\temp\gtfs\Strathcona\trips_noblank.txt | select -Skip 1) | sc D:\inetpub\temp\gtfs\Strathcona\trips_noheader.txt
+(gc  D:\inetpub\temp\gtfs\Strathcona\calendar_dates_noblank.txt | select -Skip 1) | sc D:\inetpub\temp\gtfs\Strathcona\calendar_dates_noheader.txt
+(gc  D:\inetpub\temp\gtfs\Strathcona\stops_noblank.txt | select -Skip 1) | sc D:\inetpub\temp\gtfs\Strathcona\stops_noheader.txt
+#(gc  D:\inetpub\temp\gtfs\Strathcona\transfers_noblank.txt | select -Skip 1) | sc D:\inetpub\temp\gtfs\Strathcona\transfers_noheader.txt
+(gc  D:\inetpub\temp\gtfs\Strathcona\routes_noblank.txt | select -Skip 1) | sc D:\inetpub\temp\gtfs\Strathcona\routes_noheader.txt
+(gc  D:\inetpub\temp\gtfs\Strathcona\agency_noblank.txt | select -Skip 1) | sc D:\inetpub\temp\gtfs\Strathcona\agency_noheader.txt
 
 #St. Albert
-(gc  D:\inetpub\temp\gtfs\StAlbert\stop_times.txt | select -Skip 1) | sc D:\inetpub\temp\gtfs\StAlbert\stop_times_noheader.txt
-(gc  D:\inetpub\temp\gtfs\StAlbert\shapes.txt | select -Skip 1) | sc D:\inetpub\temp\gtfs\StAlbert\shapes_noheader.txt
-(gc  D:\inetpub\temp\gtfs\StAlbert\trips.txt | select -Skip 1) | sc D:\inetpub\temp\gtfs\StAlbert\trips_noheader.txt
-(gc  D:\inetpub\temp\gtfs\StAlbert\calendar_dates.txt | select -Skip 1) | sc D:\inetpub\temp\gtfs\StAlbert\calendar_dates_noheader.txt
-(gc  D:\inetpub\temp\gtfs\StAlbert\stops.txt | select -Skip 1) | sc D:\inetpub\temp\gtfs\StAlbert\stops_noheader.txt
-(gc  D:\inetpub\temp\gtfs\StAlbert\transfers.txt | select -Skip 1) | sc D:\inetpub\temp\gtfs\StAlbert\transfers_noheader.txt
-(gc  D:\inetpub\temp\gtfs\StAlbert\routes.txt | select -Skip 1) | sc D:\inetpub\temp\gtfs\StAlbert\routes_noheader.txt
-(gc  D:\inetpub\temp\gtfs\StAlbert\agency.txt | select -Skip 1) | sc D:\inetpub\temp\gtfs\StAlbert\agency_noheader.txt
+(gc  D:\inetpub\temp\gtfs\StAlbert\stop_times_noblank.txt | select -Skip 1) | sc D:\inetpub\temp\gtfs\StAlbert\stop_times_noheader.txt
+(gc  D:\inetpub\temp\gtfs\StAlbert\shapes_noblank.txt | select -Skip 1) | sc D:\inetpub\temp\gtfs\StAlbert\shapes_noheader.txt
+(gc  D:\inetpub\temp\gtfs\StAlbert\trips_noblank.txt | select -Skip 1) | sc D:\inetpub\temp\gtfs\StAlbert\trips_noheader.txt
+(gc  D:\inetpub\temp\gtfs\StAlbert\calendar_dates_noblank.txt | select -Skip 1) | sc D:\inetpub\temp\gtfs\StAlbert\calendar_dates_noheader.txt
+(gc  D:\inetpub\temp\gtfs\StAlbert\stops_noblank.txt | select -Skip 1) | sc D:\inetpub\temp\gtfs\StAlbert\stops_noheader.txt
+(gc  D:\inetpub\temp\gtfs\StAlbert\transfers_noblank.txt | select -Skip 1) | sc D:\inetpub\temp\gtfs\StAlbert\transfers_noheader.txt
+(gc  D:\inetpub\temp\gtfs\StAlbert\routes_noblank.txt | select -Skip 1) | sc D:\inetpub\temp\gtfs\StAlbert\routes_noheader.txt
+(gc  D:\inetpub\temp\gtfs\StAlbert\agency_noblank.txt | select -Skip 1) | sc D:\inetpub\temp\gtfs\StAlbert\agency_noheader.txt
