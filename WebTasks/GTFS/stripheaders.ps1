@@ -26,6 +26,7 @@
 (gc  D:\inetpub\temp\gtfs\Strathcona\stop_times_noblank.txt | select -Skip 1) | sc D:\inetpub\temp\gtfs\Strathcona\stop_times_noheader.txt
 (gc  D:\inetpub\temp\gtfs\Strathcona\shapes_noblank.txt | select -Skip 1) | sc D:\inetpub\temp\gtfs\Strathcona\shapes_noheader.txt
 (gc  D:\inetpub\temp\gtfs\Strathcona\trips_noblank.txt | select -Skip 1) | sc D:\inetpub\temp\gtfs\Strathcona\trips_noheader.txt
+(gc  D:\inetpub\temp\gtfs\Strathcona\calendar_noblank.txt | select -Skip 1) | sc D:\inetpub\temp\gtfs\Strathcona\calendar_noheader.txt
 (gc  D:\inetpub\temp\gtfs\Strathcona\calendar_dates_noblank.txt | select -Skip 1) | sc D:\inetpub\temp\gtfs\Strathcona\calendar_dates_noheader.txt
 (gc  D:\inetpub\temp\gtfs\Strathcona\stops_noblank.txt | select -Skip 1) | sc D:\inetpub\temp\gtfs\Strathcona\stops_noheader.txt
 #(gc  D:\inetpub\temp\gtfs\Strathcona\transfers_noblank.txt | select -Skip 1) | sc D:\inetpub\temp\gtfs\Strathcona\transfers_noheader.txt
@@ -36,6 +37,7 @@
 (gc  D:\inetpub\temp\gtfs\StAlbert\stop_times_noblank.txt | select -Skip 1) | sc D:\inetpub\temp\gtfs\StAlbert\stop_times_noheader.txt
 (gc  D:\inetpub\temp\gtfs\StAlbert\shapes_noblank.txt | select -Skip 1) | sc D:\inetpub\temp\gtfs\StAlbert\shapes_noheader.txt
 (gc  D:\inetpub\temp\gtfs\StAlbert\trips_noblank.txt | select -Skip 1) | sc D:\inetpub\temp\gtfs\StAlbert\trips_noheader.txt
+(gc  D:\inetpub\temp\gtfs\StAlbert\calendar_noblank.txt | select -Skip 1) | sc D:\inetpub\temp\gtfs\StAlbert\calendar_noheader.txt
 (gc  D:\inetpub\temp\gtfs\StAlbert\calendar_dates_noblank.txt | select -Skip 1) | sc D:\inetpub\temp\gtfs\StAlbert\calendar_dates_noheader.txt
 (gc  D:\inetpub\temp\gtfs\StAlbert\stops_noblank.txt | select -Skip 1) | sc D:\inetpub\temp\gtfs\StAlbert\stops_noheader.txt
 (gc  D:\inetpub\temp\gtfs\StAlbert\transfers_noblank.txt | select -Skip 1) | sc D:\inetpub\temp\gtfs\StAlbert\transfers_noheader.txt

@@ -1,0 +1,13 @@
+8.0
+11
+1	SQLCHAR   0		9999	"\""		0	first_quote		""
+2	SQLCHAR   0		9999	"\",\""		2	service_id		""
+3	SQLCHAR   0		9999	"\",\""		3	monday			""
+4	SQLCHAR   0		9999	"\",\""		4	tuesday			""
+5	SQLCHAR   0		9999	"\",\""		5	wednesday		""
+6	SQLCHAR   0		9999	"\",\""		6	thursday		""
+7	SQLCHAR   0		9999	"\",\""		7	friday			""
+8	SQLCHAR   0		9999	"\",\""		8	saturday		""
+9	SQLCHAR   0		9999	"\",\""		9	sunday			""
+10	SQLCHAR   0		9999	"\",\""		10	start_date		""
+11	SQLCHAR   0		9999	"\"\r\n"	11	end_date		""

@@ -103,55 +103,37 @@ The following message was returned from the server:
 
 
 
-<cfset gtfsFilesRev="stop_times,transfers,trips,stops,shapes,routes,calendar_dates,agency" />
-<cfset gtfsFiles="agency,calendar_dates,routes,shapes,stops,trips,transfers,stop_times" />
+<cfset gtfsFilesRev="stop_times,transfers,trips,stops,shapes,routes,calendar_dates,calendar,agency" />
+<cfset gtfsFiles="agency,calendar,calendar_dates,routes,shapes,stops,trips,transfers,stop_times" />
 
 <!--- <cfset gtfsFilesRev="agency" />
 <cfset gtfsFiles="agency" /> --->
 
+<!--- Choose the inactive database to be updated. --->
+<cfquery name="updatedb" dbtype="ODBC" datasource="SecureSource">
+	SELECT TOP 1 * FROM vsd.ETS_activeDB WHERE active = 0
+</cfquery>
+
+<cfset dbprefix = updatedb.prefix />
+
+<!--- Edmonton --->
 <cftry>
-	<!--- Choose the inactive database to be updated. --->
-	<cfquery name="updatedb" dbtype="ODBC" datasource="SecureSource">
-		SELECT TOP 1 * FROM vsd.ETS_activeDB WHERE active = 0
-	</cfquery>
-
-	<cfset dbprefix = updatedb.prefix />
-
-
 	<cfquery name="BulkInsert" dbtype="ODBC" datasource="ReadWriteSource">
 
 	<cfloop list="#gtfsFilesRev#" index="fileBase">
 	DELETE FROM vsd.#dbprefix#_#fileBase#
-	DELETE FROM vsd.#dbprefix#_#fileBase#_StAlbert
-	DELETE FROM vsd.#dbprefix#_#fileBase#_Strathcona
+
 	</cfloop>
 	<cfloop list="#gtfsFiles#" index="fileBase">
-		BULK INSERT vsd.#dbprefix#_#fileBase# FROM '\\epl-cf\gtfs$\Edmonton\#fileBase#_noheader.txt'
-		WITH (
-		FIRSTROW=1,
-		FIELDTERMINATOR = ',',
-		ROWTERMINATOR = '\n',
-		FORMATFILE = '\\epl-cf\gtfs$\Edmonton\#fileBase#.fmt'
-		);
-
-	<cfif FileExists('\\epl-cf\gtfs$\StAlbert\#fileBase#_noheader.txt')>
-		BULK INSERT vsd.#dbprefix#_#fileBase#_StAlbert FROM '\\epl-cf\gtfs$\StAlbert\#fileBase#_noheader.txt'
-		WITH (
-		FIRSTROW=1,
-		FIELDTERMINATOR = ',',
-		ROWTERMINATOR = '\n',
-		FORMATFILE = '\\epl-cf\gtfs$\StAlbert\#fileBase#.fmt'
-		);
-	</cfif>	
-	<cfif FileExists('\\epl-cf\gtfs$\Strathcona\#fileBase#_noheader.txt')>
-		BULK INSERT vsd.#dbprefix#_#fileBase#_Strathcona FROM '\\epl-cf\gtfs$\Strathcona\#fileBase#_noheader.txt'
-		WITH (
-		FIRSTROW=1,
-		FIELDTERMINATOR = ',',
-		ROWTERMINATOR = '\n',
-		FORMATFILE = '\\epl-cf\gtfs$\Strathcona\#fileBase#.fmt'
-		);
-	</cfif>
+		<cfif FileExists('\\epl-cf\gtfs$\Edmonton\#fileBase#_noheader.txt')>
+			BULK INSERT vsd.#dbprefix#_#fileBase# FROM '\\epl-cf\gtfs$\Edmonton\#fileBase#_noheader.txt'
+			WITH (
+			FIRSTROW=1,
+			FIELDTERMINATOR = ',',
+			ROWTERMINATOR = '\n',
+			FORMATFILE = '\\epl-cf\gtfs$\Edmonton\#fileBase#.fmt'
+			);
+		</cfif>
 	</cfloop>
 	</cfquery>
 
@@ -171,10 +153,85 @@ The following messages have been returned from the server:
 </cfmail>
 	<cfabort>
 	</cfcatch>
-
-
-
 </cftry>
+
+<!--- St. Albert --->
+<cftry>
+	<cfquery name="BulkInsert" dbtype="ODBC" datasource="ReadWriteSource">
+
+	<cfloop list="#gtfsFilesRev#" index="fileBase">
+	DELETE FROM vsd.#dbprefix#_#fileBase#_StAlbert
+	</cfloop>
+	<cfloop list="#gtfsFiles#" index="fileBase">
+		<cfif FileExists('\\epl-cf\gtfs$\StAlbert\#fileBase#_noheader.txt')>
+			BULK INSERT vsd.#dbprefix#_#fileBase#_StAlbert FROM '\\epl-cf\gtfs$\StAlbert\#fileBase#_noheader.txt'
+			WITH (
+			FIRSTROW=1,
+			FIELDTERMINATOR = ',',
+			ROWTERMINATOR = '\n',
+			FORMATFILE = '\\epl-cf\gtfs$\StAlbert\#fileBase#.fmt'
+			);
+		</cfif>	
+	</cfloop>
+	</cfquery>
+
+	<cfcatch type="any">
+<h1>ERROR: Update Failed</h1>		
+		<cfdump var="#cfcatch#">
+		<cfmail to="jlien@epl.ca, vflores@epl.ca" subject="Error Updating ETS Database" from="noreply@epl.ca">
+An attempt to update GTFS transit data from St. Albert failed.
+Please check that the vsd.ETS databases are functional and investigate this problem.
+
+Typically this type of error occurs because the data provided by StAT has been changed in format such that it is no longer compatible with the existing database structure. Fixing his requires rebuilding the database with new field types.
+
+The following messages have been returned from the server:
+
+<cfoutput>#cfcatch.message#
+#cfcatch.detail#</cfoutput>
+</cfmail>
+	<cfabort>
+	</cfcatch>
+</cftry>
+
+
+<!--- Strathcona County --->
+<cftry>
+	<cfquery name="BulkInsert" dbtype="ODBC" datasource="ReadWriteSource">
+
+	<cfloop list="#gtfsFilesRev#" index="fileBase">
+	DELETE FROM vsd.#dbprefix#_#fileBase#_Strathcona
+	</cfloop>
+	<cfloop list="#gtfsFiles#" index="fileBase">
+		<cfif FileExists('\\epl-cf\gtfs$\Strathcona\#fileBase#_noheader.txt')>
+			BULK INSERT vsd.#dbprefix#_#fileBase#_Strathcona FROM '\\epl-cf\gtfs$\Strathcona\#fileBase#_noheader.txt'
+			WITH (
+			FIRSTROW=1,
+			FIELDTERMINATOR = ',',
+			ROWTERMINATOR = '\n',
+			FORMATFILE = '\\epl-cf\gtfs$\Strathcona\#fileBase#.fmt'
+			);
+		</cfif>
+	</cfloop>
+	</cfquery>
+
+	<cfcatch type="any">
+<h1>ERROR: Update Failed</h1>		
+		<cfdump var="#cfcatch#">
+		<cfmail to="jlien@epl.ca, vflores@epl.ca" subject="Error Updating ETS Database" from="noreply@epl.ca">
+An attempt to update GTFS transit data from Strathcona County failed.
+Please check that the vsd.ETS databases are functional and investigate this problem.
+
+Typically this type of error occurs because the data provided by Strathcona County Transit has been changed in format such that it is no longer compatible with the existing database structure. Fixing his requires rebuilding the database with new field types.
+
+The following messages have been returned from the server:
+
+<cfoutput>#cfcatch.message#
+#cfcatch.detail#</cfoutput>
+</cfmail>
+	<cfabort>
+	</cfcatch>
+</cftry>
+
 
 <!--- There are a few stray double-quotes that I want to get rid of --->
 <cfquery name="CleanUp" dbtype="ODBC" datasource="ReadWriteSource">

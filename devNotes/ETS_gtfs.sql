@@ -64,6 +64,48 @@ CREATE TABLE vsd.ETS1_agency_Strathcona (
 	agency_phone varchar(16) NULL
 )
 
+CREATE TABLE vsd.ETS1_calendar (
+	cID INT NOT NULL IDENTITY PRIMARY KEY,
+	service_id varchar(255) NOT NULL,
+	monday BIT NOT NULL,
+	tuesday BIT NOT NULL,
+	wednesday BIT NOT NULL,
+	thursday BIT NOT NULL,
+	friday BIT NOT NULL,
+	saturday BIT NOT NULL,
+	sunday BIT NOT NULL,
+	start_date DATE NOT NULL,
+	end_date DATE NOT NULL
+)
+
+CREATE TABLE vsd.ETS1_calendar_StAlbert (
+	cID INT NOT NULL IDENTITY PRIMARY KEY,
+	service_id varchar(255) NOT NULL,
+	monday BIT NOT NULL,
+	tuesday BIT NOT NULL,
+	wednesday BIT NOT NULL,
+	thursday BIT NOT NULL,
+	friday BIT NOT NULL,
+	saturday BIT NOT NULL,
+	sunday BIT NOT NULL,
+	start_date DATE NOT NULL,
+	end_date DATE NOT NULL
+)
+
+CREATE TABLE vsd.ETS1_calendar_Strathcona (
+	cID INT NOT NULL IDENTITY PRIMARY KEY,
+	service_id varchar(255) NOT NULL,
+	monday BIT NOT NULL,
+	tuesday BIT NOT NULL,
+	wednesday BIT NOT NULL,
+	thursday BIT NOT NULL,
+	friday BIT NOT NULL,
+	saturday BIT NOT NULL,
+	sunday BIT NOT NULL,
+	start_date DATE NOT NULL,
+	end_date DATE NOT NULL
+)
+
 CREATE TABLE vsd.ETS1_calendar_dates (
 	cdID INT NOT NULL IDENTITY PRIMARY KEY,
 	service_id varchar(255) NOT NULL,
@@ -613,6 +655,49 @@ CREATE TABLE vsd.ETS2_agency_Strathcona (
 	agency_lang varchar(5) NOT NULL,
 	agency_phone varchar(16) NULL
 )
+
+CREATE TABLE vsd.ETS2_calendar (
+	cID INT NOT NULL IDENTITY PRIMARY KEY,
+	service_id varchar(255) NOT NULL,
+	monday BIT NOT NULL,
+	tuesday BIT NOT NULL,
+	wednesday BIT NOT NULL,
+	thursday BIT NOT NULL,
+	friday BIT NOT NULL,
+	saturday BIT NOT NULL,
+	sunday BIT NOT NULL,
+	start_date DATE NOT NULL,
+	end_date DATE NOT NULL
+)
+
+CREATE TABLE vsd.ETS2_calendar_StAlbert (
+	cID INT NOT NULL IDENTITY PRIMARY KEY,
+	service_id varchar(255) NOT NULL,
+	monday BIT NOT NULL,
+	tuesday BIT NOT NULL,
+	wednesday BIT NOT NULL,
+	thursday BIT NOT NULL,
+	friday BIT NOT NULL,
+	saturday BIT NOT NULL,
+	sunday BIT NOT NULL,
+	start_date DATE NOT NULL,
+	end_date DATE NOT NULL
+)
+
+CREATE TABLE vsd.ETS2_calendar_Strathcona (
+	cID INT NOT NULL IDENTITY PRIMARY KEY,
+	service_id varchar(255) NOT NULL,
+	monday BIT NOT NULL,
+	tuesday BIT NOT NULL,
+	wednesday BIT NOT NULL,
+	thursday BIT NOT NULL,
+	friday BIT NOT NULL,
+	saturday BIT NOT NULL,
+	sunday BIT NOT NULL,
+	start_date DATE NOT NULL,
+	end_date DATE NOT NULL
+)
+
 
 CREATE TABLE vsd.ETS2_calendar_dates (
 	cdID INT NOT NULL IDENTITY PRIMARY KEY,
