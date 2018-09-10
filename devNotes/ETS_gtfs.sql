@@ -5,6 +5,7 @@
 *
 *************************************************************************/
 
+DROP VIEW vsd.ETS1_trip_stop_datetimes_all_agencies
 DROP VIEW vsd.ETS1_trip_stop_datetimes
 DROP VIEW vsd.ETS1_trip_stop_datetimes_StAlbert
 DROP VIEW vsd.ETS1_trip_stop_datetimes_Strathcona
@@ -130,6 +131,23 @@ CREATE TABLE vsd.ETS1_calendar_dates_Strathcona (
 	UNIQUE(service_id,date)
 )
 
+--calendar_dates_complete is a version of calendar dates that just has every date in it, like Edmonton's, so this can be used in the main view
+CREATE TABLE vsd.ETS1_calendar_dates_complete_StAlbert (
+	cdcID INT NOT NULL IDENTITY PRIMARY KEY,
+	service_id varchar(255) NOT NULL,
+	date DATE NOT NULL,
+	exception_type INT NOT NULL,
+	UNIQUE(service_id,date)
+)
+
+CREATE TABLE vsd.ETS1_calendar_dates_complete_Strathcona (
+	cdcID INT NOT NULL IDENTITY PRIMARY KEY,
+	service_id varchar(255) NOT NULL,
+	date DATE NOT NULL,
+	exception_type INT NOT NULL,
+	UNIQUE(service_id,date)
+)
+
 
 CREATE INDEX ix_ETS1_C_service_id ON vsd.ETS1_calendar_dates(service_id)
 CREATE INDEX ix_ETS1_C_date ON vsd.ETS1_calendar_dates(date)
@@ -139,6 +157,12 @@ CREATE INDEX ix_ETS1_C_date_SA ON vsd.ETS1_calendar_dates_StAlbert(date)
 
 CREATE INDEX ix_ETS1_C_service_id_SC ON vsd.ETS1_calendar_dates_Strathcona(service_id)
 CREATE INDEX ix_ETS1_C_date_SC ON vsd.ETS1_calendar_dates_Strathcona(date)
+
+CREATE INDEX ix_ETS2_CC_service_id_SA ON vsd.ETS1_calendar_dates_complete_StAlbert(service_id)
+CREATE INDEX ix_ETS2_CC_date_SA ON vsd.ETS1_calendar_dates_complete_StAlbert(date)
+
+CREATE INDEX ix_ETS2_CC_service_id_SC ON vsd.ETS1_calendar_dates_complete_Strathcona(service_id)
+CREATE INDEX ix_ETS2_CC_date_SC ON vsd.ETS1_calendar_dates_complete_Strathcona(date)
 
 --INSERT INTO vsd.ETS1_calendar_dates VALUES('1-Saturday-1-JUN17-0000010',	'20170715',	1)
 --SELECT * FROM vsd.ETS1_calendar_dates
@@ -515,7 +539,7 @@ stime.trip_id, stime.arrival_time, stime.departure_hour, stime.departure_minute,
 stime.shape_dist_traveled, t.route_id, t.service_id, t.trip_headsign, t.direction_id, t.block_id, t.shape_id, c.date, c.exception_type
 FROM vsd.ETS1_stop_times_StAlbert stime
 JOIN vsd.ETS1_trips_StAlbert t ON stime.trip_id=t.trip_id
-JOIN vsd.ETS1_calendar_dates_StAlbert c ON c.service_id=t.service_id
+JOIN vsd.ETS1_calendar_dates_complete_StAlbert c ON c.service_id=t.service_id
 
 
 CREATE VIEW vsd.ETS1_trip_stop_datetimes_Strathcona WITH SCHEMABINDING AS
@@ -530,7 +554,7 @@ stime.trip_id, stime.arrival_time, stime.departure_hour, stime.departure_minute,
 stime.shape_dist_traveled, t.route_id, t.service_id, t.trip_headsign, t.direction_id, t.block_id, t.shape_id, c.date, c.exception_type
 FROM vsd.ETS1_stop_times_Strathcona stime
 JOIN vsd.ETS1_trips_Strathcona t ON stime.trip_id=t.trip_id
-JOIN vsd.ETS1_calendar_dates_Strathcona c ON c.service_id=t.service_id
+JOIN vsd.ETS1_calendar_dates_complete_Strathcona c ON c.service_id=t.service_id
 
 
 --This view adds a unique id based on the zone_id to create a unique identifier
@@ -596,7 +620,7 @@ FROM vsd.ETS1_trip_stop_datetimes_StAlbert
 
 
 
-
+DROP VIEW vsd.ETS2_trip_stop_datetimes_all_agencies
 DROP VIEW vsd.ETS2_trip_stop_datetimes
 DROP VIEW vsd.ETS2_trip_stop_datetimes_StAlbert
 DROP VIEW vsd.ETS2_trip_stop_datetimes_Strathcona
@@ -723,6 +747,21 @@ CREATE TABLE vsd.ETS2_calendar_dates_Strathcona (
 	UNIQUE(service_id,date)
 )
 
+CREATE TABLE vsd.ETS2_calendar_dates_complete_StAlbert (
+	cdcID INT NOT NULL IDENTITY PRIMARY KEY,
+	service_id varchar(255) NOT NULL,
+	date DATE NOT NULL,
+	exception_type INT NOT NULL,
+	UNIQUE(service_id,date)
+)
+
+CREATE TABLE vsd.ETS2_calendar_dates_complete_Strathcona (
+	cdcID INT NOT NULL IDENTITY PRIMARY KEY,
+	service_id varchar(255) NOT NULL,
+	date DATE NOT NULL,
+	exception_type INT NOT NULL,
+	UNIQUE(service_id,date)
+)
 
 CREATE INDEX ix_ETS2_C_service_id ON vsd.ETS2_calendar_dates(service_id)
 CREATE INDEX ix_ETS2_C_date ON vsd.ETS2_calendar_dates(date)
@@ -732,6 +771,12 @@ CREATE INDEX ix_ETS2_C_date_SA ON vsd.ETS2_calendar_dates_StAlbert(date)
 
 CREATE INDEX ix_ETS2_C_service_id_SC ON vsd.ETS2_calendar_dates_Strathcona(service_id)
 CREATE INDEX ix_ETS2_C_date_SC ON vsd.ETS2_calendar_dates_Strathcona(date)
+
+CREATE INDEX ix_ETS2_CC_service_id_SA ON vsd.ETS2_calendar_dates_complete_StAlbert(service_id)
+CREATE INDEX ix_ETS2_CC_date_SA ON vsd.ETS2_calendar_dates_complete_StAlbert(date)
+
+CREATE INDEX ix_ETS2_CC_service_id_SC ON vsd.ETS2_calendar_dates_complete_Strathcona(service_id)
+CREATE INDEX ix_ETS2_CC_date_SC ON vsd.ETS2_calendar_dates_complete_Strathcona(date)
 
 --INSERT INTO vsd.ETS2_calendar_dates VALUES('1-Saturday-1-JUN17-0000010',	'20170715',	1)
 --SELECT * FROM vsd.ETS2_calendar_dates
@@ -1108,7 +1153,7 @@ stime.trip_id, stime.arrival_time, stime.departure_hour, stime.departure_minute,
 stime.shape_dist_traveled, t.route_id, t.service_id, t.trip_headsign, t.direction_id, t.block_id, t.shape_id, c.date, c.exception_type
 FROM vsd.ETS2_stop_times_StAlbert stime
 JOIN vsd.ETS2_trips_StAlbert t ON stime.trip_id=t.trip_id
-JOIN vsd.ETS2_calendar_dates_StAlbert c ON c.service_id=t.service_id
+JOIN vsd.ETS2_calendar_dates_complete_StAlbert c ON c.service_id=t.service_id
 
 
 CREATE VIEW vsd.ETS2_trip_stop_datetimes_Strathcona WITH SCHEMABINDING AS
@@ -1123,7 +1168,7 @@ stime.trip_id, stime.arrival_time, stime.departure_hour, stime.departure_minute,
 stime.shape_dist_traveled, t.route_id, t.service_id, t.trip_headsign, t.direction_id, t.block_id, t.shape_id, c.date, c.exception_type
 FROM vsd.ETS2_stop_times_Strathcona stime
 JOIN vsd.ETS2_trips_Strathcona t ON stime.trip_id=t.trip_id
-JOIN vsd.ETS2_calendar_dates_Strathcona c ON c.service_id=t.service_id
+JOIN vsd.ETS2_calendar_dates_complete_Strathcona c ON c.service_id=t.service_id
 
 
 --This view adds a unique id based on the zone_id to create a unique identifier

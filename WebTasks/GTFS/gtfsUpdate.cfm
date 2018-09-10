@@ -307,6 +307,90 @@ UPDATE vsd.#dbprefix#_stops SET exclusive=1
 	GROUP BY st.stop_id, t.route_id, t.agency_id
 </cfquery>
 
+
+
+<!--- 
+	Loops through every entry of a "calendar" table, and inserts each date from the range into the calendar_dates_complete
+	table for StAlbert and Strathcona, accounting for any exceptions in the calendar_dates table.
+ --->
+<cfquery name="calendarStA" dbtype="ODBC" datasource="SecureSource">
+	SELECT * FROM vsd.#dbprefix#_calendar_StAlbert
+</cfquery>
+
+<!--- Clean out previous entries in calendar_dates_complete --->
+<cfquery name="DeleteCalendarDatesComplete" dbtype="ODBC" datasource="ReadWriteSource">
+	DELETE FROM vsd.#dbprefix#_calendar_dates_complete_StAlbert
+</cfquery>
+
+<cfloop query="calendarStA">
+	<!--- Now loop through the date range --->
+	<cfset fromDate = start_date> 
+	<cfset toDate = end_date> 
+	<cfloop from="#start_date#" to="#end_date#" index="day" step="#CreateTimeSpan(1,0,0,0)#"> 
+		<!--- <cfoutput>#dateformat(day, "mm/dd/yyyy")# - #LCase(DayOfWeekAsString(DayOfWeek(day)))#<br /></cfoutput> --->
+		<!--- Now query for the service_ids for this date --->
+		<cfquery name="DayServiceIds" dbtype="ODBC" datasource="SecureSource">
+			SELECT ISNULL(cdserviceid, cserviceid) AS service_id FROM (
+			SELECT c.service_id AS cserviceid, cd.service_id AS cdserviceid, exception_type FROM vsd.#dbprefix#_calendar_StAlbert c
+			LEFT OUTER JOIN vsd.#dbprefix#_calendar_dates_StAlbert cd ON cd.date='#DateFormat(day, "YYYY-MM-DD")#'
+			WHERE start_date <= '#DateFormat(day, "YYYY-MM-DD")#' AND end_date >= '#DateFormat(day, "YYYY-MM-DD")#' AND #LCase(DayOfWeekAsString(DayOfWeek(day)))#=1
+			) AS subq WHERE exception_type = 1 OR exception_type IS NULL
+		</cfquery>
+		<!--- Now insert the service Ids into the calendar_dates_complete table --->
+		<cfquery name="InsertComplete" dbtype="ODBC" datasource="ReadWriteSource">
+			<cfloop query="DayServiceIds">
+				<!--- Check that there is no unique key violation. This must be horribly inefficient --->
+				BEGIN TRY
+				INSERT INTO vsd.#dbprefix#_calendar_dates_complete_StAlbert (service_id, date, exception_type)
+				VALUES('#DayServiceIds.service_id#', '#DateFormat(day, "YYYYMMDD")#', 1)
+				END TRY BEGIN CATCH END CATCH
+			</cfloop>
+		</cfquery>
+	</cfloop>
+</cfloop>
+
+
+<!--- Now do the Strathcona Calendar --->
+
+<cfquery name="calendarStr" dbtype="ODBC" datasource="SecureSource">
+	SELECT * FROM vsd.#dbprefix#_calendar_Strathcona
+</cfquery>
+
+<!--- Clean out previous entries in calendar_dates_complete --->
+<cfquery name="DeleteCalendarDatesComplete" dbtype="ODBC" datasource="ReadWriteSource">
+	DELETE FROM vsd.#dbprefix#_calendar_dates_complete_Strathcona
+</cfquery>
+
+<cfloop query="calendarStr">
+	<!--- Now loop through the date range --->
+	<cfset fromDate = start_date> 
+	<cfset toDate = end_date> 
+	<cfloop from="#start_date#" to="#end_date#" index="day" step="#CreateTimeSpan(1,0,0,0)#"> 
+		<!--- <cfoutput>#dateformat(day, "mm/dd/yyyy")# - #LCase(DayOfWeekAsString(DayOfWeek(day)))#<br /></cfoutput> --->
+		<!--- Now query for the service_ids for this date --->
+		<cfquery name="DayServiceIds" dbtype="ODBC" datasource="SecureSource">
+			SELECT ISNULL(cdserviceid, cserviceid) AS service_id FROM (
+			SELECT c.service_id AS cserviceid, cd.service_id AS cdserviceid, exception_type FROM vsd.#dbprefix#_calendar_Strathcona c
+			LEFT OUTER JOIN vsd.#dbprefix#_calendar_dates_Strathcona cd ON cd.date='#DateFormat(day, "YYYY-MM-DD")#'
+			WHERE start_date <= '#DateFormat(day, "YYYY-MM-DD")#' AND end_date >= '#DateFormat(day, "YYYY-MM-DD")#' AND #LCase(DayOfWeekAsString(DayOfWeek(day)))#=1
+			) AS subq WHERE exception_type = 1 OR exception_type IS NULL
+		</cfquery>
+		<!--- Now insert the service Ids into the calendar_dates_complete table --->
+		<cfquery name="InsertComplete" dbtype="ODBC" datasource="ReadWriteSource">
+			<cfloop query="DayServiceIds">
+				<!--- Check that there is no unique key violation. This must be horribly inefficient --->
+				BEGIN TRY
+				INSERT INTO vsd.#dbprefix#_calendar_dates_complete_Strathcona (service_id, date, exception_type)
+				VALUES('#DayServiceIds.service_id#', '#DateFormat(day, "YYYYMMDD")#', 1)
+				END TRY BEGIN CATCH END CATCH
+			</cfloop>
+		</cfquery>
+	</cfloop>
+</cfloop>
+
+
+
+
 <!--- If everything seems to be working, now let's switch the active database to the newly updated one. --->
 
 <cfquery name="SwapDBs" dbtype="ODBC" datasource="ReadWriteSource">
