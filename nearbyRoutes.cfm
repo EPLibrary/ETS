@@ -51,6 +51,8 @@ from a given point to the nearest route stop to that point --->
 	</cfquery>
 
 	<cfset dbprefix = activedb.prefix />
+	<!--- TEMPORARILY SET THIS MANUALLY FOR TESTING. REMOVE THIS LINE FOR PRODUCTION!!! --->
+	<!--- <cfset dbprefix = 'ETS2' /> --->
 
 	<!--- Query all stops with the distance from the specified point. We don't need to do this separately. --->
 	<!---
@@ -126,13 +128,13 @@ from a given point to the nearest route stop to that point --->
 (ie a route that has no trips at this time of the day still shows up) --->
 <cfquery name="RouteByNearestStopDist" dbtype="ODBC" datasource="SecureSource">
 	SELECT *, CONCAT(value, ' ', route_long_name, ' - ', CAST(distance AS int), 'm') AS text FROM (
-	SELECT sr.stop_id, sr.route_id AS value, sr.agency_id, stop_lat, stop_lon, route_long_name,
+	SELECT sr.stop_id, sr.route_id AS value, sr.agency_id, stop_lat, stop_lon, route_short_name, route_long_name,
 	(6371000*acos(cos(radians(#form.lat#))*cos(radians(stop_lat)) * cos(radians(stop_lon)-radians(#form.lon#))+sin(radians(#form.lat#)) * sin(radians(stop_lat)))) AS distance,
 	ROW_NUMBER() OVER(PARTITION BY sr.route_id ORDER BY
 	(6371000*acos(cos(radians(#form.lat#))*cos(radians(stop_lat)) * cos(radians(stop_lon)-radians(#form.lon#))+sin(radians(#form.lat#)) * sin(radians(stop_lat)))) ASC) AS rk
-	 FROM vsd.ETS1_stop_routes_all_agencies sr
-	JOIN vsd.ETS1_stops_all_agencies s ON s.stop_id=sr.stop_id AND s.agency_id=sr.agency_id
-	JOIN vsd.ETS1_routes_all_agencies r ON sr.route_id=r.route_id AND sr.agency_id=r.agency_id
+	 FROM vsd.#dbprefix#_stop_routes_all_agencies sr
+	JOIN vsd.#dbprefix#_stops_all_agencies s ON s.stop_id=sr.stop_id AND s.agency_id=sr.agency_id
+	JOIN vsd.#dbprefix#_routes_all_agencies r ON sr.route_id=r.route_id AND sr.agency_id=r.agency_id
 	) AS ard
 	WHERE rk=1 <cfif range GT 0>AND distance < #form.range#</cfif>
 	ORDER BY distance, value  ASC

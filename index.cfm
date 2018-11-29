@@ -119,6 +119,8 @@
 </cfquery>
 
 <cfset dbprefix = activedb.prefix />
+<!--- TEMPORARILY SET THIS MANUALLY FOR TESTING. REMOVE THIS LINE FOR PRODUCTION!!! --->
+<!--- <cfset dbprefix = 'ETS2' /> --->
 
 
 <form class="w2Form" id="fromToForm">
@@ -151,7 +153,7 @@ SELECT * FROM vsd.#dbprefix#_stops_all_agencies_unique ORDER BY astop_id
 	<select name="rid" id="rid" class="selectizeField">
 		<option></option>
 		<cfoutput query="Routes">
-			<option value="#route_id#" <cfif url.rid IS route_id>selected</cfif>>#route_id# #route_long_name#</option>
+			<option value="#route_id#" <cfif url.rid IS route_id>selected</cfif>><cfif len(route_short_name)>#route_short_name#<cfelse>#route_id#</cfif> #route_long_name#</option>
 		</cfoutput>
 	</select>
 </label>

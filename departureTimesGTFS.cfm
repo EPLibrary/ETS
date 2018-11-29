@@ -308,15 +308,15 @@ description="Accepts FROM and TO station IDs, and a datetime and outputs a table
 		<cfquery name="TripDurationHelper" dbtype="ODBC" datasource="SecureSource">
 			SELECT TOP 3 arrival_time, trip_id, stop_id, stop_sequence, stop_headsign,
 			(SELECT TOP 1 arrival_time FROM vsd.#dbprefix#_stop_times
-			WHERE trip_id=#validTrips.trip_id# --from validTrips
+			WHERE trip_id='#validTrips.trip_id#' --from validTrips
 				AND stop_id IN (#toStation.stop_id1#,#toStation.stop_id2#)
 				AND stop_sequence > sdt.stop_sequence
 				ORDER BY stop_sequence
 			) AS DestTime
-			FROM vsd.#dbprefix#_stop_times sdt WHERE trip_id=#validTrips.trip_id#
+			FROM vsd.#dbprefix#_stop_times sdt WHERE trip_id='#validTrips.trip_id#'
 			AND stop_id IN (#fromStation.stop_id1#,#fromStation.stop_id2#)
 			AND (SELECT TOP 1 arrival_time FROM vsd.#dbprefix#_stop_times
-			WHERE trip_id=#validTrips.trip_id# --from validTrips
+			WHERE trip_id='#validTrips.trip_id#' --from validTrips
 				AND stop_id IN (#toStation.stop_id1#,#toStation.stop_id2#)
 				AND stop_sequence > sdt.stop_sequence
 			) IS NOT NULL
@@ -364,7 +364,7 @@ description="Accepts FROM and TO station IDs, and a datetime and outputs a table
 				<td>#arrival_time#</td>
 				<td>#stop_id#</td>
 				<td>#stop_sequence#</td>
-				<td>#stop_headsign#</td>
+				<td><cfif trip_headsign NEQ 1>#route_id# </cfif><cfif len(stop_headsign)>#stop_headsign#<cfelseif len(trip_headsign) AND trip_headsign NEQ 1>#trip_headsign#<cfelse>#route_long_name#</cfif></td>
 				<td>#pickup_type#</td>
 				<td>#drop_off_type#</td>
 				<td>#shape_dist_traveled#</td>
@@ -398,7 +398,7 @@ description="Accepts FROM and TO station IDs, and a datetime and outputs a table
 	<cfloop query="DepartureTimes">
 		<!--- Only show if the time hasn't elapsed --->
 		<tr data-tripid="#trip_id#" data-sequence="#stop_sequence#">
-			<td class="tN">#UCase(stop_headsign)#</td>
+			<td class="tN"><cfif trip_headsign NEQ 1>#route_id# </cfif><cfif len(stop_headsign)>#UCase(stop_headsign)#<cfelseif len(trip_headsign) AND trip_headsign NEQ 1>#trip_headsign#<cfelse>#route_long_name#</cfif></td>
 			<td class="aT" data-scheduled="#ActualDateTime#" data-datetime="#ActualDateTime#">#TimeFormat(ActualDateTime, "h:mm tt")#</td>
 			<td class="cD"></td>
 		</tr>
@@ -432,6 +432,10 @@ description="Accepts FROM and TO station IDs, and a datetime and outputs a table
 		</cfquery>
 
 		<cfset dbprefix = activedb.prefix />
+
+		<!--- TEMPORARILY SET THIS MANUALLY FOR TESTING. REMOVE THIS LINE FOR PRODUCTION!!! --->
+		<!--- <cfset dbprefix = 'ETS2' /> --->
+
 
 		<!--- Setting date variables for DepartureTimes query --->
 		<!--- Set the Day of Week. Sunday is 1, Saturday is 7 --->

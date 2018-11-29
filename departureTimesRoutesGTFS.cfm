@@ -92,7 +92,7 @@ description="Accepts FROM and TO stop IDs, and a datetime and outputs a table wi
 	</cfif>
 
 
-
+	<cfdump var="#DepartureTimes#">
 
 	<cfoutput>
 	
@@ -152,6 +152,8 @@ description="Accepts FROM and TO stop IDs, and a datetime and outputs a table wi
 		</cfquery>
 
 		<cfset dbprefix = activedb.prefix />
+		<!--- TEMPORARILY SET THIS MANUALLY FOR TESTING. REMOVE THIS LINE FOR PRODUCTION!!! --->
+		<!--- <cfset dbprefix = 'ETS2' /> --->
 
 		<!--- Get the prefix for the particular agency this route is for --->
 		<cfquery name="RouteAgency" dbtype="ODBC" datasource="SecureSource">

@@ -104,7 +104,7 @@ description="Accepts FROM stop_id and a datetime and outputs a table with releva
 		<cfloop query="DepartureTimes">
 			<!--- Only show if the time hasn't elapsed --->
 			<tr data-tripid="#trip_id#" data-sequence="#stop_sequence#">
-				<td class="tN"><cfif trip_headsign NEQ 1>#route_id# </cfif><cfif len(stop_headsign)>#stop_headsign#<cfelse>#trip_headsign#</cfif></td>
+				<td class="tN"><cfif trip_headsign NEQ 1>#route_id# </cfif><cfif len(stop_headsign)>#stop_headsign#<cfelseif len(trip_headsign) AND trip_headsign NEQ 1>#trip_headsign#<cfelse>#route_short_name# #route_long_name#</cfif></td>
 				<td class="aT" data-scheduled="#ActualDateTime#" data-datetime="#ActualDateTime#">#TimeFormat(ActualDateTime, "h:mm tt")#</td>
 				<td class="cD"></td>
 			</tr>
@@ -130,6 +130,9 @@ description="Accepts FROM stop_id and a datetime and outputs a table with releva
 		</cfquery>
 
 		<cfset dbprefix = activedb.prefix />
+
+		<!--- TEMPORARILY SET THIS MANUALLY FOR TESTING. REMOVE THIS LINE FOR PRODUCTION!!! --->
+		<!--- <cfset dbprefix = 'ETS2' /> --->
 
 		<!--- Setting date variables for DepartureTimes query --->
 		<!--- Set the Day of Week. Sunday is 1, Saturday is 7 --->

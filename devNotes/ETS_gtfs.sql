@@ -5,6 +5,13 @@
 *
 *************************************************************************/
 
+DROP VIEW vsd.ETS1_stop_times_all_agencies
+DROP VIEW vsd.ETS1_trips_all_agencies
+DROP VIEW vsd.ETS1_stops_all_agencies_unique
+DROP VIEW vsd.ETS1_stops_all_agencies
+DROP VIEW vsd.ETS1_shapes_all_agencies
+DROP VIEW vsd.ETS1_routes_all_agencies
+DROP VIEW vsd.ETS1_agency_all_agencies
 DROP VIEW vsd.ETS1_trip_stop_datetimes_all_agencies
 DROP VIEW vsd.ETS1_trip_stop_datetimes
 DROP VIEW vsd.ETS1_trip_stop_datetimes_StAlbert
@@ -31,9 +38,15 @@ DROP TABLE vsd.ETS1_routes
 DROP TABLE vsd.ETS1_routes_StAlbert
 DROP TABLE vsd.ETS1_routes_Strathcona
 DROP TABLE vsd.ETS1_route_types
+DROP TABLE vsd.ETS1_stop_routes_all_agencies
+DROP TABLE vsd.ETS1_calendar
+DROP TABLE vsd.ETS1_calendar_StAlbert
+DROP TABLE vsd.ETS1_calendar_Strathcona
 DROP TABLE vsd.ETS1_calendar_dates
 DROP TABLE vsd.ETS1_calendar_dates_StAlbert
 DROP TABLE vsd.ETS1_calendar_dates_Strathcona
+DROP TABLE vsd.ETS1_calendar_dates_complete_StAlbert
+DROP TABLE vsd.ETS1_calendar_dates_complete_Strathcona
 DROP TABLE vsd.ETS1_agency
 DROP TABLE vsd.ETS1_agency_StAlbert
 DROP TABLE vsd.ETS1_agency_Strathcona
@@ -158,11 +171,11 @@ CREATE INDEX ix_ETS1_C_date_SA ON vsd.ETS1_calendar_dates_StAlbert(date)
 CREATE INDEX ix_ETS1_C_service_id_SC ON vsd.ETS1_calendar_dates_Strathcona(service_id)
 CREATE INDEX ix_ETS1_C_date_SC ON vsd.ETS1_calendar_dates_Strathcona(date)
 
-CREATE INDEX ix_ETS2_CC_service_id_SA ON vsd.ETS1_calendar_dates_complete_StAlbert(service_id)
-CREATE INDEX ix_ETS2_CC_date_SA ON vsd.ETS1_calendar_dates_complete_StAlbert(date)
+CREATE INDEX ix_ETS1_CC_service_id_SA ON vsd.ETS1_calendar_dates_complete_StAlbert(service_id)
+CREATE INDEX ix_ETS1_CC_date_SA ON vsd.ETS1_calendar_dates_complete_StAlbert(date)
 
-CREATE INDEX ix_ETS2_CC_service_id_SC ON vsd.ETS1_calendar_dates_complete_Strathcona(service_id)
-CREATE INDEX ix_ETS2_CC_date_SC ON vsd.ETS1_calendar_dates_complete_Strathcona(date)
+CREATE INDEX ix_ETS1_CC_service_id_SC ON vsd.ETS1_calendar_dates_complete_Strathcona(service_id)
+CREATE INDEX ix_ETS1_CC_date_SC ON vsd.ETS1_calendar_dates_complete_Strathcona(date)
 
 --INSERT INTO vsd.ETS1_calendar_dates VALUES('1-Saturday-1-JUN17-0000010',	'20170715',	1)
 --SELECT * FROM vsd.ETS1_calendar_dates
@@ -302,7 +315,7 @@ CREATE TABLE vsd.ETS1_stops_Strathcona (
 CREATE TABLE vsd.ETS1_trips (
 	route_id VARCHAR(20) FOREIGN KEY REFERENCES vsd.ETS1_routes(route_id),
 	service_id varchar(255), --FOREIGN KEY REFERENCES vsd.ETS1_calendar_dates(service_id),
-	trip_id VARCHAR(30) PRIMARY KEY,
+	trip_id VARCHAR(255) PRIMARY KEY,
 	trip_headsign nvarchar(255) NULL,
 	direction_id bit NULL, --0 = outbound, 1 = inbound
 	block_id  varchar(30) NULL, /* Identifies the block to which the trip belongs. A block consists of two or more sequential trips made using the same vehicle, where a passenger can transfer from one trip to the next just by staying in the vehicle. The block_id must be referenced by two or more trips in trips.txt. */
@@ -312,7 +325,7 @@ CREATE TABLE vsd.ETS1_trips (
 CREATE TABLE vsd.ETS1_trips_StAlbert (
 	route_id VARCHAR(20) FOREIGN KEY REFERENCES vsd.ETS1_routes_StAlbert(route_id),
 	service_id varchar(255), --FOREIGN KEY REFERENCES vsd.ETS1_calendar_dates(service_id),
-	trip_id VARCHAR(30) PRIMARY KEY,
+	trip_id VARCHAR(255) PRIMARY KEY,
 	trip_headsign nvarchar(255) NULL,
 	direction_id bit NULL, --0 = outbound, 1 = inbound
 	block_id varchar(30) NULL, /* Identifies the block to which the trip belongs. A block consists of two or more sequential trips made using the same vehicle, where a passenger can transfer from one trip to the next just by staying in the vehicle. The block_id must be referenced by two or more trips in trips.txt. */
@@ -322,7 +335,7 @@ CREATE TABLE vsd.ETS1_trips_StAlbert (
 CREATE TABLE vsd.ETS1_trips_Strathcona (
 	route_id VARCHAR(20) FOREIGN KEY REFERENCES vsd.ETS1_routes_Strathcona(route_id),
 	service_id varchar(255), --FOREIGN KEY REFERENCES vsd.ETS1_calendar_dates(service_id),
-	trip_id VARCHAR(30) PRIMARY KEY,
+	trip_id VARCHAR(255) PRIMARY KEY,
 	trip_headsign nvarchar(255) NULL,
 	direction_id bit NULL, --0 = outbound, 1 = inbound
 	block_id varchar(30) NULL, /* Identifies the block to which the trip belongs. A block consists of two or more sequential trips made using the same vehicle, where a passenger can transfer from one trip to the next just by staying in the vehicle. The block_id must be referenced by two or more trips in trips.txt. */
@@ -345,24 +358,24 @@ INSERT INTO vsd.ETS1_transfer_types VALUES(3, 'Not Possible', 'Transfers are not
 
 
 CREATE TABLE vsd.ETS1_transfers (
-	from_stop_id VARCHAR(30) NOT NULL REFERENCES vsd.ETS1_trips(trip_id),
-	to_stop_id VARCHAR(30) NOT NULL REFERENCES vsd.ETS1_trips(trip_id),
+	from_stop_id VARCHAR(255) NOT NULL REFERENCES vsd.ETS1_trips(trip_id),
+	to_stop_id VARCHAR(255) NOT NULL REFERENCES vsd.ETS1_trips(trip_id),
 	transfer_type INT NULL REFERENCES vsd.ETS1_transfer_types(transfer_type),
 	min_transfer_time INT NULL, -- value in seconds
 	PRIMARY KEY (from_stop_id, to_stop_id)
 )
 
 CREATE TABLE vsd.ETS1_transfers_StAlbert (
-	from_stop_id VARCHAR(30) NOT NULL REFERENCES vsd.ETS1_trips_StAlbert(trip_id),
-	to_stop_id VARCHAR(30) NOT NULL REFERENCES vsd.ETS1_trips_StAlbert(trip_id),
+	from_stop_id VARCHAR(255) NOT NULL REFERENCES vsd.ETS1_trips_StAlbert(trip_id),
+	to_stop_id VARCHAR(255) NOT NULL REFERENCES vsd.ETS1_trips_StAlbert(trip_id),
 	transfer_type INT NULL REFERENCES vsd.ETS1_transfer_types(transfer_type),
 	min_transfer_time INT NULL, -- value in seconds
 	PRIMARY KEY (from_stop_id, to_stop_id)
 )
 
 CREATE TABLE vsd.ETS1_transfers_Strathcona (
-	from_stop_id VARCHAR(30) NOT NULL REFERENCES vsd.ETS1_trips_Strathcona(trip_id),
-	to_stop_id VARCHAR(30) NOT NULL REFERENCES vsd.ETS1_trips_Strathcona(trip_id),
+	from_stop_id VARCHAR(255) NOT NULL REFERENCES vsd.ETS1_trips_Strathcona(trip_id),
+	to_stop_id VARCHAR(255) NOT NULL REFERENCES vsd.ETS1_trips_Strathcona(trip_id),
 	transfer_type INT NULL REFERENCES vsd.ETS1_transfer_types(transfer_type),
 	min_transfer_time INT NULL, -- value in seconds
 	PRIMARY KEY (from_stop_id, to_stop_id)
@@ -396,7 +409,7 @@ INSERT INTO vsd.ETS1_drop_off_types VALUES(3, 'Coordinate with Driver', 'Must co
 --DROP TABLE vsd.ETS1_stop_times
 CREATE TABLE vsd.ETS1_stop_times (
 	--stimeID INT IDENTITY PRIMARY KEY, --I don't use this so removing it might save me from running out of keys later
-	trip_id VARCHAR(30) NOT NULL REFERENCES vsd.ETS1_trips(trip_id),
+	trip_id VARCHAR(255) NOT NULL REFERENCES vsd.ETS1_trips(trip_id),
 	arrival_time varchar(8) NOT NULL, ---not used in practice. Can't store as time because they can go over 24:00 (even over 25:00)
 	departure_hour int NOT NULL, --The hour and minute will be broken up here so they can be stored as INT for faster sorting
 	departure_minute int NOT NULL,
@@ -413,7 +426,7 @@ CREATE TABLE vsd.ETS1_stop_times (
 
 CREATE TABLE vsd.ETS1_stop_times_StAlbert (
 	--stimeID INT IDENTITY PRIMARY KEY, --I don't use this so removing it might save me from running out of keys later
-	trip_id VARCHAR(30) NOT NULL REFERENCES vsd.ETS1_trips_StAlbert(trip_id),
+	trip_id VARCHAR(255) NOT NULL REFERENCES vsd.ETS1_trips_StAlbert(trip_id),
 	arrival_time varchar(8) NOT NULL, ---not used in practice. Can't store as time because they can go over 24:00 (even over 25:00)
 	departure_hour int NOT NULL, --The hour and minute will be broken up here so they can be stored as INT for faster sorting
 	departure_minute int NOT NULL,
@@ -430,7 +443,7 @@ CREATE TABLE vsd.ETS1_stop_times_StAlbert (
 
 CREATE TABLE vsd.ETS1_stop_times_Strathcona (
 	--stimeID INT IDENTITY PRIMARY KEY, --I don't use this so removing it might save me from running out of keys later
-	trip_id VARCHAR(30) NOT NULL REFERENCES vsd.ETS1_trips_Strathcona(trip_id),
+	trip_id VARCHAR(255) NOT NULL REFERENCES vsd.ETS1_trips_Strathcona(trip_id),
 	arrival_time varchar(8) NOT NULL, ---not used in practice. Can't store as time because they can go over 24:00 (even over 25:00)
 	departure_hour int NOT NULL, --The hour and minute will be broken up here so they can be stored as INT for faster sorting
 	departure_minute int NOT NULL,
@@ -521,9 +534,10 @@ CONVERT(datetime, date, 121)+CONVERT(datetime, CAST(departure_hour AS varchar)+'
 END --CASE
 AS ActualDateTime,
 stime.trip_id, stime.arrival_time, stime.departure_hour, stime.departure_minute,stop_id, stime.stop_sequence, stime.stop_headsign, stime.pickup_type, stime.drop_off_type,
-stime.shape_dist_traveled, t.route_id, t.service_id, t.trip_headsign, t.direction_id, t.block_id, t.shape_id, c.date, c.exception_type
+stime.shape_dist_traveled, t.route_id, t.service_id, t.trip_headsign, t.direction_id, t.block_id, t.shape_id, r.route_short_name, r.route_long_name, c.date, c.exception_type
 FROM vsd.ETS1_stop_times stime
 JOIN vsd.ETS1_trips t ON stime.trip_id=t.trip_id
+JOIN vsd.ETS1_routes r ON t.route_id=r.route_id
 JOIN vsd.ETS1_calendar_dates c ON c.service_id=t.service_id
 
 
@@ -536,9 +550,10 @@ CONVERT(datetime, date, 121)+CONVERT(datetime, CAST(departure_hour AS varchar)+'
 END --CASE
 AS ActualDateTime,
 stime.trip_id, stime.arrival_time, stime.departure_hour, stime.departure_minute,stop_id, stime.stop_sequence, stime.stop_headsign, stime.pickup_type, stime.drop_off_type,
-stime.shape_dist_traveled, t.route_id, t.service_id, t.trip_headsign, t.direction_id, t.block_id, t.shape_id, c.date, c.exception_type
+stime.shape_dist_traveled, t.route_id, t.service_id, t.trip_headsign, t.direction_id, t.block_id, t.shape_id, r.route_short_name, r.route_long_name, c.date, c.exception_type
 FROM vsd.ETS1_stop_times_StAlbert stime
 JOIN vsd.ETS1_trips_StAlbert t ON stime.trip_id=t.trip_id
+JOIN vsd.ETS1_routes r ON t.route_id=r.route_id
 JOIN vsd.ETS1_calendar_dates_complete_StAlbert c ON c.service_id=t.service_id
 
 
@@ -551,9 +566,10 @@ CONVERT(datetime, date, 121)+CONVERT(datetime, CAST(departure_hour AS varchar)+'
 END --CASE
 AS ActualDateTime,
 stime.trip_id, stime.arrival_time, stime.departure_hour, stime.departure_minute,stop_id, stime.stop_sequence, stime.stop_headsign, stime.pickup_type, stime.drop_off_type,
-stime.shape_dist_traveled, t.route_id, t.service_id, t.trip_headsign, t.direction_id, t.block_id, t.shape_id, c.date, c.exception_type
+stime.shape_dist_traveled, t.route_id, t.service_id, t.trip_headsign, t.direction_id, t.block_id, t.shape_id, r.route_short_name, r.route_long_name, c.date, c.exception_type
 FROM vsd.ETS1_stop_times_Strathcona stime
 JOIN vsd.ETS1_trips_Strathcona t ON stime.trip_id=t.trip_id
+JOIN vsd.ETS1_routes r ON t.route_id=r.route_id
 JOIN vsd.ETS1_calendar_dates_complete_Strathcona c ON c.service_id=t.service_id
 
 
@@ -595,19 +611,19 @@ FROM vsd.ETS1_stop_times UNION
 SELECT trip_id, arrival_time, departure_hour, departure_minute, departure_second, stop_id, stop_sequence, stop_headsign, pickup_type, drop_off_type, shape_dist_traveled, 2 AS agency_id
 FROM vsd.ETS1_stop_times_StAlbert UNION
 SELECT trip_id, arrival_time, departure_hour, departure_minute, departure_second, stop_id, stop_sequence, stop_headsign, pickup_type, drop_off_type, shape_dist_traveled, 3 AS agency_id
-FROM vsd.ETS2_stop_times_Strathcona
+FROM vsd.ETS1_stop_times_Strathcona
 
 
 --The big kahuna
 CREATE VIEW vsd.ETS1_trip_stop_datetimes_all_agencies WITH SCHEMABINDING AS
 SELECT
-1 AS agency_id, ActualDateTime, trip_id, arrival_time, departure_hour, departure_minute, stop_id, stop_headsign, pickup_type, drop_off_type, shape_dist_traveled, route_id, service_id, trip_headsign, direction_id, block_id, shape_id, date, exception_type
+1 AS agency_id, ActualDateTime, trip_id, arrival_time, departure_hour, departure_minute, stop_id, stop_headsign, pickup_type, drop_off_type, shape_dist_traveled, route_id, service_id, trip_headsign, direction_id, block_id, shape_id, route_short_name, route_long_name, date, exception_type
 FROM vsd.ETS1_trip_stop_datetimes
 UNION SELECT
-2 AS agency_id, ActualDateTime, trip_id, arrival_time, departure_hour, departure_minute, stop_id, stop_headsign, pickup_type, drop_off_type, shape_dist_traveled, route_id, service_id, trip_headsign, direction_id, block_id, shape_id, date, exception_type
+2 AS agency_id, ActualDateTime, trip_id, arrival_time, departure_hour, departure_minute, stop_id, stop_headsign, pickup_type, drop_off_type, shape_dist_traveled, route_id, service_id, trip_headsign, direction_id, block_id, shape_id, route_short_name, route_long_name, date, exception_type
 FROM vsd.ETS1_trip_stop_datetimes_Strathcona
 UNION SELECT
-3 AS agency_id, ActualDateTime, trip_id, arrival_time, departure_hour, departure_minute, stop_id, stop_headsign, pickup_type, drop_off_type, shape_dist_traveled, route_id, service_id, trip_headsign, direction_id, block_id, shape_id, date, exception_type
+3 AS agency_id, ActualDateTime, trip_id, arrival_time, departure_hour, departure_minute, stop_id, stop_headsign, pickup_type, drop_off_type, shape_dist_traveled, route_id, service_id, trip_headsign, direction_id, block_id, shape_id, route_short_name, route_long_name, date, exception_type
 FROM vsd.ETS1_trip_stop_datetimes_StAlbert
 
 
@@ -618,7 +634,13 @@ FROM vsd.ETS1_trip_stop_datetimes_StAlbert
 *
 *************************************************************************/
 
-
+DROP VIEW ETS2_stop_times_all_agencies
+DROP VIEW ETS2_trips_all_agencies
+DROP VIEW ETS2_stops_all_agencies_unique
+DROP VIEW ETS2_stops_all_agencies
+DROP VIEW ETS2_shapes_all_agencies
+DROP VIEW ETS2_routes_all_agencies
+DROP VIEW ETS2_agency_all_agencies
 
 DROP VIEW vsd.ETS2_trip_stop_datetimes_all_agencies
 DROP VIEW vsd.ETS2_trip_stop_datetimes
@@ -646,9 +668,15 @@ DROP TABLE vsd.ETS2_routes
 DROP TABLE vsd.ETS2_routes_StAlbert
 DROP TABLE vsd.ETS2_routes_Strathcona
 DROP TABLE vsd.ETS2_route_types
+DROP TABLE ETS2_stop_routes_all_agencies
+DROP TABLE vsd.ETS2_calendar
+DROP TABLE vsd.ETS2_calendar_StAlbert
+DROP TABLE vsd.ETS2_calendar_Strathcona
 DROP TABLE vsd.ETS2_calendar_dates
 DROP TABLE vsd.ETS2_calendar_dates_StAlbert
 DROP TABLE vsd.ETS2_calendar_dates_Strathcona
+DROP TABLE ETS2_calendar_dates_complete_StAlbert
+DROP TABLE ETS2_calendar_dates_complete_Strathcona
 DROP TABLE vsd.ETS2_agency
 DROP TABLE vsd.ETS2_agency_StAlbert
 DROP TABLE vsd.ETS2_agency_Strathcona
@@ -916,7 +944,7 @@ CREATE TABLE vsd.ETS2_stops_Strathcona (
 CREATE TABLE vsd.ETS2_trips (
 	route_id VARCHAR(20) FOREIGN KEY REFERENCES vsd.ETS2_routes(route_id),
 	service_id varchar(255), --FOREIGN KEY REFERENCES vsd.ETS2_calendar_dates(service_id),
-	trip_id VARCHAR(30) PRIMARY KEY,
+	trip_id VARCHAR(255) PRIMARY KEY,
 	trip_headsign nvarchar(255) NULL,
 	direction_id bit NULL, --0 = outbound, 1 = inbound
 	block_id  varchar(30) NULL, /* Identifies the block to which the trip belongs. A block consists of two or more sequential trips made using the same vehicle, where a passenger can transfer from one trip to the next just by staying in the vehicle. The block_id must be referenced by two or more trips in trips.txt. */
@@ -926,7 +954,7 @@ CREATE TABLE vsd.ETS2_trips (
 CREATE TABLE vsd.ETS2_trips_StAlbert (
 	route_id VARCHAR(20) FOREIGN KEY REFERENCES vsd.ETS2_routes_StAlbert(route_id),
 	service_id varchar(255), --FOREIGN KEY REFERENCES vsd.ETS2_calendar_dates(service_id),
-	trip_id VARCHAR(30) PRIMARY KEY,
+	trip_id VARCHAR(255) PRIMARY KEY,
 	trip_headsign nvarchar(255) NULL,
 	direction_id bit NULL, --0 = outbound, 1 = inbound
 	block_id varchar(30) NULL, /* Identifies the block to which the trip belongs. A block consists of two or more sequential trips made using the same vehicle, where a passenger can transfer from one trip to the next just by staying in the vehicle. The block_id must be referenced by two or more trips in trips.txt. */
@@ -936,7 +964,7 @@ CREATE TABLE vsd.ETS2_trips_StAlbert (
 CREATE TABLE vsd.ETS2_trips_Strathcona (
 	route_id VARCHAR(20) FOREIGN KEY REFERENCES vsd.ETS2_routes_Strathcona(route_id),
 	service_id varchar(255), --FOREIGN KEY REFERENCES vsd.ETS2_calendar_dates(service_id),
-	trip_id VARCHAR(30) PRIMARY KEY,
+	trip_id VARCHAR(255) PRIMARY KEY,
 	trip_headsign nvarchar(255) NULL,
 	direction_id bit NULL, --0 = outbound, 1 = inbound
 	block_id varchar(30) NULL, /* Identifies the block to which the trip belongs. A block consists of two or more sequential trips made using the same vehicle, where a passenger can transfer from one trip to the next just by staying in the vehicle. The block_id must be referenced by two or more trips in trips.txt. */
@@ -959,24 +987,24 @@ INSERT INTO vsd.ETS2_transfer_types VALUES(3, 'Not Possible', 'Transfers are not
 
 
 CREATE TABLE vsd.ETS2_transfers (
-	from_stop_id VARCHAR(30) NOT NULL REFERENCES vsd.ETS2_trips(trip_id),
-	to_stop_id VARCHAR(30) NOT NULL REFERENCES vsd.ETS2_trips(trip_id),
+	from_stop_id VARCHAR(255) NOT NULL REFERENCES vsd.ETS2_trips(trip_id),
+	to_stop_id VARCHAR(255) NOT NULL REFERENCES vsd.ETS2_trips(trip_id),
 	transfer_type INT NULL REFERENCES vsd.ETS2_transfer_types(transfer_type),
 	min_transfer_time INT NULL, -- value in seconds
 	PRIMARY KEY (from_stop_id, to_stop_id)
 )
 
 CREATE TABLE vsd.ETS2_transfers_StAlbert (
-	from_stop_id VARCHAR(30) NOT NULL REFERENCES vsd.ETS2_trips_StAlbert(trip_id),
-	to_stop_id VARCHAR(30) NOT NULL REFERENCES vsd.ETS2_trips_StAlbert(trip_id),
+	from_stop_id VARCHAR(255) NOT NULL REFERENCES vsd.ETS2_trips_StAlbert(trip_id),
+	to_stop_id VARCHAR(255) NOT NULL REFERENCES vsd.ETS2_trips_StAlbert(trip_id),
 	transfer_type INT NULL REFERENCES vsd.ETS2_transfer_types(transfer_type),
 	min_transfer_time INT NULL, -- value in seconds
 	PRIMARY KEY (from_stop_id, to_stop_id)
 )
 
 CREATE TABLE vsd.ETS2_transfers_Strathcona (
-	from_stop_id VARCHAR(30) NOT NULL REFERENCES vsd.ETS2_trips_Strathcona(trip_id),
-	to_stop_id VARCHAR(30) NOT NULL REFERENCES vsd.ETS2_trips_Strathcona(trip_id),
+	from_stop_id VARCHAR(255) NOT NULL REFERENCES vsd.ETS2_trips_Strathcona(trip_id),
+	to_stop_id VARCHAR(255) NOT NULL REFERENCES vsd.ETS2_trips_Strathcona(trip_id),
 	transfer_type INT NULL REFERENCES vsd.ETS2_transfer_types(transfer_type),
 	min_transfer_time INT NULL, -- value in seconds
 	PRIMARY KEY (from_stop_id, to_stop_id)
@@ -1010,7 +1038,7 @@ INSERT INTO vsd.ETS2_drop_off_types VALUES(3, 'Coordinate with Driver', 'Must co
 --DROP TABLE vsd.ETS2_stop_times
 CREATE TABLE vsd.ETS2_stop_times (
 	--stimeID INT IDENTITY PRIMARY KEY, --I don't use this so removing it might save me from running out of keys later
-	trip_id VARCHAR(30) NOT NULL REFERENCES vsd.ETS2_trips(trip_id),
+	trip_id VARCHAR(255) NOT NULL REFERENCES vsd.ETS2_trips(trip_id),
 	arrival_time varchar(8) NOT NULL, ---not used in practice. Can't store as time because they can go over 24:00 (even over 25:00)
 	departure_hour int NOT NULL, --The hour and minute will be broken up here so they can be stored as INT for faster sorting
 	departure_minute int NOT NULL,
@@ -1027,7 +1055,7 @@ CREATE TABLE vsd.ETS2_stop_times (
 
 CREATE TABLE vsd.ETS2_stop_times_StAlbert (
 	--stimeID INT IDENTITY PRIMARY KEY, --I don't use this so removing it might save me from running out of keys later
-	trip_id VARCHAR(30) NOT NULL REFERENCES vsd.ETS2_trips_StAlbert(trip_id),
+	trip_id VARCHAR(255) NOT NULL REFERENCES vsd.ETS2_trips_StAlbert(trip_id),
 	arrival_time varchar(8) NOT NULL, ---not used in practice. Can't store as time because they can go over 24:00 (even over 25:00)
 	departure_hour int NOT NULL, --The hour and minute will be broken up here so they can be stored as INT for faster sorting
 	departure_minute int NOT NULL,
@@ -1044,7 +1072,7 @@ CREATE TABLE vsd.ETS2_stop_times_StAlbert (
 
 CREATE TABLE vsd.ETS2_stop_times_Strathcona (
 	--stimeID INT IDENTITY PRIMARY KEY, --I don't use this so removing it might save me from running out of keys later
-	trip_id VARCHAR(30) NOT NULL REFERENCES vsd.ETS2_trips_Strathcona(trip_id),
+	trip_id VARCHAR(255) NOT NULL REFERENCES vsd.ETS2_trips_Strathcona(trip_id),
 	arrival_time varchar(8) NOT NULL, ---not used in practice. Can't store as time because they can go over 24:00 (even over 25:00)
 	departure_hour int NOT NULL, --The hour and minute will be broken up here so they can be stored as INT for faster sorting
 	departure_minute int NOT NULL,
@@ -1124,7 +1152,12 @@ FROM vsd.ETS2_routes_StAlbert UNION
 SELECT route_id, route_short_name, route_long_name, route_desc, route_type, route_url, route_color, route_text_color, 3 AS agency_id
 FROM vsd.ETS2_routes_Strathcona
 
---DROP VIEW vsd.ETS2_trip_stop_datetimes
+/*
+DROP VIEW vsd.ETS2_trip_stop_datetimes_all_agencies
+DROP VIEW vsd.ETS2_trip_stop_datetimes
+DROP VIEW vsd.ETS2_trip_stop_datetimes_StAlbert
+DROP VIEW vsd.ETS2_trip_stop_datetimes_Strathcona
+*/
 -- Creates a very useful view from the stop_times
 CREATE VIEW vsd.ETS2_trip_stop_datetimes WITH SCHEMABINDING AS
 SELECT --TOP 10000
@@ -1135,10 +1168,12 @@ CONVERT(datetime, date, 121)+CONVERT(datetime, CAST(departure_hour AS varchar)+'
 END --CASE
 AS ActualDateTime,
 stime.trip_id, stime.arrival_time, stime.departure_hour, stime.departure_minute,stop_id, stime.stop_sequence, stime.stop_headsign, stime.pickup_type, stime.drop_off_type,
-stime.shape_dist_traveled, t.route_id, t.service_id, t.trip_headsign, t.direction_id, t.block_id, t.shape_id, c.date, c.exception_type
+stime.shape_dist_traveled, t.route_id, t.service_id, t.trip_headsign, t.direction_id, t.block_id, t.shape_id, r.route_short_name, r.route_long_name, c.date, c.exception_type
 FROM vsd.ETS2_stop_times stime
 JOIN vsd.ETS2_trips t ON stime.trip_id=t.trip_id
+JOIN vsd.ETS2_routes r ON t.route_id=r.route_id
 JOIN vsd.ETS2_calendar_dates c ON c.service_id=t.service_id
+--SELECT * FROM vsd.ETS2_routes
 
 
 CREATE VIEW vsd.ETS2_trip_stop_datetimes_StAlbert WITH SCHEMABINDING AS
@@ -1150,9 +1185,10 @@ CONVERT(datetime, date, 121)+CONVERT(datetime, CAST(departure_hour AS varchar)+'
 END --CASE
 AS ActualDateTime,
 stime.trip_id, stime.arrival_time, stime.departure_hour, stime.departure_minute,stop_id, stime.stop_sequence, stime.stop_headsign, stime.pickup_type, stime.drop_off_type,
-stime.shape_dist_traveled, t.route_id, t.service_id, t.trip_headsign, t.direction_id, t.block_id, t.shape_id, c.date, c.exception_type
+stime.shape_dist_traveled, t.route_id, t.service_id, t.trip_headsign, t.direction_id, t.block_id, t.shape_id, r.route_short_name, r.route_long_name, c.date, c.exception_type
 FROM vsd.ETS2_stop_times_StAlbert stime
 JOIN vsd.ETS2_trips_StAlbert t ON stime.trip_id=t.trip_id
+JOIN vsd.ETS2_routes_StAlbert r ON t.route_id=r.route_id
 JOIN vsd.ETS2_calendar_dates_complete_StAlbert c ON c.service_id=t.service_id
 
 
@@ -1165,9 +1201,10 @@ CONVERT(datetime, date, 121)+CONVERT(datetime, CAST(departure_hour AS varchar)+'
 END --CASE
 AS ActualDateTime,
 stime.trip_id, stime.arrival_time, stime.departure_hour, stime.departure_minute,stop_id, stime.stop_sequence, stime.stop_headsign, stime.pickup_type, stime.drop_off_type,
-stime.shape_dist_traveled, t.route_id, t.service_id, t.trip_headsign, t.direction_id, t.block_id, t.shape_id, c.date, c.exception_type
+stime.shape_dist_traveled, t.route_id, t.service_id, t.trip_headsign, t.direction_id, t.block_id, t.shape_id, r.route_short_name, r.route_long_name, c.date, c.exception_type
 FROM vsd.ETS2_stop_times_Strathcona stime
 JOIN vsd.ETS2_trips_Strathcona t ON stime.trip_id=t.trip_id
+JOIN vsd.ETS2_routes_Strathcona r ON t.route_id=r.route_id
 JOIN vsd.ETS2_calendar_dates_complete_Strathcona c ON c.service_id=t.service_id
 
 
@@ -1214,13 +1251,13 @@ FROM vsd.ETS2_stop_times_Strathcona
 --The big kahuna
 CREATE VIEW vsd.ETS2_trip_stop_datetimes_all_agencies WITH SCHEMABINDING AS
 SELECT
-1 AS agency_id, ActualDateTime, trip_id, arrival_time, departure_hour, departure_minute, stop_id, stop_headsign, pickup_type, drop_off_type, shape_dist_traveled, route_id, service_id, trip_headsign, direction_id, block_id, shape_id, date, exception_type
+1 AS agency_id, ActualDateTime, trip_id, arrival_time, departure_hour, departure_minute, stop_id, stop_headsign, pickup_type, drop_off_type, shape_dist_traveled, route_id, service_id, trip_headsign, direction_id, block_id, shape_id, route_short_name, route_long_name, date, exception_type
 FROM vsd.ETS2_trip_stop_datetimes
 UNION SELECT
-2 AS agency_id, ActualDateTime, trip_id, arrival_time, departure_hour, departure_minute, stop_id, stop_headsign, pickup_type, drop_off_type, shape_dist_traveled, route_id, service_id, trip_headsign, direction_id, block_id, shape_id, date, exception_type
+2 AS agency_id, ActualDateTime, trip_id, arrival_time, departure_hour, departure_minute, stop_id, stop_headsign, pickup_type, drop_off_type, shape_dist_traveled, route_id, service_id, trip_headsign, direction_id, block_id, shape_id, route_short_name, route_long_name, date, exception_type
 FROM vsd.ETS2_trip_stop_datetimes_Strathcona
 UNION SELECT
-3 AS agency_id, ActualDateTime, trip_id, arrival_time, departure_hour, departure_minute, stop_id, stop_headsign, pickup_type, drop_off_type, shape_dist_traveled, route_id, service_id, trip_headsign, direction_id, block_id, shape_id, date, exception_type
+3 AS agency_id, ActualDateTime, trip_id, arrival_time, departure_hour, departure_minute, stop_id, stop_headsign, pickup_type, drop_off_type, shape_dist_traveled, route_id, service_id, trip_headsign, direction_id, block_id, shape_id, route_short_name, route_long_name, date, exception_type
 FROM vsd.ETS2_trip_stop_datetimes_StAlbert
 /************************************************************************
 *
@@ -1245,5 +1282,3 @@ SELECT * FROM vsd.ETS_activedb
 
 
 SELECT * FROM vsd.EZLRTStations
-
-SELECT * FROM vsd.ETS1_stops_StAlbert
