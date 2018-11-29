@@ -92,8 +92,6 @@ description="Accepts FROM and TO stop IDs, and a datetime and outputs a table wi
 	</cfif>
 
 
-	<cfdump var="#DepartureTimes#">
-
 	<cfoutput>
 	
 	<table class="altColors" data-stopid="#from#">
