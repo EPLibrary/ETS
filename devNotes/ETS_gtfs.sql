@@ -553,7 +553,7 @@ stime.trip_id, stime.arrival_time, stime.departure_hour, stime.departure_minute,
 stime.shape_dist_traveled, t.route_id, t.service_id, t.trip_headsign, t.direction_id, t.block_id, t.shape_id, r.route_short_name, r.route_long_name, c.date, c.exception_type
 FROM vsd.ETS1_stop_times_StAlbert stime
 JOIN vsd.ETS1_trips_StAlbert t ON stime.trip_id=t.trip_id
-JOIN vsd.ETS1_routes r ON t.route_id=r.route_id
+JOIN vsd.ETS1_routes_StAlbert r ON t.route_id=r.route_id
 JOIN vsd.ETS1_calendar_dates_complete_StAlbert c ON c.service_id=t.service_id
 
 
@@ -569,7 +569,7 @@ stime.trip_id, stime.arrival_time, stime.departure_hour, stime.departure_minute,
 stime.shape_dist_traveled, t.route_id, t.service_id, t.trip_headsign, t.direction_id, t.block_id, t.shape_id, r.route_short_name, r.route_long_name, c.date, c.exception_type
 FROM vsd.ETS1_stop_times_Strathcona stime
 JOIN vsd.ETS1_trips_Strathcona t ON stime.trip_id=t.trip_id
-JOIN vsd.ETS1_routes r ON t.route_id=r.route_id
+JOIN vsd.ETS1_routes_Strathcona r ON t.route_id=r.route_id
 JOIN vsd.ETS1_calendar_dates_complete_Strathcona c ON c.service_id=t.service_id
 
 
