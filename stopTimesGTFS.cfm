@@ -46,15 +46,36 @@ description="Accepts FROM stop_id and a datetime and outputs a table with releva
 	<!--- Set the end of the range we are interested in --->
 	<cfset MaxFutureTime = DateAdd('n', maxDepartureMins, CurrentTime)>
 
+
+	<!--- Below, I am unioning the stops if this is a numeric stop. Now... I only really need to do this
+	IF that stopid appears for another city IN SELECT * FROM vsd.ETSX_stops_all_agencies WHERE exclusive=0
+	I should check for this first --->
+	<cfset useSTA = false />
+	<cfset useSTR = false />
+	<cfif isNumeric(fromStop)>
+		<cfquery name="checkForeignAgencies" dbtype="ODBC" datasource="SecureSource">
+			SELECT * FROM vsd.ETS1_stops_all_agencies WHERE stop_id='#fromStop#' AND exclusive=0
+		</cfquery>
+		<cfloop query="checkForeignAgencies">
+			<cfif zone_id IS "St. Albert Transit"><cfset useSTA = true /></cfif>
+			<cfif zone_id IS "Strathcona County Transit"><cfset useSTR = true /></cfif>
+		</cfloop>
+	</cfif>
+
 	<!--- Query that should show the relevant schedule times. --->
 	<cfquery name="DepartureTimes" dbtype="ODBC" datasource="SecureSource">
 		<!--- if fromStop is numeric, it's an ETS stop --->
 		<cfif isNumeric(fromStop)>
 			SELECT * FROM (SELECT * FROM vsd.#dbprefix#_trip_stop_datetimes
+			<cfif useSTA IS true>
 			UNION
 			SELECT * FROM vsd.#dbprefix#_trip_stop_datetimes_StAlbert
+			</cfif>
+			<cfif useSTR IS true>
 			UNION
-			SELECT * FROM vsd.#dbprefix#_trip_stop_datetimes_Strathcona) AS AllDatetimes
+			SELECT * FROM vsd.#dbprefix#_trip_stop_datetimes_Strathcona
+			</cfif>
+			) AS AllDatetimes
 			WHERE stop_id=#fromStop# 
 			AND ActualDateTime > #CurrentTime#
 			AND ActualDateTime < #maxFutureTime#
