@@ -583,10 +583,11 @@ UNION SELECT stop_id, stop_code, stop_name, stop_desc, stop_lat, stop_lon, zone_
 UNION SELECT stop_id, stop_code, stop_name, stop_desc, stop_lat, stop_lon, zone_id, stop_url, location_type, parent_station, is_lrt, exclusive FROM vsd.ETS1_stops_Strathcona)
 AS allstops WHERE exclusive=1
 
+--DROP VIEW vsd.ETS1_stops_all_agencies
 CREATE VIEW vsd.ETS1_stops_all_agencies WITH SCHEMABINDING AS
-SELECT stop_id, stop_code, stop_name, stop_desc, stop_lat, stop_lon, zone_id, stop_url, location_type, parent_station, is_lrt, 1 AS agency_id FROM vsd.ETS1_stops
-UNION SELECT stop_id, stop_code, stop_name, stop_desc, stop_lat, stop_lon, zone_id, stop_url, location_type, parent_station, is_lrt, 2 AS agency_id FROM vsd.ETS1_stops_StAlbert
-UNION SELECT stop_id, stop_code, stop_name, stop_desc, stop_lat, stop_lon, zone_id, stop_url, location_type, parent_station, is_lrt, 3 AS agency_id FROM vsd.ETS1_stops_Strathcona
+SELECT stop_id, stop_code, stop_name, stop_desc, stop_lat, stop_lon, zone_id, stop_url, location_type, parent_station, is_lrt, exclusive, 1 AS agency_id FROM vsd.ETS1_stops
+UNION SELECT stop_id, stop_code, stop_name, stop_desc, stop_lat, stop_lon, zone_id, stop_url, location_type, parent_station, is_lrt, exclusive, 2 AS agency_id FROM vsd.ETS1_stops_StAlbert
+UNION SELECT stop_id, stop_code, stop_name, stop_desc, stop_lat, stop_lon, zone_id, stop_url, location_type, parent_station, is_lrt, exclusive, 3 AS agency_id FROM vsd.ETS1_stops_Strathcona
 
 
 --Create a view of all trips
@@ -1219,10 +1220,9 @@ UNION SELECT stop_id, stop_code, stop_name, stop_desc, stop_lat, stop_lon, zone_
 AS allstops WHERE exclusive=1
 
 CREATE VIEW vsd.ETS2_stops_all_agencies WITH SCHEMABINDING AS
-SELECT stop_id, stop_code, stop_name, stop_desc, stop_lat, stop_lon, zone_id, stop_url, location_type, parent_station, is_lrt, 1 AS agency_id FROM vsd.ETS2_stops
-UNION SELECT stop_id, stop_code, stop_name, stop_desc, stop_lat, stop_lon, zone_id, stop_url, location_type, parent_station, is_lrt, 2 AS agency_id FROM vsd.ETS2_stops_StAlbert
-UNION SELECT stop_id, stop_code, stop_name, stop_desc, stop_lat, stop_lon, zone_id, stop_url, location_type, parent_station, is_lrt, 3 AS agency_id FROM vsd.ETS2_stops_Strathcona
-
+SELECT stop_id, stop_code, stop_name, stop_desc, stop_lat, stop_lon, zone_id, stop_url, location_type, parent_station, is_lrt, exclusive, 1 AS agency_id FROM vsd.ETS2_stops
+UNION SELECT stop_id, stop_code, stop_name, stop_desc, stop_lat, stop_lon, zone_id, stop_url, location_type, parent_station, is_lrt, exclusive, 2 AS agency_id FROM vsd.ETS2_stops_StAlbert
+UNION SELECT stop_id, stop_code, stop_name, stop_desc, stop_lat, stop_lon, zone_id, stop_url, location_type, parent_station, is_lrt, exclusive, 3 AS agency_id FROM vsd.ETS2_stops_Strathcona
 
 --Create a view of all trips
 CREATE VIEW vsd.ETS2_trips_all_agencies WITH SCHEMABINDING AS
