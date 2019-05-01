@@ -49,8 +49,38 @@
 
 	<title><cfoutput>#PageTitleHead#</cfoutput></title>
 
+
 </head>
 <body class="<cfif isDefined('cookie.lrt_dark') and cookie.lrt_dark IS true>darkMode</cfif>">
+
+	<script>
+		//Utility functions for cookies
+		function setCookie(key, value) {
+			var expires = new Date();
+			expires.setTime(expires.getTime() + (10 * 365 * 24 * 60 * 60 * 1000));
+			document.cookie = key + '=' + value + ';expires=' + expires.toUTCString();
+		}
+
+		function getCookie(key) {
+		    var keyValue = document.cookie.match('(^|;) ?' + key + '=([^;]*)(;|$)');
+		    return keyValue ? keyValue[2] : null;
+		}
+
+
+		// We can see if the user wants dark mode here and set it if so
+		// This approach allows the user to have a setting (saved in a cookie) that they can change, 
+		// but it will automatically default to dark mode if their user agent says they prefer color scheme dark
+		// Works as before on browsers that don't support prefers-color-scheme media query
+		// Originally this was done on document.ready, however that causes a white flash.
+		// This way the dark mode takes effect as soon as the body exists and the white flash shouldn't happen.
+		// Note that I'm only able to use vanilla JS without any of my functions that are defined later.
+		if (getCookie('LRT_DARK') === null && window.matchMedia("(prefers-color-scheme: dark)").matches) {
+			// This is almost equivalent to toggleDarkMode() doesn't change the toggle link text, as it doesn't exist yet.
+			setCookie('LRT_DARK', true);
+			document.body.classList.toggle('darkMode');
+		}
+	</script>
+
 	<!--- These are used for the map display --->
 	<div id="mapModal"><div id="mapCanvas" /></div></div>
 	<div id="closeMap"><a href="javascript:void(0);">Close Map</a></div>
@@ -785,17 +815,6 @@ function bindShowArrival() {
 }
 
 
-function setCookie(key, value) {
-	var expires = new Date();
-	expires.setTime(expires.getTime() + (10 * 365 * 24 * 60 * 60 * 1000));
-	document.cookie = key + '=' + value + ';expires=' + expires.toUTCString();
-}
-
-function getCookie(key) {
-    var keyValue = document.cookie.match('(^|;) ?' + key + '=([^;]*)(;|$)');
-    return keyValue ? keyValue[2] : null;
-}
-
 function toggleDarkMode() {
 	$('body').toggleClass('darkMode');
 	if (getCookie('LRT_DARK') === "true") {
@@ -940,14 +959,13 @@ $(document).ready(function() {
 	<cfif NOT isDefined('url.time') OR (isDefined('url.time') AND url.time EQ "")>
 	$('#nowLink').hide();
 	</cfif>
-
-	// We can see if the user wants dark mode here and set it if so
-	// This approach allows the user to have a setting (saved in a cookie) that they can change, 
-	// but it will automatically default to dark mode if their user agent says they prefer color scheme dark
-	// Works as before on browsers that don't support prefers-color-scheme media query
-	if (getCookie('LRT_DARK') == null && window.matchMedia("(prefers-color-scheme: dark)").matches) {
-		// Just do the same thing as clicking on "Night Mode"
-		toggleDarkMode();
+	// Originally a function was run here to auto-switch to night mode based on the media query for
+	// prefers-color-scheme. Unfortunately this causes a white flash until the whole page is loaded,
+	// So instead I have almost all this evaluate as soon as the body element exists.
+	// This will result in the toggle link being wrong, though. This should fix it after the DOM is ready.
+	// This just makes sure the 
+	if (getCookie('LRT_DARK') === "true") {
+		$('#nightModeLink a').html('&#x2600; Day Mode');
 	}
 });
 
