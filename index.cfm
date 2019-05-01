@@ -940,6 +940,15 @@ $(document).ready(function() {
 	<cfif NOT isDefined('url.time') OR (isDefined('url.time') AND url.time EQ "")>
 	$('#nowLink').hide();
 	</cfif>
+
+	// We can see if the user wants dark mode here and set it if so
+	// This approach allows the user to have a setting (saved in a cookie) that they can change, 
+	// but it will automatically default to dark mode if their user agent says they prefer color scheme dark
+	// Works as before on browsers that don't support prefers-color-scheme media query
+	if (getCookie('LRT_DARK') == null && window.matchMedia("(prefers-color-scheme: dark)").matches) {
+		// Just do the same thing as clicking on "Night Mode"
+		toggleDarkMode();
+	}
 });
 
 
@@ -1419,40 +1428,7 @@ $('#mapNotice').on('click', function(){
         <div id="cms_external_footer">
             <link rel="stylesheet" href="https://www.epl.ca/wp-content/themes/epl/css/footer_all.css">
             <!--- Add my support for night mode --->
-            <style>
-				#bccms_footer #footer_container {
-					/*padding:0;*/
-				}
 
-				@media screen and (max-width: 768px) {}
-					#bccms_footer .footer-bottom .support-cpl {
-					    /*margin-top: 15px !important;*/
-					}
-				}
-
-            	.darkMode #bccms_footer #footer_container {
-            		border-color:rgb(126, 164, 241);
-            	}
-				.darkMode #bc_core_external,
-				.darkMode #bccms_footer,
-				.darkMode #bccms_footer #footer_container {
-					background-color:#111;
-					color:white;
-				}
-
-				.darkMode #bccms_footer #footer_container .footer_container_12 .footer-menus a:link,
-				.darkMode #bccms_footer #footer_container .footer_container_12 .footer-menus a:visited,
-				.darkMode #bc_core_external a,
-				.darkMode #bccms_footer a,
-				.darkMode #bccms_footer #footer_container a {
-					color:#b4bdc0;
-				}
-
-				.darkMode #bccms_footer #footer_container .footer_container_12 .footer-menus .bccms-footer-heading {
-					color:#eef6f8;
-				}
-
-            </style>
             <div id="bccms_footer" class="footer-wrapper">
                 <div id="footer_container" style="padding:0px;box-shadow:none;">
     		<!---

@@ -56,8 +56,10 @@ CREATE TABLE vsd.ETS1_agency (
 	agency_name nvarchar(255) NOT NULL,
 	agency_url nvarchar(1024) NOT NULL,
 	agency_timezone nvarchar(255) NOT NULL,
-	agency_lang varchar(5) NOT NULL,
-	agency_phone varchar(16) NULL
+	agency_lang varchar(15) NULL,
+	agency_phone varchar(16) NULL,
+	agency_fare_url varchar(1024) NULL,
+	agency_email varchar(1024) NULL
 )
 
 CREATE TABLE vsd.ETS1_agency_StAlbert (
@@ -65,8 +67,10 @@ CREATE TABLE vsd.ETS1_agency_StAlbert (
 	agency_name nvarchar(255) NOT NULL,
 	agency_url nvarchar(1024) NOT NULL,
 	agency_timezone nvarchar(255) NOT NULL,
-	agency_lang varchar(5) NOT NULL,
-	agency_phone varchar(16) NULL
+	agency_lang varchar(15) NULL,
+	agency_phone varchar(16) NULL,
+	agency_fare_url varchar(1024) NULL,
+	agency_email varchar(1024) NULL
 )
 
 CREATE TABLE vsd.ETS1_agency_Strathcona (
@@ -74,8 +78,10 @@ CREATE TABLE vsd.ETS1_agency_Strathcona (
 	agency_name nvarchar(255) NOT NULL,
 	agency_url nvarchar(1024) NOT NULL,
 	agency_timezone nvarchar(255) NOT NULL,
-	agency_lang varchar(5) NOT NULL,
-	agency_phone varchar(16) NULL
+	agency_lang varchar(15) NULL,
+	agency_phone varchar(16) NULL,
+	agency_fare_url varchar(1024) NULL,
+	agency_email varchar(1024) NULL
 )
 
 CREATE TABLE vsd.ETS1_calendar (
@@ -687,8 +693,10 @@ CREATE TABLE vsd.ETS2_agency (
 	agency_name nvarchar(255) NOT NULL,
 	agency_url nvarchar(1024) NOT NULL,
 	agency_timezone nvarchar(255) NOT NULL,
-	agency_lang varchar(5) NOT NULL,
-	agency_phone varchar(16) NULL
+	agency_lang varchar(15) NULL,
+	agency_phone varchar(16) NULL,
+	agency_fare_url varchar(1024) NULL,
+	agency_email varchar(1024) NULL
 )
 
 CREATE TABLE vsd.ETS2_agency_StAlbert (
@@ -696,8 +704,10 @@ CREATE TABLE vsd.ETS2_agency_StAlbert (
 	agency_name nvarchar(255) NOT NULL,
 	agency_url nvarchar(1024) NOT NULL,
 	agency_timezone nvarchar(255) NOT NULL,
-	agency_lang varchar(5) NOT NULL,
-	agency_phone varchar(16) NULL
+	agency_lang varchar(15) NULL,
+	agency_phone varchar(16) NULL,
+	agency_fare_url varchar(1024) NULL,
+	agency_email varchar(1024) NULL
 )
 
 CREATE TABLE vsd.ETS2_agency_Strathcona (
@@ -705,8 +715,10 @@ CREATE TABLE vsd.ETS2_agency_Strathcona (
 	agency_name nvarchar(255) NOT NULL,
 	agency_url nvarchar(1024) NOT NULL,
 	agency_timezone nvarchar(255) NOT NULL,
-	agency_lang varchar(5) NOT NULL,
-	agency_phone varchar(16) NULL
+	agency_lang varchar(15) NULL,
+	agency_phone varchar(16) NULL,
+	agency_fare_url varchar(1024) NULL,
+	agency_email varchar(1024) NULL
 )
 
 CREATE TABLE vsd.ETS2_calendar (
