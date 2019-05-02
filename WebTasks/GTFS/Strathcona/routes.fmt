@@ -1,12 +1,11 @@
 9.0
-10
-1	SQLCHAR 0	9999	"\""		0	first_quote		""
-2	SQLCHAR	0	9999	"\",\""		1	route_id		""
-3	SQLCHAR	0	9999	"\",\""		0	agency_id		""
-4	SQLCHAR	0	9999	"\",\""		2	route_short_name	""
-5	SQLCHAR	0	9999	"\",\""		3	route_long_name	""
-6	SQLCHAR	0	9999	"\",\""		4	route_desc		""
-7	SQLCHAR	0	9999	"\",\""		5	route_type		""
-8	SQLCHAR	0	9999	"\",\""		6	route_url		""
-9	SQLCHAR	0	9999	"\",\""		7	route_color		""
-10	SQLCHAR	0	9999	"\"\r\n"	8	route_text_color		""
+9
+1	SQLCHAR	0	9999	",\""		1	route_id		""
+2	SQLCHAR	0	9999	"\","		0	agency_id		""
+3	SQLCHAR	0	9999	",\""		2	route_short_name	""
+4	SQLCHAR	0	9999	"\","		3	route_long_name	""
+5	SQLCHAR	0	9999	","			4	route_desc		""
+6	SQLCHAR	0	9999	","			5	route_type		""
+7	SQLCHAR	0	9999	","			6	route_url		""
+8	SQLCHAR	0	9999	","			7	route_color		""
+9	SQLCHAR	0	9999	"\r\n"		8	route_text_color		""
