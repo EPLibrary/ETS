@@ -580,14 +580,17 @@ JOIN vsd.ETS1_calendar_dates_complete_Strathcona c ON c.service_id=t.service_id
 
 
 --This view adds a unique id based on the zone_id to create a unique identifier
+--June 11, 2019 - Edmonton started adding zone IDs and Strathcona removed theirs. I just make up a city code for non-edmonton cities and prepent that now.
 --St. Albert starts with StA, Strathcona Str, Edmonton are just the regular ID
+--DROP VIEW vsd.ETS1_stops_all_agencies_unique 
 CREATE VIEW vsd.ETS1_stops_all_agencies_unique WITH SCHEMABINDING AS
-SELECT CONCAT(left(REPLACE(zone_id, '. ', ''), 3), stop_id) AS astop_id,
+SELECT CONCAT(left(REPLACE(city_code, '. ', ''), 3), stop_id) AS astop_id,
 stop_id, stop_code, stop_name, stop_desc, stop_lat, stop_lon, zone_id, stop_url, location_type, parent_station, is_lrt, exclusive
-FROM (SELECT stop_id, stop_code, stop_name, stop_desc, stop_lat, stop_lon, zone_id, stop_url, location_type, parent_station, is_lrt, exclusive FROM vsd.ETS1_stops
-UNION SELECT stop_id, stop_code, stop_name, stop_desc, stop_lat, stop_lon, zone_id, stop_url, location_type, parent_station, is_lrt, exclusive FROM vsd.ETS1_stops_StAlbert
-UNION SELECT stop_id, stop_code, stop_name, stop_desc, stop_lat, stop_lon, zone_id, stop_url, location_type, parent_station, is_lrt, exclusive FROM vsd.ETS1_stops_Strathcona)
+FROM (SELECT '' AS city_code, stop_id, stop_code, stop_name, stop_desc, stop_lat, stop_lon, zone_id, stop_url, location_type, parent_station, is_lrt, exclusive FROM vsd.ETS1_stops
+UNION SELECT 'StA' AS city_code, stop_id, stop_code, stop_name, stop_desc, stop_lat, stop_lon, zone_id, stop_url, location_type, parent_station, is_lrt, exclusive FROM vsd.ETS1_stops_StAlbert
+UNION SELECT 'Str' AS city_code, stop_id, stop_code, stop_name, stop_desc, stop_lat, stop_lon, zone_id, stop_url, location_type, parent_station, is_lrt, exclusive FROM vsd.ETS1_stops_Strathcona)
 AS allstops WHERE exclusive=1
+
 
 --DROP VIEW vsd.ETS1_stops_all_agencies
 CREATE VIEW vsd.ETS1_stops_all_agencies WITH SCHEMABINDING AS
@@ -1223,13 +1226,16 @@ JOIN vsd.ETS2_calendar_dates_complete_Strathcona c ON c.service_id=t.service_id
 
 --This view adds a unique id based on the zone_id to create a unique identifier
 --St. Albert starts with StA, Strathcona Str, Edmonton are just the regular ID
+--DROP VIEW vsd.ETS2_stops_all_agencies_unique 
 CREATE VIEW vsd.ETS2_stops_all_agencies_unique WITH SCHEMABINDING AS
-SELECT CONCAT(left(REPLACE(zone_id, '. ', ''), 3), stop_id) AS astop_id,
+SELECT CONCAT(left(REPLACE(city_code, '. ', ''), 3), stop_id) AS astop_id,
 stop_id, stop_code, stop_name, stop_desc, stop_lat, stop_lon, zone_id, stop_url, location_type, parent_station, is_lrt, exclusive
-FROM (SELECT stop_id, stop_code, stop_name, stop_desc, stop_lat, stop_lon, zone_id, stop_url, location_type, parent_station, is_lrt, exclusive FROM vsd.ETS2_stops
-UNION SELECT stop_id, stop_code, stop_name, stop_desc, stop_lat, stop_lon, zone_id, stop_url, location_type, parent_station, is_lrt, exclusive FROM vsd.ETS2_stops_StAlbert
-UNION SELECT stop_id, stop_code, stop_name, stop_desc, stop_lat, stop_lon, zone_id, stop_url, location_type, parent_station, is_lrt, exclusive FROM vsd.ETS2_stops_Strathcona)
+FROM (SELECT '' AS city_code, stop_id, stop_code, stop_name, stop_desc, stop_lat, stop_lon, zone_id, stop_url, location_type, parent_station, is_lrt, exclusive FROM vsd.ETS2_stops
+UNION SELECT 'StA' AS city_code, stop_id, stop_code, stop_name, stop_desc, stop_lat, stop_lon, zone_id, stop_url, location_type, parent_station, is_lrt, exclusive FROM vsd.ETS2_stops_StAlbert
+UNION SELECT 'Str' AS city_code, stop_id, stop_code, stop_name, stop_desc, stop_lat, stop_lon, zone_id, stop_url, location_type, parent_station, is_lrt, exclusive FROM vsd.ETS2_stops_Strathcona)
 AS allstops WHERE exclusive=1
+
+--SELECT * FROM vsd.ETS2_stops_all_agencies_unique
 
 CREATE VIEW vsd.ETS2_stops_all_agencies WITH SCHEMABINDING AS
 SELECT stop_id, stop_code, stop_name, stop_desc, stop_lat, stop_lon, zone_id, stop_url, location_type, parent_station, is_lrt, exclusive, 1 AS agency_id FROM vsd.ETS2_stops

@@ -26,7 +26,7 @@ description="Accepts FROM stop_id and a datetime and outputs a table with releva
 	<cfargument name="CurrentTime" required="true" type="date" />
 
 
-	<!--- Set the says of the week --->
+	<!--- Set the days of the week --->
 	<cfset DOW = CurDOW = DayOfWeek(CurrentTime) />
 	<cfset NextDOW = (CurDOW+1) />
 	<cfif NextDow GT 7><cfset NextDow -= 7 /></cfif>
@@ -58,7 +58,7 @@ description="Accepts FROM stop_id and a datetime and outputs a table with releva
 		</cfquery>
 		<cfloop query="checkForeignAgencies">
 			<cfif zone_id IS "St. Albert Transit"><cfset useSTA = true /></cfif>
-			<cfif zone_id IS "Strathcona County Transit"><cfset useSTR = true /></cfif>
+			<cfif zone_id IS ""><cfset useSTR = true /></cfif>
 		</cfloop>
 	</cfif>
 
