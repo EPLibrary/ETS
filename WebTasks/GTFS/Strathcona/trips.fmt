@@ -1,6 +1,6 @@
 8.0
 7
-1	SQLCHAR 0	9999	","		1	route_id
+1	SQLCHAR 0	9999	","		1	route_id ""
 2	SQLCHAR	0	9999	","		2	service_id	""
 3	SQLCHAR	0	9999	",\""	3	trip_id	""
 4	SQLCHAR	0	9999	"\","	4	trip_headsign	""
