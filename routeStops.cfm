@@ -11,7 +11,7 @@
 
 <!--- If we're passed a route_id (url.rid), we return all the relevant stop info here as JSON to populate select lists. Runs very quickly --->
 
-<cfif isDefined("url.rid") AND isNumeric(url.rid)>
+<cfif isDefined("url.rid")>
 <!--- Which agency is this route for? --->
 <cfquery name="RouteAgency" dbtype="ODBC" datasource="SecureSource">
 	SELECT agency_id FROM vsd.#dbprefix#_routes_all_agencies WHERE route_id='#url.rid#'

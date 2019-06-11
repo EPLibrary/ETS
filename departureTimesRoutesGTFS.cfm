@@ -24,7 +24,7 @@
 
 <cffunction name="getRouteDepartures" returntype="void"
 description="Accepts FROM and TO stop IDs, and a datetime and outputs a table with relevant stops at that stop to the destination">
-	<cfargument name="rid" required="true" type="numeric" />
+	<cfargument name="rid" required="true" type="string" />
 	<cfargument name="from" required="true" type="numeric" />
 	<cfargument name="CurrentTime" required="true" type="date" />
 	<cfargument name="to" required="false" type="numeric" />
