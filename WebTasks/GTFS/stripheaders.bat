@@ -5,6 +5,7 @@ rem City of Edmonton
 C:\Windows\System32\findstr.exe /V /R "^[a-z].*[a-z]$" D:\inetpub\temp\gtfs\Edmonton\stop_times.txt > D:\inetpub\temp\gtfs\Edmonton\stop_times_noheader.txt
 C:\Windows\System32\findstr.exe /V /R "^[a-z].*[a-z]$" D:\inetpub\temp\gtfs\Edmonton\shapes.txt > D:\inetpub\temp\gtfs\Edmonton\shapes_noheader.txt
 C:\Windows\System32\findstr.exe /V /R "^[a-z].*[a-z]$" D:\inetpub\temp\gtfs\Edmonton\trips.txt > D:\inetpub\temp\gtfs\Edmonton\trips_noheader.txt
+C:\Windows\System32\findstr.exe /V /R "^[a-z].*[a-z]$" D:\inetpub\temp\gtfs\Edmonton\calendar.txt > D:\inetpub\temp\gtfs\Edmonton\calendar_noheader.txt
 C:\Windows\System32\findstr.exe /V /R "^[a-z].*[a-z]$" D:\inetpub\temp\gtfs\Edmonton\calendar_dates.txt > D:\inetpub\temp\gtfs\Edmonton\calendar_dates_noheader.txt
 C:\Windows\System32\findstr.exe /V /R "^[a-z].*[a-z]$" D:\inetpub\temp\gtfs\Edmonton\stops.txt > D:\inetpub\temp\gtfs\Edmonton\stops_noheader.txt
 C:\Windows\System32\findstr.exe /V /R "^[a-z].*[a-z]$" D:\inetpub\temp\gtfs\Edmonton\transfers.txt > D:\inetpub\temp\gtfs\Edmonton\transfers_noheader.txt
@@ -22,6 +23,9 @@ C:\Windows\System32\findstr.exe /V /R "^$" D:\inetpub\temp\gtfs\Strathcona\stops
 C:\Windows\System32\findstr.exe /V /R "^$" D:\inetpub\temp\gtfs\Strathcona\transfers.txt > D:\inetpub\temp\gtfs\Strathcona\transfers_noblank.txt
 C:\Windows\System32\findstr.exe /V /R "^$" D:\inetpub\temp\gtfs\Strathcona\routes.txt > D:\inetpub\temp\gtfs\Strathcona\routes_noblank.txt
 C:\Windows\System32\findstr.exe /V /R "^$" D:\inetpub\temp\gtfs\Strathcona\agency.txt > D:\inetpub\temp\gtfs\Strathcona\agency_noblank.txt
+rem Remove "Virtual Stops" starting with an S. To support these I need to change stops to numbers, which would be terrible for performance.
+C:\Windows\System32\findstr.exe /V /R "^S999[0-9].*" D:\inetpub\temp\gtfs\Strathcona\stops_noblank.txt > D:\inetpub\temp\gtfs\Strathcona\stops_noblank_novirtual.txt
+copy D:\inetpub\temp\gtfs\Strathcona\stops_noblank_novirtual.txt D:\inetpub\temp\gtfs\Strathcona\stops_noblank.txt
 
 rem St. Albert
 C:\Windows\System32\findstr.exe /V /R "^$" D:\inetpub\temp\gtfs\StAlbert\stop_times.txt > D:\inetpub\temp\gtfs\StAlbert\stop_times_noblank.txt

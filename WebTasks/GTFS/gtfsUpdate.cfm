@@ -337,15 +337,17 @@ UPDATE vsd.#dbprefix#_stops SET exclusive=1
 			) AS subq WHERE exception_type = 1 OR exception_type IS NULL
 		</cfquery>
 		<!--- Now insert the service Ids into the calendar_dates_complete table --->
-		<cfquery name="InsertComplete" dbtype="ODBC" datasource="ReadWriteSource">
-			<cfloop query="DayServiceIds">
-				<!--- Check that there is no unique key violation. This must be horribly inefficient --->
-				BEGIN TRY
-				INSERT INTO vsd.#dbprefix#_calendar_dates_complete_StAlbert (service_id, date, exception_type)
-				VALUES('#DayServiceIds.service_id#', '#DateFormat(day, "YYYYMMDD")#', 1)
-				END TRY BEGIN CATCH END CATCH
-			</cfloop>
-		</cfquery>
+		<cfif DayServiceIds.RecordCount GT 0 AND isDefined('DayServiceIds.service_id') AND len(DayServiceIDs.service_id)>
+			<cfquery name="InsertComplete" dbtype="ODBC" datasource="ReadWriteSource">
+				<cfloop query="DayServiceIds">
+					<!--- Check that there is no unique key violation. This must be horribly inefficient --->
+					BEGIN TRY
+					INSERT INTO vsd.#dbprefix#_calendar_dates_complete_StAlbert (service_id, date, exception_type)
+					VALUES('#DayServiceIds.service_id#', '#DateFormat(day, "YYYYMMDD")#', 1)
+					END TRY BEGIN CATCH END CATCH
+				</cfloop>
+			</cfquery>
+		</cfif>
 	</cfloop>
 </cfloop>
 
@@ -376,15 +378,17 @@ UPDATE vsd.#dbprefix#_stops SET exclusive=1
 			) AS subq WHERE exception_type = 1 OR exception_type IS NULL
 		</cfquery>
 		<!--- Now insert the service Ids into the calendar_dates_complete table --->
-		<cfquery name="InsertComplete" dbtype="ODBC" datasource="ReadWriteSource">
-			<cfloop query="DayServiceIds">
-				<!--- Check that there is no unique key violation. This must be horribly inefficient --->
-				BEGIN TRY
-				INSERT INTO vsd.#dbprefix#_calendar_dates_complete_Strathcona (service_id, date, exception_type)
-				VALUES('#DayServiceIds.service_id#', '#DateFormat(day, "YYYYMMDD")#', 1)
-				END TRY BEGIN CATCH END CATCH
-			</cfloop>
-		</cfquery>
+		<cfif DayServiceIds.RecordCount GT 0 AND isDefined('DayServiceIds.service_id') AND len(DayServiceIDs.service_id)>
+			<cfquery name="InsertComplete" dbtype="ODBC" datasource="ReadWriteSource">
+				<cfloop query="DayServiceIds">
+					<!--- Check that there is no unique key violation. This must be horribly inefficient --->
+					BEGIN TRY
+					INSERT INTO vsd.#dbprefix#_calendar_dates_complete_Strathcona (service_id, date, exception_type)
+					VALUES('#DayServiceIds.service_id#', '#DateFormat(day, "YYYYMMDD")#', 1)
+					END TRY BEGIN CATCH END CATCH
+				</cfloop>
+			</cfquery>
+		</cfif>
 	</cfloop>
 </cfloop>
 
