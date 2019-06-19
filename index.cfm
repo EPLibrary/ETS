@@ -868,7 +868,7 @@ function updateTrips() {
 			trips.push($(this).attr('data-tripid'));
 		});
 		if (trips.length > 0)
-		$.post('tripUpdate.cfm', {"tid":trips.join(", "), "stopid":stopid}).done(function(data) {
+		$.post('tripUpdateDB.cfm', {"tid":trips.join(", "), "stopid":stopid}).done(function(data) {
 
 			//Now inject this data into the page somehow or another
 			$.each(data.message.entity, function(index, value) {
@@ -948,8 +948,8 @@ $(document).ready(function() {
 	bindShowArrival();
 	// Update using realtime data after this page is loaded.
 	updateTrips();
-	//Update Trip schedule every two minutes
-	setInterval(function(){updateTrips();}, 120000);
+	//Update Trip schedule every 90 seconds
+	setInterval(function(){updateTrips();}, 90000);
 
 	// Hide the "Select stop from map" link on Routes page if there's no route selected
 	<cfif isDefined('url.rid') AND url.rid EQ "">
