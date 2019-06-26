@@ -3,7 +3,7 @@
 
 <cfheader name="Content-Type" value="application/json" />
 
-<!--- TripUpdate.cfm allows a page to request a trip update for a list of tripIDs and a stop.
+<!--- TripUpdateDB.cfm allows a page to request a trip update for a list of tripIDs and a stop.
 This NEW version requests from the database which is populated approximately every two minutes with ETSRealtime.exe --->
 
 <cfif isDefined('url.tid')><cfset form.tid=url.tid /></cfif>
