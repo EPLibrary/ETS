@@ -3,8 +3,12 @@
 
 
 <!--- Link Provided by City of Edmonton--->
-<cfset gtfsUrl = "https://data.edmonton.ca/download/gzhc-5ss6/application%2Fzip" />
+<!--- <cfset gtfsUrl = "https://data.edmonton.ca/download/gzhc-5ss6/application%2Fzip" /> --->
+<!--- New link is on Google Drive --->
+<!--- <cfset gtfsUrl = "https://drive.google.com/uc?id=1KcQixzJcucT5PDOwFJBXhDg-Alh0SVP6&export=download" /> --->
 
+<!--- 2019-08-26: brian.korthuis@edmonton.ca says GTFS files have moved here --->
+<cfset gtfsUrl = "https://gtfs.edmonton.ca/TMGTFSRealTimeWebService/GTFS/GTFS.zip" />
 <!--- Actual filename --->
 <!--- <cfset gtfsActual = "https://data.edmonton.ca/api/views/gzhc-5ss6/files/d646faa2-b520-418a-95e8-8ba53a989daf?filename=gtfs.zip" /> --->
 <!--- 💩 <cfhttp method="get" url="#gtfsUrl#" path="D:\inetpub\temp\gtfs" file="gtfs.zip" timeout="1000" getasbinary="auto"> --->

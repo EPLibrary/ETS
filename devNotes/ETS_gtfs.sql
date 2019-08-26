@@ -271,7 +271,7 @@ CREATE TABLE vsd.ETS1_shapes_Strathcona (
 
 --INSERT INTO vsd.ETS1_shapes VALUES('1-89-1',53.53864,-113.42325,1)
 CREATE TABLE vsd.ETS1_stops (
-	stop_id INT PRIMARY KEY,
+	stop_id VARCHAR(20) PRIMARY KEY,
 	stop_code INT NULL,
 	stop_name nvarchar(512) NOT NULL,
 	stop_desc nvarchar(1023) NULL,
@@ -280,7 +280,7 @@ CREATE TABLE vsd.ETS1_stops (
 	zone_id varchar(30) NULL,
 	stop_url nvarchar(1023) NULL,
 	location_type bit NULL, --0/blank = stop, 1 = Station
-	parent_station INT NULL,
+	parent_station VARCHAR(20) NULL,
 	is_lrt bit NULL, --optional field added after import by my own code for simplicity
 	exclusive bit NULL --can specify that this stop is not used by other agencies
 )
@@ -288,7 +288,7 @@ CREATE TABLE vsd.ETS1_stops (
 --Experimental tables for other transit agencies
 --DROP TABLE vsd.ETS1_stops_StAlbert
 CREATE TABLE vsd.ETS1_stops_StAlbert (
-	stop_id INT PRIMARY KEY,
+	stop_id VARCHAR(20) PRIMARY KEY,
 	stop_code INT NULL,
 	stop_name nvarchar(512) NOT NULL,
 	stop_desc nvarchar(1023) NULL,
@@ -297,14 +297,14 @@ CREATE TABLE vsd.ETS1_stops_StAlbert (
 	zone_id varchar(30) NULL,
 	stop_url nvarchar(1023) NULL,
 	location_type bit NULL, --0/blank = stop, 1 = Station
-	parent_station INT NULL,
+	parent_station VARCHAR(20) NULL,
 	is_lrt bit NULL, --optional field added after import by my own code for simplicity
 	exclusive bit NULL --can specify that this stop is not used by other agencies
 )
 
 --DROP TABLE vsd.ETS1_stops_Strathcona
 CREATE TABLE vsd.ETS1_stops_Strathcona (
-	stop_id INT PRIMARY KEY,
+	stop_id VARCHAR(20) PRIMARY KEY,
 	stop_code INT NULL,
 	stop_name nvarchar(512) NOT NULL,
 	stop_desc nvarchar(1023) NULL,
@@ -313,7 +313,7 @@ CREATE TABLE vsd.ETS1_stops_Strathcona (
 	zone_id varchar(30) NULL,
 	stop_url nvarchar(1023) NULL,
 	location_type bit NULL, --0/blank = stop, 1 = Station
-	parent_station INT NULL,
+	parent_station VARCHAR(20) NULL,
 	is_lrt bit NULL, --optional field added after import by my own code for simplicity
 	exclusive bit NULL --can specify that this stop is not used by other agencies
 )
@@ -421,7 +421,7 @@ CREATE TABLE vsd.ETS1_stop_times (
 	departure_minute int NOT NULL,
 	departure_second int NOT NULL,
 	--departure_time varchar(8) NOT NULL, --Removed because this will now be split into hour/minute integers for smaller storage and faster operation
-	stop_id INT NOT NULL FOREIGN KEY REFERENCES vsd.ETS1_stops(stop_id),
+	stop_id VARCHAR(20) NOT NULL FOREIGN KEY REFERENCES vsd.ETS1_stops(stop_id),
 	stop_sequence int NOT NULL, --integer
 	--for proper normalization, stop_sequence really should be another DB table, but since it only seems to ever be one number, that's not so necesssary
 	stop_headsign nvarchar(255) NULL,
@@ -438,7 +438,7 @@ CREATE TABLE vsd.ETS1_stop_times_StAlbert (
 	departure_minute int NOT NULL,
 	departure_second int NOT NULL,
 	--departure_time varchar(8) NOT NULL, --Removed because this will now be split into hour/minute integers for smaller storage and faster operation
-	stop_id INT NOT NULL FOREIGN KEY REFERENCES vsd.ETS1_stops_StAlbert(stop_id),
+	stop_id VARCHAR(20) NOT NULL FOREIGN KEY REFERENCES vsd.ETS1_stops_StAlbert(stop_id),
 	stop_sequence int NOT NULL, --integer
 	--for proper normalization, stop_sequence really should be another DB table, but since it only seems to ever be one number, that's not so necesssary
 	stop_headsign nvarchar(255) NULL,
@@ -455,7 +455,7 @@ CREATE TABLE vsd.ETS1_stop_times_Strathcona (
 	departure_minute int NOT NULL,
 	departure_second int NOT NULL,
 	--departure_time varchar(8) NOT NULL, --Removed because this will now be split into hour/minute integers for smaller storage and faster operation
-	stop_id INT NOT NULL FOREIGN KEY REFERENCES vsd.ETS1_stops_Strathcona(stop_id),
+	stop_id VARCHAR(20) NOT NULL FOREIGN KEY REFERENCES vsd.ETS1_stops_Strathcona(stop_id),
 	stop_sequence int NOT NULL, --integer
 	--for proper normalization, stop_sequence really should be another DB table, but since it only seems to ever be one number, that's not so necesssary
 	stop_headsign nvarchar(255) NULL,
@@ -466,7 +466,7 @@ CREATE TABLE vsd.ETS1_stop_times_Strathcona (
 
 --Table that allows quickly sorting nearby stops. This gets recreated every time the update is done.
 CREATE TABLE vsd.ETS1_stop_routes_all_agencies (
-stop_id INT NOT NULL,
+stop_id VARCHAR(20) NOT NULL,
 route_id varchar(20) NOT NULL,
 agency_id INT NOT NULL, 
 PRIMARY KEY (stop_id, route_id, agency_id)
@@ -910,7 +910,7 @@ CREATE TABLE vsd.ETS2_shapes_Strathcona (
 
 --INSERT INTO vsd.ETS2_shapes VALUES('1-89-1',53.53864,-113.42325,1)
 CREATE TABLE vsd.ETS2_stops (
-	stop_id INT PRIMARY KEY,
+	stop_id VARCHAR(20) PRIMARY KEY,
 	stop_code INT NULL,
 	stop_name nvarchar(512) NOT NULL,
 	stop_desc nvarchar(1023) NULL,
@@ -919,7 +919,7 @@ CREATE TABLE vsd.ETS2_stops (
 	zone_id varchar(30) NULL,
 	stop_url nvarchar(1023) NULL,
 	location_type bit NULL, --0/blank = stop, 1 = Station
-	parent_station INT NULL,
+	parent_station VARCHAR(20) NULL,
 	is_lrt bit NULL, --optional field added after import by my own code for simplicity
 	exclusive bit NULL --can specify that this stop is not used by other agencies
 )
@@ -927,7 +927,7 @@ CREATE TABLE vsd.ETS2_stops (
 --Experimental tables for other transit agencies
 --DROP TABLE vsd.ETS2_stops_StAlbert
 CREATE TABLE vsd.ETS2_stops_StAlbert (
-	stop_id INT PRIMARY KEY,
+	stop_id VARCHAR(20) PRIMARY KEY,
 	stop_code INT NULL,
 	stop_name nvarchar(512) NOT NULL,
 	stop_desc nvarchar(1023) NULL,
@@ -936,14 +936,14 @@ CREATE TABLE vsd.ETS2_stops_StAlbert (
 	zone_id varchar(30) NULL,
 	stop_url nvarchar(1023) NULL,
 	location_type bit NULL, --0/blank = stop, 1 = Station
-	parent_station INT NULL,
+	parent_station VARCHAR(20) NULL,
 	is_lrt bit NULL, --optional field added after import by my own code for simplicity
 	exclusive bit NULL --can specify that this stop is not used by other agencies
 )
 
 --DROP TABLE vsd.ETS2_stops_Strathcona
 CREATE TABLE vsd.ETS2_stops_Strathcona (
-	stop_id INT PRIMARY KEY,
+	stop_id VARCHAR(20) PRIMARY KEY,
 	stop_code INT NULL,
 	stop_name nvarchar(512) NOT NULL,
 	stop_desc nvarchar(1023) NULL,
@@ -952,7 +952,7 @@ CREATE TABLE vsd.ETS2_stops_Strathcona (
 	zone_id varchar(30) NULL,
 	stop_url nvarchar(1023) NULL,
 	location_type bit NULL, --0/blank = stop, 1 = Station
-	parent_station INT NULL,
+	parent_station VARCHAR(20) NULL,
 	is_lrt bit NULL, --optional field added after import by my own code for simplicity
 	exclusive bit NULL --can specify that this stop is not used by other agencies
 )
@@ -1060,7 +1060,7 @@ CREATE TABLE vsd.ETS2_stop_times (
 	departure_minute int NOT NULL,
 	departure_second int NOT NULL,
 	--departure_time varchar(8) NOT NULL, --Removed because this will now be split into hour/minute integers for smaller storage and faster operation
-	stop_id INT NOT NULL FOREIGN KEY REFERENCES vsd.ETS2_stops(stop_id),
+	stop_id VARCHAR(20) NOT NULL FOREIGN KEY REFERENCES vsd.ETS2_stops(stop_id),
 	stop_sequence int NOT NULL, --integer
 	--for proper normalization, stop_sequence really should be another DB table, but since it only seems to ever be one number, that's not so necesssary
 	stop_headsign nvarchar(255) NULL,
@@ -1077,7 +1077,7 @@ CREATE TABLE vsd.ETS2_stop_times_StAlbert (
 	departure_minute int NOT NULL,
 	departure_second int NOT NULL,
 	--departure_time varchar(8) NOT NULL, --Removed because this will now be split into hour/minute integers for smaller storage and faster operation
-	stop_id INT NOT NULL FOREIGN KEY REFERENCES vsd.ETS2_stops_StAlbert(stop_id),
+	stop_id VARCHAR(20) NOT NULL FOREIGN KEY REFERENCES vsd.ETS2_stops_StAlbert(stop_id),
 	stop_sequence int NOT NULL, --integer
 	--for proper normalization, stop_sequence really should be another DB table, but since it only seems to ever be one number, that's not so necesssary
 	stop_headsign nvarchar(255) NULL,
@@ -1094,7 +1094,7 @@ CREATE TABLE vsd.ETS2_stop_times_Strathcona (
 	departure_minute int NOT NULL,
 	departure_second int NOT NULL,
 	--departure_time varchar(8) NOT NULL, --Removed because this will now be split into hour/minute integers for smaller storage and faster operation
-	stop_id INT NOT NULL FOREIGN KEY REFERENCES vsd.ETS2_stops_Strathcona(stop_id),
+	stop_id VARCHAR(20) NOT NULL FOREIGN KEY REFERENCES vsd.ETS2_stops_Strathcona(stop_id),
 	stop_sequence int NOT NULL, --integer
 	--for proper normalization, stop_sequence really should be another DB table, but since it only seems to ever be one number, that's not so necesssary
 	stop_headsign nvarchar(255) NULL,
@@ -1105,7 +1105,7 @@ CREATE TABLE vsd.ETS2_stop_times_Strathcona (
 
 --Table that allows quickly sorting nearby stops. This gets recreated every time the update is done.
 CREATE TABLE vsd.ETS2_stop_routes_all_agencies (
-stop_id INT NOT NULL,
+stop_id VARCHAR(20) NOT NULL,
 route_id varchar(20) NOT NULL,
 agency_id INT NOT NULL, 
 PRIMARY KEY (stop_id, route_id, agency_id)

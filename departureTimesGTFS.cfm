@@ -398,7 +398,7 @@ description="Accepts FROM and TO station IDs, and a datetime and outputs a table
 	<cfloop query="DepartureTimes">
 		<!--- Only show if the time hasn't elapsed --->
 		<tr data-tripid="#trip_id#" data-sequence="#stop_sequence#">
-			<td class="tN"><cfif trip_headsign NEQ 1>#route_id# </cfif><cfif len(stop_headsign)>#UCase(stop_headsign)#<cfelseif len(trip_headsign) AND trip_headsign NEQ 1>#trip_headsign#<cfelse>#route_long_name#</cfif></td>
+			<td class="tN"><cfif trip_headsign NEQ 1><!--#route_id# --></cfif><cfif len(stop_headsign)>#UCase(stop_headsign)#<cfelseif len(trip_headsign) AND trip_headsign NEQ 1>#trip_headsign#<cfelse>#route_long_name#</cfif></td>
 			<td class="aT" data-scheduled="#ActualDateTime#" data-datetime="#ActualDateTime#">#TimeFormat(ActualDateTime, "h:mm tt")#</td>
 			<td class="cD"></td>
 		</tr>
