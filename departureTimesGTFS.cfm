@@ -40,6 +40,16 @@ description="Accepts FROM and TO station IDs, and a datetime and outputs a table
 		SELECT * FROM vsd.EZLRTStations WHERE StationID=#to#
 	</cfquery>
 
+	<!--- Show error if a station doesn't exist --->
+	<cfif fromStation.RecordCount EQ 0>
+		<p class="gone">Your specified departure station does not exist.</p>
+		<cfreturn />
+	</cfif>
+	<cfif toStation.RecordCount EQ 0>
+		<p class="gone">Your specified destination station does not exist.</p>
+		<cfreturn />
+	</cfif>
+
 	<!--- This query checks to see if our to and from stations connect. If not, we have to find a connecting station --->
 	<cfquery name="validTrips" dbtype="ODBC" datasource="SecureSource">
 		SELECT trip_id FROM 
@@ -263,7 +273,7 @@ description="Accepts FROM and TO station IDs, and a datetime and outputs a table
 			</cfoutput>
 			<cfreturn>
 		<cfelse>
-			<p class="error">You have chosen two stations with no connection between them.</p>
+			<p class="gone">You have chosen two stations with no connection between them.</p>
 			<cfreturn />
 		</cfif>
 
