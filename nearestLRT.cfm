@@ -28,25 +28,36 @@ Note that a three-decimal place precision is sufficient here if one is concerned
 	<cfset dest = url.dest />
 </cfif>
 
-<cfset error = false />
+<cfset error = 0 />
 <cfset errMsg = "" />
 
 <cfif NOT isDefined('url.lat') OR NOT isNumeric(url.lat)>
-	<cfset errMsg &= 'No valid <b>lat</b> specified.<br />' />
-	<cfset error = true />
+	<cfset errMsg &= '<b>lat</b> not specified.<br />' />
+	<cfset error++ />
 </cfif>
 <cfif NOT isDefined('url.lon') OR NOT isNumeric(url.lon)>
-	<cfset errMsg &= 'No valid <b>lon</b> specified.<br />' />
-	<cfset error = true />
+	<cfset errMsg &= '<b>lon</b> not specified.<br />' />
+	<cfset error++ />
 </cfif>
 <cfif len(dest) EQ 0>
-	<cfset errMsg &= '<b>dest</b> not specified (optional).<br />' />
+	<cfset errMsg &= '<b>dest</b> id not specified.<br />' />
+	<cfset error++ />
+<cfelse>
+	<!--- Check that the destination station exists --->
+	<cfquery name="checkStationID" dbtype="query">
+		SELECT * FROM stations WHERE StationID=#dest#
+	</cfquery>
+	<cfif checkStationID.RecordCount EQ 0>
+		<cfset error++ />
+		<cfset errMsg &= '<b>dest</b> stationID <cfoutput>"#dest#"</cfoutput> does not exist.<br />' />
+	</cfif>
 </cfif>
 
 <cfif error >
 <html>
 	<head>
 		<title>Nearest Edmonton LRT Station</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 		<style>
 			body {
 				font-family: sans-serif;
@@ -60,6 +71,10 @@ Note that a three-decimal place precision is sufficient here if one is concerned
 				margin-bottom:10px;
 			}
 
+			.warning {
+				color: rgb(200, 170, 0);
+			}
+
 			table {
 				/*border: 1px solid #aaa;*/
 				border-collapse: collapse;
@@ -67,11 +82,11 @@ Note that a three-decimal place precision is sufficient here if one is concerned
 
 			table td, table th {
 				padding:4px;
-				border:1px solid rgba(0, 0, 0, .10);
+				border:1px solid rgba(127, 127, 127, .40);
 			}
 
 			table th {
-				border-color:black;
+				border-color: rgba(127, 127, 127, .40);
 			}
 
 			table thead tr {
@@ -84,7 +99,7 @@ Note that a three-decimal place precision is sufficient here if one is concerned
 
 			table tbody tr:nth-child(even):not(.heading) {
 				background-color: #dddddd;
-				background-color: rgba(0, 0, 0, .05);
+				background-color: rgba(127, 127, 127, 0.3);
 			}
 
 			table tbody tr:nth-child(odd):not(.heading) {
@@ -93,6 +108,10 @@ Note that a three-decimal place precision is sufficient here if one is concerned
 
 			h1, h2, h3, h4 {
 				margin-bottom:5px;
+			}
+
+			ul {
+				margin-top:0;
 			}
 
 			@media (prefers-color-scheme: dark) {
@@ -105,10 +124,6 @@ Note that a three-decimal place precision is sufficient here if one is concerned
 					color:red;
 				}
 
-				table tbody tr:nth-child(even):not(.heading) {
-					background-color: #dddddd;
-					background-color: rgba(255, 255, 255, .08);
-				}
 
 				a {
 					color: #25caff;
@@ -124,29 +139,29 @@ Note that a three-decimal place precision is sufficient here if one is concerned
 
 	<h1>Nearest LRT Station</h1>
 
-	<p>This page is used to automatically showing the Edmonton LRT Schedule for the station nearest to a specified location. It is useful for automated scripts like Siri Shortcuts in iOS 12+.</p>
+	<p>This page automatically redirects to the Edmonton LRT Schedule for the station nearest to specified coordinates. This is useful for automated scripts like Siri Shortcuts in iOS 12+.</p>
 
 	<cfif len(errMsg)>
-		<h4>The following error has occurred:</h4>
+		<h4>The following error<cfif error GT 1>s have<cfelse> has</cfif> occurred:</h4>
 		<div class="error"><cfoutput>#errMsg#</cfoutput></div>
 		<b>Valid example:</b> <a href="https://www2.epl.ca/ETS/nearestLRT.cfm?lat=53.5443&lon=-113.4892&dest=3">https://www2.epl.ca/ETS/nearestLRT.cfm?lat=53.5443&lon=-113.4892&dest=3</a>
 	</cfif>
 
-	<h3>Parameters</h3>
+	<h2>Parameters</h2>
 	<ul>
 		<li><b>lat</b> - latitude</li>
 		<li><b>lon</b> - longitude (<b>long</b> is also accepted)</li>
-		<li><b>dest</b> - <i>optional</i> destination station ID (<a href="#destStns">see the list below</a>)</li>
+		<li><b>dest</b> - destination stationID (<a href="#destStns">see the list below</a>)</li>
 		<li><b>coords</b> - <i>alternatively</i>, coords may be specified instead of separate lat/lon parameters</li>
 	</ul>
 
-	<p>Latitude and Longitude should be specified as coordinates with at least three decimal places of precision. Alternatively, you may use a "coords" parameter that has both coordinates as one parameter.<br/>
-		<b>Usage:</b> https://www2.epl.ca/ets/nearestLRT.cfm?coords=53.5443,-113.4892</p>
-	<p>The "<b>dest</b>" parameter specifies your destination station ID and is optional. If it is omitted, the destination will default to Churchill Station unless Churchill is the nearest station, in which case the destination will default to Century Park Station.</p>
+	<p>Latitude and Longitude should be specified as decimal coordinates. Alternatively, you may use a "coords" parameter that has both coordinates, separated by a comma, as one parameter.<br/>
+		<b>Usage:</b> <a href="https://www2.epl.ca/ets/nearestLRT.cfm?coords=53.5443,-113.4892&dest=1">https://www2.epl.ca/ets/nearestLRT.cfm?coords=53.5443,-113.4892&dest=1</a></p>
+	<!--<p>The "<b>dest</b>" parameter specifies your destination station ID and is optional. If it is omitted, the destination will default to Churchill Station unless Churchill is the nearest station, in which case the destination will default to Century Park Station.</p>-->
 
 
 	
-	<h3 id="destStns">Destination Station IDs</h3>
+	<h2 id="destStns">Destination Station IDs</h2>
 	<table>
 		<thead>
 			<tr>
