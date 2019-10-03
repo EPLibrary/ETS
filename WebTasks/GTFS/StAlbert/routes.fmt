@@ -1,7 +1,7 @@
 9.0
 9
-1	SQLCHAR	0	9999	",\""	1	route_id		""
-2	SQLCHAR	0	9999	"\","	0	agency_id		""
+1	SQLCHAR	0	9999	","		1	route_id		""
+2	SQLCHAR	0	9999	","		0	agency_id		""
 3	SQLCHAR	0	9999	",\""	2	route_short_name	""
 4	SQLCHAR	0	9999	"\","	3	route_long_name	""
 5	SQLCHAR	0	9999	","		4	route_desc		""
