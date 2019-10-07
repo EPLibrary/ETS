@@ -1,5 +1,10 @@
-
 <!--- This version of departureTimesRoutesGTFS gets departure times for the stops for a specific route --->
+
+<!--- Loaded via ajax or include to show departureTimes table --->
+<cfsetting showdebugoutput="false" />
+<cfsetting requesttimeout="12" />
+<!--- set to 12s as safeguard against runaway recursive function. This page gets really slow, though :(  --->
+
 
 <!--- Simple function that accepts a weekday (2 or more letters) and returns the coldfusion weekday integer --->
 <cffunction name="weekdayToNum" returntype="numeric">
@@ -16,10 +21,6 @@
 		<cfcase value="Sa">  <cfreturn 7></cfcase>
 	</cfswitch>
 </cffunction>
-<!--- Loaded via ajax or include to show departureTimes table --->
-<cfsetting showdebugoutput="false" />
-<cfsetting requesttimeout="12" />
-<!--- set to 12s as safeguard against runaway recursive function. This page gets really slow, though :(  --->
 
 
 <cffunction name="getRouteDepartures" returntype="void"
@@ -51,12 +52,12 @@ description="Accepts FROM and TO stop IDs, and a datetime and outputs a table wi
 
 
 	<cfquery name="fromStop" dbtype="ODBC" datasource="SecureSource">
-		SELECT * FROM vsd.#dbprefix#_stops_all_agencies_unique WHERE stop_id=#from#
+		SELECT * FROM vsd.#dbprefix#_stops_all_agencies_unique WHERE stop_id='#from#'
 	</cfquery>
 	
 	<cfif isDefined('to') AND isNumeric(to)>
 		<cfquery name="toStop" dbtype="ODBC" datasource="SecureSource">
-			SELECT * FROM vsd.#dbprefix#_stops_all_agencies_unique WHERE stop_id=#to#
+			SELECT * FROM vsd.#dbprefix#_stops_all_agencies_unique WHERE stop_id='#to#'
 		</cfquery>
 	</cfif>
 
