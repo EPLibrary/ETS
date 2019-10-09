@@ -53,6 +53,7 @@ DROP TABLE vsd.ETS1_agency_Strathcona
 
 CREATE TABLE vsd.ETS1_agency (
 	aID INT NOT NULL IDENTITY PRIMARY KEY,
+	agency_id varchar(255) NULL, -- Typically 1, 2, 3, but I learned my lesson, so varchar it is.
 	agency_name nvarchar(255) NOT NULL,
 	agency_url nvarchar(1024) NOT NULL,
 	agency_timezone nvarchar(255) NOT NULL,
@@ -64,6 +65,7 @@ CREATE TABLE vsd.ETS1_agency (
 
 CREATE TABLE vsd.ETS1_agency_StAlbert (
 	aID INT NOT NULL IDENTITY PRIMARY KEY,
+	agency_id varchar(255) NULL, -- Typically 1, 2, 3, but I learned my lesson, so varchar it is.
 	agency_name nvarchar(255) NOT NULL,
 	agency_url nvarchar(1024) NOT NULL,
 	agency_timezone nvarchar(255) NOT NULL,
@@ -75,6 +77,7 @@ CREATE TABLE vsd.ETS1_agency_StAlbert (
 
 CREATE TABLE vsd.ETS1_agency_Strathcona (
 	aID INT NOT NULL IDENTITY PRIMARY KEY,
+	agency_id varchar(255) NULL, -- Typically 1, 2, 3, but I learned my lesson, so varchar it is.
 	agency_name nvarchar(255) NOT NULL,
 	agency_url nvarchar(1024) NOT NULL,
 	agency_timezone nvarchar(255) NOT NULL,
@@ -193,14 +196,15 @@ CREATE TABLE vsd.ETS1_route_types (
 	route_type_desc nvarchar(1024) NULL
 )
 
-INSERT INTO vsd.ETS1_route_types VALUES(0, 'Tram, Streetcar, Light Rail', 'Any light rail or street level system within a metropolitan area.')
-INSERT INTO vsd.ETS1_route_types VALUES(1, 'Subway, Metro', 'Any underground rail system within a metropolitan area.')
-INSERT INTO vsd.ETS1_route_types VALUES(2, 'Rail', 'Used for intercity or long-distance travel.')
-INSERT INTO vsd.ETS1_route_types VALUES(3, 'Bus', 'Used for short- and long-distance bus routes.')
-INSERT INTO vsd.ETS1_route_types VALUES(4, 'Ferry', 'Used for short- and long-distance boat service.')
-INSERT INTO vsd.ETS1_route_types VALUES(5, 'Cable Car', 'Used for street-level cable cars where the cable runs beneath the car.')
-INSERT INTO vsd.ETS1_route_types VALUES(6, 'Gondola, Suspended cable car.', 'Typically used for aerial cable cars where the car is suspended from the cable.')
-INSERT INTO vsd.ETS1_route_types VALUES(7, 'Funicular', 'Any rail system designed for steep inclines.')
+INSERT INTO vsd.ETS1_route_types VALUES
+(0, 'Tram, Streetcar, Light Rail', 'Any light rail or street level system within a metropolitan area.'),
+(1, 'Subway, Metro', 'Any underground rail system within a metropolitan area.'),
+(2, 'Rail', 'Used for intercity or long-distance travel.'),
+(3, 'Bus', 'Used for short- and long-distance bus routes.'),
+(4, 'Ferry', 'Used for short- and long-distance boat service.'),
+(5, 'Cable Car', 'Used for street-level cable cars where the cable runs beneath the car.'),
+(6, 'Gondola, Suspended cable car.', 'Typically used for aerial cable cars where the car is suspended from the cable.'),
+(7, 'Funicular', 'Any rail system designed for steep inclines.')
 
 --DELETE FROM vsd.ETS1_routes
 --DROP TABLE vsd.ETS1_routes
@@ -242,7 +246,7 @@ CREATE TABLE vsd.ETS1_routes_Strathcona (
 	--UNIQUE(route_id)
 )
 
-SELECT * FROM vsd.ETS1_routes
+--SELECT * FROM vsd.ETS1_routes
 --INSERT INTO vsd.ETS1_routes VALUES(1,1,'West Edmonton Mall - Downtown - Capilano',NULL,3,NULL)
 
 CREATE TABLE vsd.ETS1_shapes (
@@ -357,11 +361,11 @@ CREATE TABLE vsd.ETS1_transfer_types (
 	transfer_type_name nvarchar(255) NOT NULL,
 	transfer_type_desc nvarchar(1024) NULL
 )
-INSERT INTO vsd.ETS1_transfer_types VALUES(0, 'Recommended', 'This is a recommended transfer point between two routes.')
-INSERT INTO vsd.ETS1_transfer_types VALUES(1, 'Timed', ' This is a timed transfer point between two routes. The departing vehicle is expected to wait for the arriving one, with sufficient time for a passenger to transfer between routes.')
-INSERT INTO vsd.ETS1_transfer_types VALUES(2, 'Requires Min. Time', 'This transfer requires a minimum amount of time between arrival and departure to ensure a connection. The time required to transfer is specified by min_transfer_time.')
-INSERT INTO vsd.ETS1_transfer_types VALUES(3, 'Not Possible', 'Transfers are not possible between routes at this location.')
-
+INSERT INTO vsd.ETS1_transfer_types VALUES
+(0, 'Recommended', 'This is a recommended transfer point between two routes.'),
+(1, 'Timed', ' This is a timed transfer point between two routes. The departing vehicle is expected to wait for the arriving one, with  to ,transfer between routes.'),
+(2, 'Requires Min. Time', 'This transfer requires a minimum amount of time between arrival and departure to ensure a connection. The time  by ,min_transfer_time.'),
+(3, 'Not Possible', 'Transfers are not possible between routes at this location.')
 
 CREATE TABLE vsd.ETS1_transfers (
 	from_stop_id VARCHAR(255) NOT NULL REFERENCES vsd.ETS1_trips(trip_id),
@@ -395,20 +399,22 @@ CREATE TABLE vsd.ETS1_pickup_types (
 	pickup_type_name nvarchar(255) NOT NULL,
 	pickup_type_desc nvarchar(1024) NULL
 )
-INSERT INTO vsd.ETS1_pickup_types VALUES(0, 'Regular', 'Regularly scheduled pickup')
-INSERT INTO vsd.ETS1_pickup_types VALUES(1, 'No pickup', 'No pickup available')
-INSERT INTO vsd.ETS1_pickup_types VALUES(2, 'Phone', 'Must phone agency to arrange pickup')
-INSERT INTO vsd.ETS1_pickup_types VALUES(3, 'Coordinate with Driver', 'Must coordinate with driver to arrange pickup')
+INSERT INTO vsd.ETS1_pickup_types VALUES
+(0, 'Regular', 'Regularly scheduled pickup'),
+(1, 'No pickup', 'No pickup available'),
+(2, 'Phone', 'Must phone agency to arrange pickup'),
+(3, 'Coordinate with Driver', 'Must coordinate with driver to arrange pickup')
 
 CREATE TABLE vsd.ETS1_drop_off_types (
 	drop_off_type INT PRIMARY KEY,
 	drop_off_type_name nvarchar(255) NOT NULL,
 	drop_off_type_desc nvarchar(1024) NULL
 )
-INSERT INTO vsd.ETS1_drop_off_types VALUES(0, 'Regular', 'Regularly scheduled drop off')
-INSERT INTO vsd.ETS1_drop_off_types VALUES(1, 'No drop off', 'No drop off available')
-INSERT INTO vsd.ETS1_drop_off_types VALUES(2, 'Phone', 'Must phone agency to arrange drop off')
-INSERT INTO vsd.ETS1_drop_off_types VALUES(3, 'Coordinate with Driver', 'Must coordinate with driver to arrange drop off')
+INSERT INTO vsd.ETS1_drop_off_types VALUES
+(0, 'Regular', 'Regularly scheduled drop off'),
+(1, 'No drop off', 'No drop off available'),
+(2, 'Phone', 'Must phone agency to arrange drop off'),
+(3, 'Coordinate with Driver', 'Must coordinate with driver to arrange drop off')
 
 
 --INSERT INTO vsd.ETS1_stops VALUES(1001,1001,'Abbottsfield Transit Centre',NULL,53.571965,-113.390362,NULL,NULL,0,NULL)
@@ -428,6 +434,7 @@ CREATE TABLE vsd.ETS1_stop_times (
 	pickup_type INT DEFAULT 0 FOREIGN KEY REFERENCES vsd.ETS1_pickup_types(pickup_type),
 	drop_off_type INT DEFAULT 0 FOREIGN KEY REFERENCES vsd.ETS1_drop_off_types(drop_off_type),
 	shape_dist_traveled FLOAT(8) NULL, --theoretically could be a float, but is only ever int LOOKS LIKE I WAS WRONG ABOUT THIS!
+	timepoint BIT NULL -- This should only ever be 1 or 0
 )
 
 CREATE TABLE vsd.ETS1_stop_times_StAlbert (
@@ -445,6 +452,7 @@ CREATE TABLE vsd.ETS1_stop_times_StAlbert (
 	pickup_type INT DEFAULT 0 FOREIGN KEY REFERENCES vsd.ETS1_pickup_types(pickup_type),
 	drop_off_type INT DEFAULT 0 FOREIGN KEY REFERENCES vsd.ETS1_drop_off_types(drop_off_type),
 	shape_dist_traveled FLOAT(8) NULL, --theoretically could be a float, but is only ever int LOOKS LIKE I WAS WRONG ABOUT THIS!
+	timepoint BIT NULL -- This should only ever be 1 or 0
 )
 
 CREATE TABLE vsd.ETS1_stop_times_Strathcona (
@@ -462,6 +470,7 @@ CREATE TABLE vsd.ETS1_stop_times_Strathcona (
 	pickup_type INT DEFAULT 0 FOREIGN KEY REFERENCES vsd.ETS1_pickup_types(pickup_type),
 	drop_off_type INT DEFAULT 0 FOREIGN KEY REFERENCES vsd.ETS1_drop_off_types(drop_off_type),
 	shape_dist_traveled FLOAT(8) NULL, --theoretically could be a float, but is only ever int LOOKS LIKE I WAS WRONG ABOUT THIS!
+	timepoint BIT NULL -- This should only ever be 1 or 0
 )
 
 --Table that allows quickly sorting nearby stops. This gets recreated every time the update is done.
@@ -540,7 +549,7 @@ CONVERT(datetime, date, 121)+CONVERT(datetime, CAST(departure_hour AS varchar)+'
 END --CASE
 AS ActualDateTime,
 stime.trip_id, stime.arrival_time, stime.departure_hour, stime.departure_minute,stop_id, stime.stop_sequence, stime.stop_headsign, stime.pickup_type, stime.drop_off_type,
-stime.shape_dist_traveled, t.route_id, t.service_id, t.trip_headsign, t.direction_id, t.block_id, t.shape_id, r.route_short_name, r.route_long_name, c.date, c.exception_type
+stime.shape_dist_traveled, stime.timepoint, t.route_id, t.service_id, t.trip_headsign, t.direction_id, t.block_id, t.shape_id, r.route_short_name, r.route_long_name, c.date, c.exception_type
 FROM vsd.ETS1_stop_times stime
 JOIN vsd.ETS1_trips t ON stime.trip_id=t.trip_id
 JOIN vsd.ETS1_routes r ON t.route_id=r.route_id
@@ -556,7 +565,7 @@ CONVERT(datetime, date, 121)+CONVERT(datetime, CAST(departure_hour AS varchar)+'
 END --CASE
 AS ActualDateTime,
 stime.trip_id, stime.arrival_time, stime.departure_hour, stime.departure_minute,stop_id, stime.stop_sequence, stime.stop_headsign, stime.pickup_type, stime.drop_off_type,
-stime.shape_dist_traveled, t.route_id, t.service_id, t.trip_headsign, t.direction_id, t.block_id, t.shape_id, r.route_short_name, r.route_long_name, c.date, c.exception_type
+stime.shape_dist_traveled, stime.timepoint,  t.route_id, t.service_id, t.trip_headsign, t.direction_id, t.block_id, t.shape_id, r.route_short_name, r.route_long_name, c.date, c.exception_type
 FROM vsd.ETS1_stop_times_StAlbert stime
 JOIN vsd.ETS1_trips_StAlbert t ON stime.trip_id=t.trip_id
 JOIN vsd.ETS1_routes_StAlbert r ON t.route_id=r.route_id
@@ -572,7 +581,7 @@ CONVERT(datetime, date, 121)+CONVERT(datetime, CAST(departure_hour AS varchar)+'
 END --CASE
 AS ActualDateTime,
 stime.trip_id, stime.arrival_time, stime.departure_hour, stime.departure_minute,stop_id, stime.stop_sequence, stime.stop_headsign, stime.pickup_type, stime.drop_off_type,
-stime.shape_dist_traveled, t.route_id, t.service_id, t.trip_headsign, t.direction_id, t.block_id, t.shape_id, r.route_short_name, r.route_long_name, c.date, c.exception_type
+stime.shape_dist_traveled, stime.timepoint,  t.route_id, t.service_id, t.trip_headsign, t.direction_id, t.block_id, t.shape_id, r.route_short_name, r.route_long_name, c.date, c.exception_type
 FROM vsd.ETS1_stop_times_Strathcona stime
 JOIN vsd.ETS1_trips_Strathcona t ON stime.trip_id=t.trip_id
 JOIN vsd.ETS1_routes_Strathcona r ON t.route_id=r.route_id
@@ -616,24 +625,24 @@ UNION SELECT shape_id, shape_pt_lat, shape_pt_lon, shape_pt_sequence, 3 AS agenc
 
 --DROP VIEW vsd.ETS1_stop_times_all_agencies
 CREATE VIEW vsd.ETS1_stop_times_all_agencies WITH SCHEMABINDING AS
-SELECT trip_id, arrival_time, departure_hour, departure_minute, departure_second, stop_id, stop_sequence, stop_headsign, pickup_type, drop_off_type, shape_dist_traveled, 1 AS agency_id
+SELECT trip_id, arrival_time, departure_hour, departure_minute, departure_second, stop_id, stop_sequence, stop_headsign, pickup_type, drop_off_type, shape_dist_traveled, timepoint, 1 AS agency_id
 FROM vsd.ETS1_stop_times UNION
-SELECT trip_id, arrival_time, departure_hour, departure_minute, departure_second, stop_id, stop_sequence, stop_headsign, pickup_type, drop_off_type, shape_dist_traveled, 2 AS agency_id
+SELECT trip_id, arrival_time, departure_hour, departure_minute, departure_second, stop_id, stop_sequence, stop_headsign, pickup_type, drop_off_type, shape_dist_traveled, timepoint, 2 AS agency_id
 FROM vsd.ETS1_stop_times_StAlbert UNION
-SELECT trip_id, arrival_time, departure_hour, departure_minute, departure_second, stop_id, stop_sequence, stop_headsign, pickup_type, drop_off_type, shape_dist_traveled, 3 AS agency_id
+SELECT trip_id, arrival_time, departure_hour, departure_minute, departure_second, stop_id, stop_sequence, stop_headsign, pickup_type, drop_off_type, shape_dist_traveled, timepoint, 3 AS agency_id
 FROM vsd.ETS1_stop_times_Strathcona
 
 
 --The big kahuna
 CREATE VIEW vsd.ETS1_trip_stop_datetimes_all_agencies WITH SCHEMABINDING AS
 SELECT
-1 AS agency_id, ActualDateTime, trip_id, arrival_time, departure_hour, departure_minute, stop_id, stop_headsign, pickup_type, drop_off_type, shape_dist_traveled, route_id, service_id, trip_headsign, direction_id, block_id, shape_id, route_short_name, route_long_name, date, exception_type
+1 AS agency_id, ActualDateTime, trip_id, arrival_time, departure_hour, departure_minute, stop_id, stop_headsign, pickup_type, drop_off_type, shape_dist_traveled, timepoint, route_id, service_id, trip_headsign, direction_id, block_id, shape_id, route_short_name, route_long_name, date, exception_type
 FROM vsd.ETS1_trip_stop_datetimes
 UNION SELECT
-2 AS agency_id, ActualDateTime, trip_id, arrival_time, departure_hour, departure_minute, stop_id, stop_headsign, pickup_type, drop_off_type, shape_dist_traveled, route_id, service_id, trip_headsign, direction_id, block_id, shape_id, route_short_name, route_long_name, date, exception_type
+2 AS agency_id, ActualDateTime, trip_id, arrival_time, departure_hour, departure_minute, stop_id, stop_headsign, pickup_type, drop_off_type, shape_dist_traveled, timepoint, route_id, service_id, trip_headsign, direction_id, block_id, shape_id, route_short_name, route_long_name, date, exception_type
 FROM vsd.ETS1_trip_stop_datetimes_Strathcona
 UNION SELECT
-3 AS agency_id, ActualDateTime, trip_id, arrival_time, departure_hour, departure_minute, stop_id, stop_headsign, pickup_type, drop_off_type, shape_dist_traveled, route_id, service_id, trip_headsign, direction_id, block_id, shape_id, route_short_name, route_long_name, date, exception_type
+3 AS agency_id, ActualDateTime, trip_id, arrival_time, departure_hour, departure_minute, stop_id, stop_headsign, pickup_type, drop_off_type, shape_dist_traveled, timepoint, route_id, service_id, trip_headsign, direction_id, block_id, shape_id, route_short_name, route_long_name, date, exception_type
 FROM vsd.ETS1_trip_stop_datetimes_StAlbert
 
 
@@ -644,14 +653,13 @@ FROM vsd.ETS1_trip_stop_datetimes_StAlbert
 *
 *************************************************************************/
 
-DROP VIEW ETS2_stop_times_all_agencies
-DROP VIEW ETS2_trips_all_agencies
-DROP VIEW ETS2_stops_all_agencies_unique
-DROP VIEW ETS2_stops_all_agencies
-DROP VIEW ETS2_shapes_all_agencies
-DROP VIEW ETS2_routes_all_agencies
-DROP VIEW ETS2_agency_all_agencies
-
+DROP VIEW vsd.ETS2_stop_times_all_agencies
+DROP VIEW vsd.ETS2_trips_all_agencies
+DROP VIEW vsd.ETS2_stops_all_agencies_unique
+DROP VIEW vsd.ETS2_stops_all_agencies
+DROP VIEW vsd.ETS2_shapes_all_agencies
+DROP VIEW vsd.ETS2_routes_all_agencies
+DROP VIEW vsd.ETS2_agency_all_agencies
 DROP VIEW vsd.ETS2_trip_stop_datetimes_all_agencies
 DROP VIEW vsd.ETS2_trip_stop_datetimes
 DROP VIEW vsd.ETS2_trip_stop_datetimes_StAlbert
@@ -678,21 +686,22 @@ DROP TABLE vsd.ETS2_routes
 DROP TABLE vsd.ETS2_routes_StAlbert
 DROP TABLE vsd.ETS2_routes_Strathcona
 DROP TABLE vsd.ETS2_route_types
-DROP TABLE ETS2_stop_routes_all_agencies
+DROP TABLE vsd.ETS2_stop_routes_all_agencies
 DROP TABLE vsd.ETS2_calendar
 DROP TABLE vsd.ETS2_calendar_StAlbert
 DROP TABLE vsd.ETS2_calendar_Strathcona
 DROP TABLE vsd.ETS2_calendar_dates
 DROP TABLE vsd.ETS2_calendar_dates_StAlbert
 DROP TABLE vsd.ETS2_calendar_dates_Strathcona
-DROP TABLE ETS2_calendar_dates_complete_StAlbert
-DROP TABLE ETS2_calendar_dates_complete_Strathcona
+DROP TABLE vsd.ETS2_calendar_dates_complete_StAlbert
+DROP TABLE vsd.ETS2_calendar_dates_complete_Strathcona
 DROP TABLE vsd.ETS2_agency
 DROP TABLE vsd.ETS2_agency_StAlbert
 DROP TABLE vsd.ETS2_agency_Strathcona
 
 CREATE TABLE vsd.ETS2_agency (
 	aID INT NOT NULL IDENTITY PRIMARY KEY,
+	agency_id varchar(255) NULL, -- Typically 1, 2, 3, but I learned my lesson, so varchar it is.
 	agency_name nvarchar(255) NOT NULL,
 	agency_url nvarchar(1024) NOT NULL,
 	agency_timezone nvarchar(255) NOT NULL,
@@ -704,6 +713,7 @@ CREATE TABLE vsd.ETS2_agency (
 
 CREATE TABLE vsd.ETS2_agency_StAlbert (
 	aID INT NOT NULL IDENTITY PRIMARY KEY,
+	agency_id varchar(255) NULL, -- Typically 1, 2, 3, but I learned my lesson, so varchar it is.
 	agency_name nvarchar(255) NOT NULL,
 	agency_url nvarchar(1024) NOT NULL,
 	agency_timezone nvarchar(255) NOT NULL,
@@ -715,6 +725,7 @@ CREATE TABLE vsd.ETS2_agency_StAlbert (
 
 CREATE TABLE vsd.ETS2_agency_Strathcona (
 	aID INT NOT NULL IDENTITY PRIMARY KEY,
+	agency_id varchar(255) NULL, -- Typically 1, 2, 3, but I learned my lesson, so varchar it is.
 	agency_name nvarchar(255) NOT NULL,
 	agency_url nvarchar(1024) NOT NULL,
 	agency_timezone nvarchar(255) NOT NULL,
@@ -766,7 +777,6 @@ CREATE TABLE vsd.ETS2_calendar_Strathcona (
 	end_date DATE NOT NULL
 )
 
-
 CREATE TABLE vsd.ETS2_calendar_dates (
 	cdID INT NOT NULL IDENTITY PRIMARY KEY,
 	service_id varchar(255) NOT NULL,
@@ -791,6 +801,7 @@ CREATE TABLE vsd.ETS2_calendar_dates_Strathcona (
 	UNIQUE(service_id,date)
 )
 
+--calendar_dates_complete is a version of calendar dates that just has every date in it, like Edmonton's, so this can be used in the main view
 CREATE TABLE vsd.ETS2_calendar_dates_complete_StAlbert (
 	cdcID INT NOT NULL IDENTITY PRIMARY KEY,
 	service_id varchar(255) NOT NULL,
@@ -806,6 +817,7 @@ CREATE TABLE vsd.ETS2_calendar_dates_complete_Strathcona (
 	exception_type INT NOT NULL,
 	UNIQUE(service_id,date)
 )
+
 
 CREATE INDEX ix_ETS2_C_service_id ON vsd.ETS2_calendar_dates(service_id)
 CREATE INDEX ix_ETS2_C_date ON vsd.ETS2_calendar_dates(date)
@@ -832,14 +844,15 @@ CREATE TABLE vsd.ETS2_route_types (
 	route_type_desc nvarchar(1024) NULL
 )
 
-INSERT INTO vsd.ETS2_route_types VALUES(0, 'Tram, Streetcar, Light Rail', 'Any light rail or street level system within a metropolitan area.')
-INSERT INTO vsd.ETS2_route_types VALUES(1, 'Subway, Metro', 'Any underground rail system within a metropolitan area.')
-INSERT INTO vsd.ETS2_route_types VALUES(2, 'Rail', 'Used for intercity or long-distance travel.')
-INSERT INTO vsd.ETS2_route_types VALUES(3, 'Bus', 'Used for short- and long-distance bus routes.')
-INSERT INTO vsd.ETS2_route_types VALUES(4, 'Ferry', 'Used for short- and long-distance boat service.')
-INSERT INTO vsd.ETS2_route_types VALUES(5, 'Cable Car', 'Used for street-level cable cars where the cable runs beneath the car.')
-INSERT INTO vsd.ETS2_route_types VALUES(6, 'Gondola, Suspended cable car.', 'Typically used for aerial cable cars where the car is suspended from the cable.')
-INSERT INTO vsd.ETS2_route_types VALUES(7, 'Funicular', 'Any rail system designed for steep inclines.')
+INSERT INTO vsd.ETS2_route_types VALUES
+(0, 'Tram, Streetcar, Light Rail', 'Any light rail or street level system within a metropolitan area.'),
+(1, 'Subway, Metro', 'Any underground rail system within a metropolitan area.'),
+(2, 'Rail', 'Used for intercity or long-distance travel.'),
+(3, 'Bus', 'Used for short- and long-distance bus routes.'),
+(4, 'Ferry', 'Used for short- and long-distance boat service.'),
+(5, 'Cable Car', 'Used for street-level cable cars where the cable runs beneath the car.'),
+(6, 'Gondola, Suspended cable car.', 'Typically used for aerial cable cars where the car is suspended from the cable.'),
+(7, 'Funicular', 'Any rail system designed for steep inclines.')
 
 --DELETE FROM vsd.ETS2_routes
 --DROP TABLE vsd.ETS2_routes
@@ -881,7 +894,7 @@ CREATE TABLE vsd.ETS2_routes_Strathcona (
 	--UNIQUE(route_id)
 )
 
-SELECT * FROM vsd.ETS2_routes
+--SELECT * FROM vsd.ETS2_routes
 --INSERT INTO vsd.ETS2_routes VALUES(1,1,'West Edmonton Mall - Downtown - Capilano',NULL,3,NULL)
 
 CREATE TABLE vsd.ETS2_shapes (
@@ -996,11 +1009,11 @@ CREATE TABLE vsd.ETS2_transfer_types (
 	transfer_type_name nvarchar(255) NOT NULL,
 	transfer_type_desc nvarchar(1024) NULL
 )
-INSERT INTO vsd.ETS2_transfer_types VALUES(0, 'Recommended', 'This is a recommended transfer point between two routes.')
-INSERT INTO vsd.ETS2_transfer_types VALUES(1, 'Timed', ' This is a timed transfer point between two routes. The departing vehicle is expected to wait for the arriving one, with sufficient time for a passenger to transfer between routes.')
-INSERT INTO vsd.ETS2_transfer_types VALUES(2, 'Requires Min. Time', 'This transfer requires a minimum amount of time between arrival and departure to ensure a connection. The time required to transfer is specified by min_transfer_time.')
-INSERT INTO vsd.ETS2_transfer_types VALUES(3, 'Not Possible', 'Transfers are not possible between routes at this location.')
-
+INSERT INTO vsd.ETS2_transfer_types VALUES
+(0, 'Recommended', 'This is a recommended transfer point between two routes.'),
+(1, 'Timed', ' This is a timed transfer point between two routes. The departing vehicle is expected to wait for the arriving one, with  to ,transfer between routes.'),
+(2, 'Requires Min. Time', 'This transfer requires a minimum amount of time between arrival and departure to ensure a connection. The time  by ,min_transfer_time.'),
+(3, 'Not Possible', 'Transfers are not possible between routes at this location.')
 
 CREATE TABLE vsd.ETS2_transfers (
 	from_stop_id VARCHAR(255) NOT NULL REFERENCES vsd.ETS2_trips(trip_id),
@@ -1034,20 +1047,22 @@ CREATE TABLE vsd.ETS2_pickup_types (
 	pickup_type_name nvarchar(255) NOT NULL,
 	pickup_type_desc nvarchar(1024) NULL
 )
-INSERT INTO vsd.ETS2_pickup_types VALUES(0, 'Regular', 'Regularly scheduled pickup')
-INSERT INTO vsd.ETS2_pickup_types VALUES(1, 'No pickup', 'No pickup available')
-INSERT INTO vsd.ETS2_pickup_types VALUES(2, 'Phone', 'Must phone agency to arrange pickup')
-INSERT INTO vsd.ETS2_pickup_types VALUES(3, 'Coordinate with Driver', 'Must coordinate with driver to arrange pickup')
+INSERT INTO vsd.ETS2_pickup_types VALUES
+(0, 'Regular', 'Regularly scheduled pickup'),
+(1, 'No pickup', 'No pickup available'),
+(2, 'Phone', 'Must phone agency to arrange pickup'),
+(3, 'Coordinate with Driver', 'Must coordinate with driver to arrange pickup')
 
 CREATE TABLE vsd.ETS2_drop_off_types (
 	drop_off_type INT PRIMARY KEY,
 	drop_off_type_name nvarchar(255) NOT NULL,
 	drop_off_type_desc nvarchar(1024) NULL
 )
-INSERT INTO vsd.ETS2_drop_off_types VALUES(0, 'Regular', 'Regularly scheduled drop off')
-INSERT INTO vsd.ETS2_drop_off_types VALUES(1, 'No drop off', 'No drop off available')
-INSERT INTO vsd.ETS2_drop_off_types VALUES(2, 'Phone', 'Must phone agency to arrange drop off')
-INSERT INTO vsd.ETS2_drop_off_types VALUES(3, 'Coordinate with Driver', 'Must coordinate with driver to arrange drop off')
+INSERT INTO vsd.ETS2_drop_off_types VALUES
+(0, 'Regular', 'Regularly scheduled drop off'),
+(1, 'No drop off', 'No drop off available'),
+(2, 'Phone', 'Must phone agency to arrange drop off'),
+(3, 'Coordinate with Driver', 'Must coordinate with driver to arrange drop off')
 
 
 --INSERT INTO vsd.ETS2_stops VALUES(1001,1001,'Abbottsfield Transit Centre',NULL,53.571965,-113.390362,NULL,NULL,0,NULL)
@@ -1067,6 +1082,7 @@ CREATE TABLE vsd.ETS2_stop_times (
 	pickup_type INT DEFAULT 0 FOREIGN KEY REFERENCES vsd.ETS2_pickup_types(pickup_type),
 	drop_off_type INT DEFAULT 0 FOREIGN KEY REFERENCES vsd.ETS2_drop_off_types(drop_off_type),
 	shape_dist_traveled FLOAT(8) NULL, --theoretically could be a float, but is only ever int LOOKS LIKE I WAS WRONG ABOUT THIS!
+	timepoint BIT NULL -- This should only ever be 1 or 0
 )
 
 CREATE TABLE vsd.ETS2_stop_times_StAlbert (
@@ -1084,6 +1100,7 @@ CREATE TABLE vsd.ETS2_stop_times_StAlbert (
 	pickup_type INT DEFAULT 0 FOREIGN KEY REFERENCES vsd.ETS2_pickup_types(pickup_type),
 	drop_off_type INT DEFAULT 0 FOREIGN KEY REFERENCES vsd.ETS2_drop_off_types(drop_off_type),
 	shape_dist_traveled FLOAT(8) NULL, --theoretically could be a float, but is only ever int LOOKS LIKE I WAS WRONG ABOUT THIS!
+	timepoint BIT NULL -- This should only ever be 1 or 0
 )
 
 CREATE TABLE vsd.ETS2_stop_times_Strathcona (
@@ -1101,6 +1118,7 @@ CREATE TABLE vsd.ETS2_stop_times_Strathcona (
 	pickup_type INT DEFAULT 0 FOREIGN KEY REFERENCES vsd.ETS2_pickup_types(pickup_type),
 	drop_off_type INT DEFAULT 0 FOREIGN KEY REFERENCES vsd.ETS2_drop_off_types(drop_off_type),
 	shape_dist_traveled FLOAT(8) NULL, --theoretically could be a float, but is only ever int LOOKS LIKE I WAS WRONG ABOUT THIS!
+	timepoint BIT NULL -- This should only ever be 1 or 0
 )
 
 --Table that allows quickly sorting nearby stops. This gets recreated every time the update is done.
@@ -1168,12 +1186,7 @@ FROM vsd.ETS2_routes_StAlbert UNION
 SELECT route_id, route_short_name, route_long_name, route_desc, route_type, route_url, route_color, route_text_color, 3 AS agency_id
 FROM vsd.ETS2_routes_Strathcona
 
-/*
-DROP VIEW vsd.ETS2_trip_stop_datetimes_all_agencies
-DROP VIEW vsd.ETS2_trip_stop_datetimes
-DROP VIEW vsd.ETS2_trip_stop_datetimes_StAlbert
-DROP VIEW vsd.ETS2_trip_stop_datetimes_Strathcona
-*/
+--DROP VIEW vsd.ETS2_trip_stop_datetimes
 -- Creates a very useful view from the stop_times
 CREATE VIEW vsd.ETS2_trip_stop_datetimes WITH SCHEMABINDING AS
 SELECT --TOP 10000
@@ -1184,12 +1197,11 @@ CONVERT(datetime, date, 121)+CONVERT(datetime, CAST(departure_hour AS varchar)+'
 END --CASE
 AS ActualDateTime,
 stime.trip_id, stime.arrival_time, stime.departure_hour, stime.departure_minute,stop_id, stime.stop_sequence, stime.stop_headsign, stime.pickup_type, stime.drop_off_type,
-stime.shape_dist_traveled, t.route_id, t.service_id, t.trip_headsign, t.direction_id, t.block_id, t.shape_id, r.route_short_name, r.route_long_name, c.date, c.exception_type
+stime.shape_dist_traveled, stime.timepoint, t.route_id, t.service_id, t.trip_headsign, t.direction_id, t.block_id, t.shape_id, r.route_short_name, r.route_long_name, c.date, c.exception_type
 FROM vsd.ETS2_stop_times stime
 JOIN vsd.ETS2_trips t ON stime.trip_id=t.trip_id
 JOIN vsd.ETS2_routes r ON t.route_id=r.route_id
 JOIN vsd.ETS2_calendar_dates c ON c.service_id=t.service_id
---SELECT * FROM vsd.ETS2_routes
 
 
 CREATE VIEW vsd.ETS2_trip_stop_datetimes_StAlbert WITH SCHEMABINDING AS
@@ -1201,7 +1213,7 @@ CONVERT(datetime, date, 121)+CONVERT(datetime, CAST(departure_hour AS varchar)+'
 END --CASE
 AS ActualDateTime,
 stime.trip_id, stime.arrival_time, stime.departure_hour, stime.departure_minute,stop_id, stime.stop_sequence, stime.stop_headsign, stime.pickup_type, stime.drop_off_type,
-stime.shape_dist_traveled, t.route_id, t.service_id, t.trip_headsign, t.direction_id, t.block_id, t.shape_id, r.route_short_name, r.route_long_name, c.date, c.exception_type
+stime.shape_dist_traveled, stime.timepoint,  t.route_id, t.service_id, t.trip_headsign, t.direction_id, t.block_id, t.shape_id, r.route_short_name, r.route_long_name, c.date, c.exception_type
 FROM vsd.ETS2_stop_times_StAlbert stime
 JOIN vsd.ETS2_trips_StAlbert t ON stime.trip_id=t.trip_id
 JOIN vsd.ETS2_routes_StAlbert r ON t.route_id=r.route_id
@@ -1217,7 +1229,7 @@ CONVERT(datetime, date, 121)+CONVERT(datetime, CAST(departure_hour AS varchar)+'
 END --CASE
 AS ActualDateTime,
 stime.trip_id, stime.arrival_time, stime.departure_hour, stime.departure_minute,stop_id, stime.stop_sequence, stime.stop_headsign, stime.pickup_type, stime.drop_off_type,
-stime.shape_dist_traveled, t.route_id, t.service_id, t.trip_headsign, t.direction_id, t.block_id, t.shape_id, r.route_short_name, r.route_long_name, c.date, c.exception_type
+stime.shape_dist_traveled, stime.timepoint,  t.route_id, t.service_id, t.trip_headsign, t.direction_id, t.block_id, t.shape_id, r.route_short_name, r.route_long_name, c.date, c.exception_type
 FROM vsd.ETS2_stop_times_Strathcona stime
 JOIN vsd.ETS2_trips_Strathcona t ON stime.trip_id=t.trip_id
 JOIN vsd.ETS2_routes_Strathcona r ON t.route_id=r.route_id
@@ -1225,6 +1237,7 @@ JOIN vsd.ETS2_calendar_dates_complete_Strathcona c ON c.service_id=t.service_id
 
 
 --This view adds a unique id based on the zone_id to create a unique identifier
+--June 11, 2019 - Edmonton started adding zone IDs and Strathcona removed theirs. I just make up a city code for non-edmonton cities and prepent that now.
 --St. Albert starts with StA, Strathcona Str, Edmonton are just the regular ID
 --DROP VIEW vsd.ETS2_stops_all_agencies_unique 
 CREATE VIEW vsd.ETS2_stops_all_agencies_unique WITH SCHEMABINDING AS
@@ -1235,12 +1248,13 @@ UNION SELECT 'StA' AS city_code, stop_id, stop_code, stop_name, stop_desc, stop_
 UNION SELECT 'Str' AS city_code, stop_id, stop_code, stop_name, stop_desc, stop_lat, stop_lon, zone_id, stop_url, location_type, parent_station, is_lrt, exclusive FROM vsd.ETS2_stops_Strathcona)
 AS allstops WHERE exclusive=1
 
---SELECT * FROM vsd.ETS2_stops_all_agencies_unique
 
+--DROP VIEW vsd.ETS2_stops_all_agencies
 CREATE VIEW vsd.ETS2_stops_all_agencies WITH SCHEMABINDING AS
 SELECT stop_id, stop_code, stop_name, stop_desc, stop_lat, stop_lon, zone_id, stop_url, location_type, parent_station, is_lrt, exclusive, 1 AS agency_id FROM vsd.ETS2_stops
 UNION SELECT stop_id, stop_code, stop_name, stop_desc, stop_lat, stop_lon, zone_id, stop_url, location_type, parent_station, is_lrt, exclusive, 2 AS agency_id FROM vsd.ETS2_stops_StAlbert
 UNION SELECT stop_id, stop_code, stop_name, stop_desc, stop_lat, stop_lon, zone_id, stop_url, location_type, parent_station, is_lrt, exclusive, 3 AS agency_id FROM vsd.ETS2_stops_Strathcona
+
 
 --Create a view of all trips
 CREATE VIEW vsd.ETS2_trips_all_agencies WITH SCHEMABINDING AS
@@ -1251,32 +1265,34 @@ FROM vsd.ETS2_trips_StAlbert
 UNION SELECT route_id, service_id, trip_id, trip_headsign, direction_id, block_id, shape_id, 3 AS agency_id
 FROM vsd.ETS2_trips_Strathcona
 
---All Shapes
+--View of all shapes
 CREATE VIEW vsd.ETS2_shapes_all_agencies WITH SCHEMABINDING AS
 SELECT shape_id, shape_pt_lat, shape_pt_lon, shape_pt_sequence, 1 AS agency_id FROM vsd.ETS2_shapes
 UNION SELECT shape_id, shape_pt_lat, shape_pt_lon, shape_pt_sequence, 2 AS agency_id FROM vsd.ETS2_shapes_StAlbert
 UNION SELECT shape_id, shape_pt_lat, shape_pt_lon, shape_pt_sequence, 3 AS agency_id  FROM vsd.ETS2_shapes_Strathcona
 
+--DROP VIEW vsd.ETS2_stop_times_all_agencies
 CREATE VIEW vsd.ETS2_stop_times_all_agencies WITH SCHEMABINDING AS
-SELECT trip_id, arrival_time, departure_hour, departure_minute, departure_second, stop_id, stop_sequence, stop_headsign, pickup_type, drop_off_type, shape_dist_traveled, 1 AS agency_id
+SELECT trip_id, arrival_time, departure_hour, departure_minute, departure_second, stop_id, stop_sequence, stop_headsign, pickup_type, drop_off_type, shape_dist_traveled, timepoint, 1 AS agency_id
 FROM vsd.ETS2_stop_times UNION
-SELECT trip_id, arrival_time, departure_hour, departure_minute, departure_second, stop_id, stop_sequence, stop_headsign, pickup_type, drop_off_type, shape_dist_traveled, 2 AS agency_id
+SELECT trip_id, arrival_time, departure_hour, departure_minute, departure_second, stop_id, stop_sequence, stop_headsign, pickup_type, drop_off_type, shape_dist_traveled, timepoint, 2 AS agency_id
 FROM vsd.ETS2_stop_times_StAlbert UNION
-SELECT trip_id, arrival_time, departure_hour, departure_minute, departure_second, stop_id, stop_sequence, stop_headsign, pickup_type, drop_off_type, shape_dist_traveled, 3 AS agency_id
+SELECT trip_id, arrival_time, departure_hour, departure_minute, departure_second, stop_id, stop_sequence, stop_headsign, pickup_type, drop_off_type, shape_dist_traveled, timepoint, 3 AS agency_id
 FROM vsd.ETS2_stop_times_Strathcona
 
 
 --The big kahuna
 CREATE VIEW vsd.ETS2_trip_stop_datetimes_all_agencies WITH SCHEMABINDING AS
 SELECT
-1 AS agency_id, ActualDateTime, trip_id, arrival_time, departure_hour, departure_minute, stop_id, stop_headsign, pickup_type, drop_off_type, shape_dist_traveled, route_id, service_id, trip_headsign, direction_id, block_id, shape_id, route_short_name, route_long_name, date, exception_type
+1 AS agency_id, ActualDateTime, trip_id, arrival_time, departure_hour, departure_minute, stop_id, stop_headsign, pickup_type, drop_off_type, shape_dist_traveled, timepoint, route_id, service_id, trip_headsign, direction_id, block_id, shape_id, route_short_name, route_long_name, date, exception_type
 FROM vsd.ETS2_trip_stop_datetimes
 UNION SELECT
-2 AS agency_id, ActualDateTime, trip_id, arrival_time, departure_hour, departure_minute, stop_id, stop_headsign, pickup_type, drop_off_type, shape_dist_traveled, route_id, service_id, trip_headsign, direction_id, block_id, shape_id, route_short_name, route_long_name, date, exception_type
+2 AS agency_id, ActualDateTime, trip_id, arrival_time, departure_hour, departure_minute, stop_id, stop_headsign, pickup_type, drop_off_type, shape_dist_traveled, timepoint, route_id, service_id, trip_headsign, direction_id, block_id, shape_id, route_short_name, route_long_name, date, exception_type
 FROM vsd.ETS2_trip_stop_datetimes_Strathcona
 UNION SELECT
-3 AS agency_id, ActualDateTime, trip_id, arrival_time, departure_hour, departure_minute, stop_id, stop_headsign, pickup_type, drop_off_type, shape_dist_traveled, route_id, service_id, trip_headsign, direction_id, block_id, shape_id, route_short_name, route_long_name, date, exception_type
+3 AS agency_id, ActualDateTime, trip_id, arrival_time, departure_hour, departure_minute, stop_id, stop_headsign, pickup_type, drop_off_type, shape_dist_traveled, timepoint, route_id, service_id, trip_headsign, direction_id, block_id, shape_id, route_short_name, route_long_name, date, exception_type
 FROM vsd.ETS2_trip_stop_datetimes_StAlbert
+
 /************************************************************************
 *
 *  The vsd.ETS_activedb
