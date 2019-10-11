@@ -9,7 +9,7 @@ This NEW version requests from the database which is populated approximately eve
 <cfif isDefined('url.tid')><cfset form.tid=url.tid /></cfif>
 <cfif isDefined('url.stopid')><cfset form.stopid=url.stopid /></cfif>
 
-<cfif isDefined('form.tid') AND isDefined('form.stopID')>
+<cfif isDefined('form.tid') AND isDefined('form.stopID') AND isNumeric(form.tid)>
 
 	<cfset i=0 />
 	<cfquery name="TripUpdate" dbtype="ODBC" datasource="SecureSource">
@@ -70,7 +70,7 @@ This NEW version requests from the database which is populated approximately eve
 <cfelse><cfoutput>
 {
 	"error": true,
-	"message": "tid (tripid) or stopID is not defined."
+	"message": "tid (tripid) or stopID is not defined or in a valid format."
 }</cfoutput>
 
 </cfif>
