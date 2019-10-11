@@ -103,9 +103,9 @@ description="Accepts FROM stop_id and a datetime and outputs a table with releva
 		<cfif isNumeric(fromStop)>
 		SELECT * FROM vsd.#dbprefix#_stops WHERE stop_id=#fromStop#
 		<cfelseif left(fromStop, 3) EQ "Str">
-		SELECT * FROM vsd.#dbprefix#_stops_Strathcona WHERE stop_id=#mid(fromStop, 4, 99)#
+		SELECT * FROM vsd.#dbprefix#_stops_Strathcona WHERE stop_id='#mid(fromStop, 4, 99)#'
 		<cfelse>
-		SELECT * FROM vsd.#dbprefix#_stops_StAlbert WHERE stop_id=#mid(fromStop, 4, 99)#
+		SELECT * FROM vsd.#dbprefix#_stops_StAlbert WHERE stop_id='#mid(fromStop, 4, 99)#'
 		</cfif>
 	</cfquery>
 	
