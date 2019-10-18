@@ -7,6 +7,7 @@
 <cfset PageTitle="#opType#">
 <cfset PageTitleHead="#opType#" />
 
+
 <!--- Toggle Dark Mode --->
 <cfif isDefined('url.dark')>
 	<cfif url.dark IS 1>
@@ -285,9 +286,9 @@ SELECT * FROM vsd.#dbprefix#_stops_all_agencies_unique ORDER BY astop_id
 <div class="opMode">
 <p id="nightModeLink">
 	<cfif isDefined('cookie.lrt_dark') AND cookie.lrt_dark IS true>
-		<a href="javascript:void(0);">&#x2600; Light Mode</a>
+		<a href="javascript:void(0);"><img src="/Resources/images/sun.svg" /> Light Mode</a>
 	<cfelse>
-		<a href="javascript:void(0);">&#x1F31C; Dark Mode</a>
+		<a href="javascript:void(0);"><cfinclude template="/Resources/Images/moon.svg" /> Dark Mode</a>
 	</cfif>
 </p>
 </div>
@@ -819,11 +820,11 @@ function toggleDarkMode() {
 	$('body').toggleClass('darkMode');
 	if (getCookie('LRT_DARK') === "true") {
 		setCookie('LRT_DARK', "false");
-		$('#nightModeLink a').html('&#x1F31C; Night Mode');
+		$('#nightModeLink a').html('<cfinclude template="/Resources/Images/moon.svg" /> Dark Mode');
 	}
 	else {
 		setCookie('LRT_DARK', "true");
-		$('#nightModeLink a').html('&#x2600; Day Mode');
+		$('#nightModeLink a').html('<img src="/Resources/images/sun.svg" /> Light Mode');
 	}
 }
 
@@ -965,7 +966,7 @@ $(document).ready(function() {
 	// This will result in the toggle link being wrong, though. This should fix it after the DOM is ready.
 	// This just makes sure the 
 	if (getCookie('LRT_DARK') === "true") {
-		$('#nightModeLink a').html('&#x2600; Day Mode');
+		$('#nightModeLink a').html('<img src="/Resources/images/sun.svg" /> Light Mode');
 	}
 });
 
