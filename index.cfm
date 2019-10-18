@@ -1624,7 +1624,7 @@ $('#mapNotice').on('click', function(){
                     Privacy Statement<span class="a11y-visually-hidden">, opens a new window</span><!--
                 --></a>
                             <span class="copyright-statement">
-                    &copy; 2017 Edmonton Public Library                </span>
+                    &copy; <cfoutput>#Year(now())# Edmonton Public Library                </span>
                         </div>
                     </div>
                 </div>
