@@ -53,7 +53,7 @@ DROP TABLE vsd.ETS1_agency_Strathcona
 
 CREATE TABLE vsd.ETS1_agency (
 	aID INT NOT NULL IDENTITY PRIMARY KEY,
-	agency_id varchar(255) NULL, -- Typically 1, 2, 3, but I learned my lesson, so varchar it is.
+	agency_id varchar(511) NULL, -- Typically 1, 2, 3, but I learned my lesson, so varchar it is.
 	agency_name nvarchar(255) NOT NULL,
 	agency_url nvarchar(1024) NOT NULL,
 	agency_timezone nvarchar(255) NOT NULL,
@@ -65,7 +65,7 @@ CREATE TABLE vsd.ETS1_agency (
 
 CREATE TABLE vsd.ETS1_agency_StAlbert (
 	aID INT NOT NULL IDENTITY PRIMARY KEY,
-	agency_id varchar(255) NULL, -- Typically 1, 2, 3, but I learned my lesson, so varchar it is.
+	agency_id varchar(511) NULL, -- Typically 1, 2, 3, but I learned my lesson, so varchar it is.
 	agency_name nvarchar(255) NOT NULL,
 	agency_url nvarchar(1024) NOT NULL,
 	agency_timezone nvarchar(255) NOT NULL,
@@ -77,7 +77,7 @@ CREATE TABLE vsd.ETS1_agency_StAlbert (
 
 CREATE TABLE vsd.ETS1_agency_Strathcona (
 	aID INT NOT NULL IDENTITY PRIMARY KEY,
-	agency_id varchar(255) NULL, -- Typically 1, 2, 3, but I learned my lesson, so varchar it is.
+	agency_id varchar(511) NULL, -- Typically 1, 2, 3, but I learned my lesson, so varchar it is.
 	agency_name nvarchar(255) NOT NULL,
 	agency_url nvarchar(1024) NOT NULL,
 	agency_timezone nvarchar(255) NOT NULL,
@@ -212,6 +212,7 @@ INSERT INTO vsd.ETS1_route_types VALUES
 -- I'm concerned about the performance ramifications of this.
 CREATE TABLE vsd.ETS1_routes (
 	route_id VARCHAR(20) PRIMARY KEY,
+	agency_id VARCHAR(511) NULL,
 	route_short_name nvarchar(511) NOT NULL,
 	route_long_name nvarchar(1023) NOT NULL,
 	route_desc nvarchar(1023) NULL,
@@ -224,6 +225,7 @@ CREATE TABLE vsd.ETS1_routes (
 
 CREATE TABLE vsd.ETS1_routes_StAlbert (
 	route_id VARCHAR(20) PRIMARY KEY,
+	agency_id VARCHAR(511) NULL,
 	route_short_name nvarchar(511) NOT NULL,
 	route_long_name nvarchar(1023) NOT NULL,
 	route_desc nvarchar(1023) NULL,
@@ -236,6 +238,7 @@ CREATE TABLE vsd.ETS1_routes_StAlbert (
 
 CREATE TABLE vsd.ETS1_routes_Strathcona (
 	route_id VARCHAR(20) PRIMARY KEY,
+	agency_id VARCHAR(511) NULL,
 	route_short_name nvarchar(511) NOT NULL,
 	route_long_name nvarchar(1023) NOT NULL,
 	route_desc nvarchar(1023) NULL,
@@ -477,7 +480,7 @@ CREATE TABLE vsd.ETS1_stop_times_Strathcona (
 CREATE TABLE vsd.ETS1_stop_routes_all_agencies (
 stop_id VARCHAR(20) NOT NULL,
 route_id varchar(20) NOT NULL,
-agency_id INT NOT NULL, 
+agency_id varchar(511) NOT NULL, 
 PRIMARY KEY (stop_id, route_id, agency_id)
 )
 
@@ -527,7 +530,7 @@ CREATE VIEW vsd.ETS1_agency_all_agencies WITH SCHEMABINDING AS
 SELECT 1 AS agency_id, agency_name, agency_url, agency_timezone, agency_lang, agency_phone FROM vsd.ETS1_agency
 UNION
 SELECT 2 AS agency_id, agency_name, agency_url, agency_timezone, agency_lang, agency_phone FROM vsd.ETS1_agency_StAlbert
-UNION
+UNION 
 SELECT 3 AS agency_id, agency_name, agency_url, agency_timezone, agency_lang, agency_phone FROM vsd.ETS1_agency_Strathcona
 
 CREATE VIEW vsd.ETS1_routes_all_agencies WITH SCHEMABINDING AS
@@ -701,7 +704,7 @@ DROP TABLE vsd.ETS2_agency_Strathcona
 
 CREATE TABLE vsd.ETS2_agency (
 	aID INT NOT NULL IDENTITY PRIMARY KEY,
-	agency_id varchar(255) NULL, -- Typically 1, 2, 3, but I learned my lesson, so varchar it is.
+	agency_id varchar(511) NULL, -- Typically 1, 2, 3, but I learned my lesson, so varchar it is.
 	agency_name nvarchar(255) NOT NULL,
 	agency_url nvarchar(1024) NOT NULL,
 	agency_timezone nvarchar(255) NOT NULL,
@@ -713,7 +716,7 @@ CREATE TABLE vsd.ETS2_agency (
 
 CREATE TABLE vsd.ETS2_agency_StAlbert (
 	aID INT NOT NULL IDENTITY PRIMARY KEY,
-	agency_id varchar(255) NULL, -- Typically 1, 2, 3, but I learned my lesson, so varchar it is.
+	agency_id varchar(511) NULL, -- Typically 1, 2, 3, but I learned my lesson, so varchar it is.
 	agency_name nvarchar(255) NOT NULL,
 	agency_url nvarchar(1024) NOT NULL,
 	agency_timezone nvarchar(255) NOT NULL,
@@ -725,7 +728,7 @@ CREATE TABLE vsd.ETS2_agency_StAlbert (
 
 CREATE TABLE vsd.ETS2_agency_Strathcona (
 	aID INT NOT NULL IDENTITY PRIMARY KEY,
-	agency_id varchar(255) NULL, -- Typically 1, 2, 3, but I learned my lesson, so varchar it is.
+	agency_id varchar(511) NULL, -- Typically 1, 2, 3, but I learned my lesson, so varchar it is.
 	agency_name nvarchar(255) NOT NULL,
 	agency_url nvarchar(1024) NOT NULL,
 	agency_timezone nvarchar(255) NOT NULL,
@@ -860,6 +863,7 @@ INSERT INTO vsd.ETS2_route_types VALUES
 -- I'm concerned about the performance ramifications of this.
 CREATE TABLE vsd.ETS2_routes (
 	route_id VARCHAR(20) PRIMARY KEY,
+	agency_id varchar(255) NULL,
 	route_short_name nvarchar(511) NOT NULL,
 	route_long_name nvarchar(1023) NOT NULL,
 	route_desc nvarchar(1023) NULL,
@@ -872,6 +876,7 @@ CREATE TABLE vsd.ETS2_routes (
 
 CREATE TABLE vsd.ETS2_routes_StAlbert (
 	route_id VARCHAR(20) PRIMARY KEY,
+	agency_id varchar(255) NULL,
 	route_short_name nvarchar(511) NOT NULL,
 	route_long_name nvarchar(1023) NOT NULL,
 	route_desc nvarchar(1023) NULL,
@@ -884,6 +889,7 @@ CREATE TABLE vsd.ETS2_routes_StAlbert (
 
 CREATE TABLE vsd.ETS2_routes_Strathcona (
 	route_id VARCHAR(20) PRIMARY KEY,
+	agency_id varchar(255) NULL,
 	route_short_name nvarchar(511) NOT NULL,
 	route_long_name nvarchar(1023) NOT NULL,
 	route_desc nvarchar(1023) NULL,
@@ -1125,7 +1131,7 @@ CREATE TABLE vsd.ETS2_stop_times_Strathcona (
 CREATE TABLE vsd.ETS2_stop_routes_all_agencies (
 stop_id VARCHAR(20) NOT NULL,
 route_id varchar(20) NOT NULL,
-agency_id INT NOT NULL, 
+agency_id VARCHAR(511) NOT NULL, 
 PRIMARY KEY (stop_id, route_id, agency_id)
 )
 

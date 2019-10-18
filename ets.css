@@ -30,9 +30,6 @@ select {
 	padding:4px 6px; /* Needed for mobile safari to make the dropdowns not too tiny */
 }
 
-.pageTitle {
-
-}
 
 #eplLogo {
 	/*float:left;*/
@@ -115,7 +112,7 @@ input[type="button"], button {
 	background-image:linear-gradient(to bottom, rgba(255,255,255,1) 0%,rgba(220,220,220,1) 100%);
 }
 
-.pageTitle {
+.pageTitle, div.pageTitle {
 	font-size:24px;
 }
 

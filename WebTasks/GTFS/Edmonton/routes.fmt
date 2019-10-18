@@ -1,8 +1,11 @@
 9.0
-6
+9
 1	SQLCHAR	0	9999	","		1	route_id		""
-2	SQLCHAR	0	9999	",\""		2	route_short_name	""
-3	SQLCHAR	0	9999	"\","		3	route_long_name	""
-4	SQLCHAR	0	9999	","		4	route_desc		""
-5	SQLCHAR	0	9999	","		5	route_type		""
-6	SQLCHAR	0	9999	"\r\n"	6	route_url		""
+2	SQLCHAR	0	9999	","		2	agency_id		""
+3	SQLCHAR	0	9999	",\""	3	route_short_name	""
+4	SQLCHAR	0	9999	"\","	4	route_long_name	""
+5	SQLCHAR	0	9999	","		5	route_desc		""
+6	SQLCHAR	0	9999	","		6	route_type		""
+7	SQLCHAR	0	9999	","		7	route_url		""
+8	SQLCHAR	0	9999	","		8	route_color		""
+9	SQLCHAR	0	9999	"\r\n"	9	route_text_color ""

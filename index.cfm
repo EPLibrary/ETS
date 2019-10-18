@@ -285,9 +285,9 @@ SELECT * FROM vsd.#dbprefix#_stops_all_agencies_unique ORDER BY astop_id
 <div class="opMode">
 <p id="nightModeLink">
 	<cfif isDefined('cookie.lrt_dark') AND cookie.lrt_dark IS true>
-		<a href="javascript:void(0);">&#x2600; Day Mode</a>
+		<a href="javascript:void(0);">&#x2600; Light Mode</a>
 	<cfelse>
-		<a href="javascript:void(0);">&#x1F31C; Night Mode</a>
+		<a href="javascript:void(0);">&#x1F31C; Dark Mode</a>
 	</cfif>
 </p>
 </div>
