@@ -620,8 +620,22 @@ table td.dA {
 		padding:4px 6px; /* Needed for mobile safari to make the dropdowns not too tiny */
 		color:white;
 		background-color:black;
-		background-image:linear-gradient(to bottom, rgba(100,100,100,0.45) 0%,rgba(0,0,0,0) 100%);
+		/* Experimental dropdown arrows*/
+		background-image: url('data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20400%20400%22%3E%3Cpolygon%20fill%3D%22%23888%22%20points%3D%22200%2C380%2010%2C60%20390%2C60%22%20%2F%3E%3C%2Fsvg%3E');
+		background-size:7px 7px;
+		background-repeat:no-repeat;
+		background-position: calc(100% - 5px) 50%;
+		-moz-appearance: none; 
+		-webkit-appearance: none; 
+		appearance: none;
+		padding:4px 6px;
+		padding-right:19px;
 	}
+
+	.darkMode .selectize-control.single .selectize-input:after {
+	    border-width: 6px 3.5px 0 3.5px;
+	}
+
 
 	.darkMode .selectize-input {
 		background-color:black;

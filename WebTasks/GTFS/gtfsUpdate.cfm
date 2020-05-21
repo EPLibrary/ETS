@@ -36,7 +36,8 @@ The following message was returned from the server:
 </CFIF>
 
 
-<!--- Download Strathcona County zip file --->
+<!--- We no longer need to separately handle agencies other than Edmonton --->
+<!--- Download Strathcona County zip file 
 <cfset gtfsUrl = "http://webpub2.strathcona.ab.ca/GTFS/Google_Transit.zip" />
 <cfx_http5 url="#gtfsUrl#" ssl="5" async="n" out="D:\inetpub\temp\gtfs\Strathcona\gtfs.zip" file="y">
 
@@ -57,7 +58,8 @@ The following message was returned from the server:
    <CFABORT>
 </CFIF>
 
-<!--- Download St. Albert zip file --->
+
+--- Download St. Albert zip file 
 <cfset gtfsUrl = "https://stalbert.ca/uploads/files-zip/google_transit.zip" />
 <cfx_http5 url="#gtfsUrl#" ssl="5" async="n" out="D:\inetpub\temp\gtfs\StAlbert\gtfs.zip" file="y">
 
@@ -77,7 +79,7 @@ The following message was returned from the server:
 </cfmail>   
    <CFABORT>
 </CFIF>
-
+--->
 
 <!--- Extract zip into gtfs directory --->
 <cfzip action="unzip" file="D:\inetpub\temp\gtfs\Edmonton\gtfs.zip" overwrite="true" destination="D:\inetpub\temp\gtfs\Edmonton\" />
@@ -85,18 +87,20 @@ The following message was returned from the server:
 <!--- Delete the original zip as we do not need it anymore --->
 <cffile action="delete" file="D:\inetpub\temp\gtfs\Edmonton\gtfs.zip" />
 
-<!--- Extract zip into gtfs directory --->
+
+<!--- We no longer need to separately handle agencies other than Edmonton --->
+<!--- Extract zip into gtfs directory 
 <cfzip action="unzip" file="D:\inetpub\temp\gtfs\Strathcona\gtfs.zip" overwrite="true" destination="D:\inetpub\temp\gtfs\Strathcona\" />
 
-<!--- Delete the original zip as we do not need it anymore --->
+--- Delete the original zip as we do not need it anymore 
 <cffile action="delete" file="D:\inetpub\temp\gtfs\Strathcona\gtfs.zip" />
 
-<!--- Extract zip into gtfs directory --->
+--- Extract zip into gtfs directory 
 <cfzip action="unzip" file="D:\inetpub\temp\gtfs\StAlbert\gtfs.zip" overwrite="true" destination="D:\inetpub\temp\gtfs\StAlbert\" />
 
-<!--- Delete the original zip as we do not need it anymore --->
+--- Delete the original zip as we do not need it anymore 
 <cffile action="delete" file="D:\inetpub\temp\gtfs\StAlbert\gtfs.zip" />
-
+--->
 <!--- List of files. First in reverse order for deleting without violating constraints --->
 
 <!--- Remove annoying headers from GTFS files so we can import them easily --->
@@ -159,7 +163,7 @@ The following messages have been returned from the server:
 	</cfcatch>
 </cftry>
 
-<!--- St. Albert --->
+<!--- St. Albert 
 <cftry>
 	<cfquery name="BulkInsert" dbtype="ODBC" datasource="ReadWriteSource">
 
@@ -198,7 +202,7 @@ The following messages have been returned from the server:
 </cftry>
 
 
-<!--- Strathcona County --->
+--- Strathcona County ---
 <cftry>
 	<cfquery name="BulkInsert" dbtype="ODBC" datasource="ReadWriteSource">
 
@@ -235,7 +239,7 @@ The following messages have been returned from the server:
 	<cfabort>
 	</cfcatch>
 </cftry>
-
+--->
 
 <!--- There are a few stray double-quotes that I want to get rid of --->
 <cfquery name="CleanUp" dbtype="ODBC" datasource="ReadWriteSource">
@@ -255,7 +259,7 @@ The following messages have been returned from the server:
 	)	
 </cfquery>
 
-<!--- Clean up Strathcona Stops and flag stops that are exclusively Strathcona and not ETS --->
+<!--- Clean up Strathcona Stops and flag stops that are exclusively Strathcona and not ETS 
 <cfquery name="CleanOutsideStops" dbtype="ODBC" datasource="ReadWriteSource">
 --This will ensure that the stop_name of stops with same ID and similar coordinates (within about ten metres) match exactly
 UPDATE vsd.#dbprefix#_stops_Strathcona SET stop_name = (SELECT stop_name FROM vsd.#dbprefix#_stops WHERE stop_id=vsd.#dbprefix#_stops_Strathcona.stop_id)
@@ -298,7 +302,7 @@ AND vsd.#dbprefix#_stops_StAlbert.stop_name=(SELECT stop_name FROM vsd.#dbprefix
 --For now, we consider all ETS stops exclusive - we want to show them all in the view of all stops
 UPDATE vsd.#dbprefix#_stops SET exclusive=1
 </cfquery>
-
+--->
 
 
 <cfquery name="UpdateRouteStops" dbtype="ODBC" datasource="ReadWriteSource">
@@ -316,7 +320,7 @@ UPDATE vsd.#dbprefix#_stops SET exclusive=1
 <!--- 
 	Loops through every entry of a "calendar" table, and inserts each date from the range into the calendar_dates_complete
 	table for StAlbert and Strathcona, accounting for any exceptions in the calendar_dates table.
- --->
+
 <cfquery name="calendarStA" dbtype="ODBC" datasource="SecureSource">
 	SELECT * FROM vsd.#dbprefix#_calendar_StAlbert
 </cfquery>
@@ -396,7 +400,7 @@ UPDATE vsd.#dbprefix#_stops SET exclusive=1
 	</cfloop>
 </cfloop>
 
-
+--->
 
 
 <!--- If everything seems to be working, now let's switch the active database to the newly updated one. --->
