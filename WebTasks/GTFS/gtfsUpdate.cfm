@@ -23,7 +23,7 @@
    <p><b>Failure to update GTFS Data</b></p>
    <!--- Could email JD here --->
    <CFOUTPUT>#MSG#</CFOUTPUT>
-		<cfmail to="jlien@epl.ca, vflores@epl.ca" subject="Error Downloading GTFS data for ETS Database" from="noreply@epl.ca">
+		<cfmail to="jlien@epl.ca, weblogs@epl.ca" subject="Error Downloading GTFS data for ETS Database" from="noreply@epl.ca">
 An attempt to download GTFS transit data from City of Edmonton failed.
 Please check that the relevant URL is functional and investigate this problem.<br />
 <cfoutput>#gtfsUrl#</cfoutput>
@@ -32,12 +32,11 @@ The following message was returned from the server:
 
 <cfoutput>#MSG#</cfoutput>
 </cfmail>   
-   <CFABORT>
+   <cfabort />
 </CFIF>
 
 
-<!--- We no longer need to separately handle agencies other than Edmonton --->
-<!--- Download Strathcona County zip file 
+<!--- Download Strathcona County zip file --->
 <cfset gtfsUrl = "http://webpub2.strathcona.ab.ca/GTFS/Google_Transit.zip" />
 <cfx_http5 url="#gtfsUrl#" ssl="5" async="n" out="D:\inetpub\temp\gtfs\Strathcona\gtfs.zip" file="y">
 
@@ -46,7 +45,7 @@ The following message was returned from the server:
    <p><b>Failure to update GTFS Data</b></p>
    <!--- Could email JD here --->
    <CFOUTPUT>#MSG#</CFOUTPUT>
-		<cfmail to="jlien@epl.ca, vflores@epl.ca" subject="Error Downloading GTFS data for ETS Database" from="noreply@epl.ca">
+		<cfmail to="jlien@epl.ca, weblogs@epl.ca" subject="Error Downloading GTFS data for ETS Database" from="noreply@epl.ca">
 An attempt to download GTFS transit data from Strathcona County failed.
 Please check that the relevant URL is functional and investigate this problem.<br />
 <cfoutput>#gtfsUrl#</cfoutput>
@@ -55,12 +54,11 @@ The following message was returned from the server:
 
 <cfoutput>#MSG#</cfoutput>
 </cfmail>   
-   <CFABORT>
+   <cfabort />
 </CFIF>
 
-
---- Download St. Albert zip file 
-<cfset gtfsUrl = "https://stalbert.ca/uploads/files-zip/google_transit.zip" />
+<!--- Download St. Albert zip file --->
+<cfset gtfsUrl = "https://stalbert.ca/site/assets/files/3840/google_transit.zip" />
 <cfx_http5 url="#gtfsUrl#" ssl="5" async="n" out="D:\inetpub\temp\gtfs\StAlbert\gtfs.zip" file="y">
 
 <CFIF STATUS EQ "ER">
@@ -68,7 +66,7 @@ The following message was returned from the server:
    <p><b>Failure to update GTFS Data</b></p>
    <!--- Could email JD here --->
    <CFOUTPUT>#MSG#</CFOUTPUT>
-		<cfmail to="jlien@epl.ca, vflores@epl.ca" subject="Error Downloading GTFS data for ETS Database" from="noreply@epl.ca">
+		<cfmail to="jlien@epl.ca, weblogs@epl.ca" subject="Error Downloading GTFS data for ETS Database" from="noreply@epl.ca">
 An attempt to download GTFS transit data from St. Albert failed.
 Please check that the relevant URL is functional and investigate this problem.<br />
 <cfoutput>#gtfsUrl#</cfoutput>
@@ -77,30 +75,48 @@ The following message was returned from the server:
 
 <cfoutput>#MSG#</cfoutput>
 </cfmail>   
-   <CFABORT>
+   <cfabort />
 </CFIF>
---->
 
-<!--- Extract zip into gtfs directory --->
-<cfzip action="unzip" file="D:\inetpub\temp\gtfs\Edmonton\gtfs.zip" overwrite="true" destination="D:\inetpub\temp\gtfs\Edmonton\" />
+<!--- Unzip all gtfs packages --->
+<cftry>
+	<!--- Extract zip into gtfs directory --->
+	<cfzip action="unzip" file="D:\inetpub\temp\gtfs\Edmonton\gtfs.zip" overwrite="true" destination="D:\inetpub\temp\gtfs\Edmonton\" />
 
-<!--- Delete the original zip as we do not need it anymore --->
-<cffile action="delete" file="D:\inetpub\temp\gtfs\Edmonton\gtfs.zip" />
+	<!--- Delete the original zip as we do not need it anymore --->
+	<cffile action="delete" file="D:\inetpub\temp\gtfs\Edmonton\gtfs.zip" />
 
+	<!--- Extract zip into gtfs directory --->
+	<cfzip action="unzip" file="D:\inetpub\temp\gtfs\Strathcona\gtfs.zip" overwrite="true" destination="D:\inetpub\temp\gtfs\Strathcona\" />
 
-<!--- We no longer need to separately handle agencies other than Edmonton --->
-<!--- Extract zip into gtfs directory 
-<cfzip action="unzip" file="D:\inetpub\temp\gtfs\Strathcona\gtfs.zip" overwrite="true" destination="D:\inetpub\temp\gtfs\Strathcona\" />
+	<!--- Delete the original zip as we do not need it anymore --->
+	<cffile action="delete" file="D:\inetpub\temp\gtfs\Strathcona\gtfs.zip" />
 
---- Delete the original zip as we do not need it anymore 
-<cffile action="delete" file="D:\inetpub\temp\gtfs\Strathcona\gtfs.zip" />
+	<!--- Extract zip into gtfs directory --->
+	<cfzip action="unzip" file="D:\inetpub\temp\gtfs\StAlbert\gtfs.zip" overwrite="true" destination="D:\inetpub\temp\gtfs\StAlbert\" />
 
---- Extract zip into gtfs directory 
-<cfzip action="unzip" file="D:\inetpub\temp\gtfs\StAlbert\gtfs.zip" overwrite="true" destination="D:\inetpub\temp\gtfs\StAlbert\" />
+	<!--- Delete the original zip as we do not need it anymore --->
+	<cffile action="delete" file="D:\inetpub\temp\gtfs\StAlbert\gtfs.zip" />
 
---- Delete the original zip as we do not need it anymore 
-<cffile action="delete" file="D:\inetpub\temp\gtfs\StAlbert\gtfs.zip" />
---->
+	<cfcatch type="any">
+
+		<h1>ERROR: Update Failed</h1>		
+				<cfdump var="#cfcatch#">
+				<cfmail to="jlien@epl.ca, weblogs@epl.ca" subject="Error Updating ETS Database" from="noreply@epl.ca">
+An attempt to update GTFS transit data failed.
+
+There was an issue unzipping one of the gtfs packages from an agency. This could be caused because a link has moved, and an error page was downloaded instead of an actual zip file.
+
+<cfoutput>
+#cfcatch.message#
+#cfcatch.detail#
+</cfoutput>
+		</cfmail>
+		<cfabort />
+
+	</cfcatch>
+</cftry>
+
 <!--- List of files. First in reverse order for deleting without violating constraints --->
 
 <!--- Remove annoying headers from GTFS files so we can import them easily --->
@@ -148,7 +164,7 @@ The following message was returned from the server:
 	<cfcatch type="any">
 <h1>ERROR: Update Failed</h1>		
 		<cfdump var="#cfcatch#">
-		<cfmail to="jlien@epl.ca, vflores@epl.ca" subject="Error Updating ETS Database" from="noreply@epl.ca">
+		<cfmail to="jlien@epl.ca, weblogs@epl.ca" subject="Error Updating ETS Database" from="noreply@epl.ca">
 An attempt to update GTFS transit data from City of Edmonton failed.
 Please check that the vsd.ETS databases are functional and investigate this problem.
 
@@ -159,11 +175,11 @@ The following messages have been returned from the server:
 <cfoutput>#cfcatch.message#
 #cfcatch.detail#</cfoutput>
 </cfmail>
-	<cfabort>
+	<cfabort />
 	</cfcatch>
 </cftry>
 
-<!--- St. Albert 
+<!--- St. Albert --->
 <cftry>
 	<cfquery name="BulkInsert" dbtype="ODBC" datasource="ReadWriteSource">
 
@@ -186,7 +202,7 @@ The following messages have been returned from the server:
 	<cfcatch type="any">
 <h1>ERROR: Update Failed</h1>		
 		<cfdump var="#cfcatch#">
-		<cfmail to="jlien@epl.ca, vflores@epl.ca" subject="Error Updating ETS Database" from="noreply@epl.ca">
+		<cfmail to="jlien@epl.ca, weblogs@epl.ca" subject="Error Updating ETS Database" from="noreply@epl.ca">
 An attempt to update GTFS transit data from St. Albert failed.
 Please check that the vsd.ETS databases are functional and investigate this problem.
 
@@ -197,12 +213,12 @@ The following messages have been returned from the server:
 <cfoutput>#cfcatch.message#
 #cfcatch.detail#</cfoutput>
 </cfmail>
-	<cfabort>
+	<cfabort />
 	</cfcatch>
 </cftry>
 
 
---- Strathcona County ---
+<!--- Strathcona County --->
 <cftry>
 	<cfquery name="BulkInsert" dbtype="ODBC" datasource="ReadWriteSource">
 
@@ -225,7 +241,7 @@ The following messages have been returned from the server:
 	<cfcatch type="any">
 <h1>ERROR: Update Failed</h1>		
 		<cfdump var="#cfcatch#">
-		<cfmail to="jlien@epl.ca, vflores@epl.ca" subject="Error Updating ETS Database" from="noreply@epl.ca">
+		<cfmail to="jlien@epl.ca, weblogs@epl.ca" subject="Error Updating ETS Database" from="noreply@epl.ca">
 An attempt to update GTFS transit data from Strathcona County failed.
 Please check that the vsd.ETS databases are functional and investigate this problem.
 
@@ -236,10 +252,10 @@ The following messages have been returned from the server:
 <cfoutput>#cfcatch.message#
 #cfcatch.detail#</cfoutput>
 </cfmail>
-	<cfabort>
+	<cfabort />
 	</cfcatch>
 </cftry>
---->
+
 
 <!--- There are a few stray double-quotes that I want to get rid of --->
 <cfquery name="CleanUp" dbtype="ODBC" datasource="ReadWriteSource">
@@ -259,7 +275,7 @@ The following messages have been returned from the server:
 	)	
 </cfquery>
 
-<!--- Clean up Strathcona Stops and flag stops that are exclusively Strathcona and not ETS 
+<!--- Clean up Strathcona Stops and flag stops that are exclusively Strathcona and not ETS --->
 <cfquery name="CleanOutsideStops" dbtype="ODBC" datasource="ReadWriteSource">
 --This will ensure that the stop_name of stops with same ID and similar coordinates (within about ten metres) match exactly
 UPDATE vsd.#dbprefix#_stops_Strathcona SET stop_name = (SELECT stop_name FROM vsd.#dbprefix#_stops WHERE stop_id=vsd.#dbprefix#_stops_Strathcona.stop_id)
@@ -302,7 +318,7 @@ AND vsd.#dbprefix#_stops_StAlbert.stop_name=(SELECT stop_name FROM vsd.#dbprefix
 --For now, we consider all ETS stops exclusive - we want to show them all in the view of all stops
 UPDATE vsd.#dbprefix#_stops SET exclusive=1
 </cfquery>
---->
+
 
 
 <cfquery name="UpdateRouteStops" dbtype="ODBC" datasource="ReadWriteSource">
@@ -320,7 +336,7 @@ UPDATE vsd.#dbprefix#_stops SET exclusive=1
 <!--- 
 	Loops through every entry of a "calendar" table, and inserts each date from the range into the calendar_dates_complete
 	table for StAlbert and Strathcona, accounting for any exceptions in the calendar_dates table.
-
+ --->
 <cfquery name="calendarStA" dbtype="ODBC" datasource="SecureSource">
 	SELECT * FROM vsd.#dbprefix#_calendar_StAlbert
 </cfquery>
@@ -400,7 +416,7 @@ UPDATE vsd.#dbprefix#_stops SET exclusive=1
 	</cfloop>
 </cfloop>
 
---->
+
 
 
 <!--- If everything seems to be working, now let's switch the active database to the newly updated one. --->
