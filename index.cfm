@@ -1606,10 +1606,7 @@ $('#mapNotice').on('click', function(){
                     <a href="https://www2.epl.ca/ContactEPL/" class="feedback-btn-small">Contact EPL</a>
                     <div class="clear"></div>
                     <div class="support-cpl">
-                        <a href="https://www.canadahelps.org/dn/2773" class="support-cpl-link">
-                                            <img alt="Donate Now" src="https://epl.bibliocms.com/wp-content/uploads/sites/18/2015/11/DonateNowButton_130x60px_Nov2015.png?v=1501597825150159683415015965403">
-                                            <span class="a11y-visually-hidden">, opens a new window</span>
-                </a>
+                        <a href="https://www.canadahelps.org/dn/2773" class="support-cpl-link">DONATE NOW</a>
                     </div>
                     <div class="footer-col-2">
                         <!---<div id="green-links-wrapper">
