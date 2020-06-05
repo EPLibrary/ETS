@@ -21,7 +21,7 @@
 
 <!--- Remove for production --->
 <!--- <cfoutput>Updating TripUpdates.pb...</cfoutput> --->
-<cfset PBFile = "D:\inetpub\CustomTags\TripUpdates.pb" />
+<cfset PBFile = "D:\inetpub\temp\gtfs\TripUpdates.pb" />
 <cfx_http5 url="#TripUpdateURL#" ssl="5" async="n" out="#PBFile#" file="y">
 
 <CFIF STATUS EQ "ER">

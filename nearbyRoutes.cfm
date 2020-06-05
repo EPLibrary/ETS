@@ -140,7 +140,7 @@ from a given point to the nearest route stop to that point --->
 	ORDER BY distance, value  ASC
 </cfquery>
 
-<cfoutput>#SerializeJSON(QueryToStruct(RouteByNearestStopDist))#</cfoutput>
+<cfoutput>#SerializeJSON(queryToStruct(RouteByNearestStopDist))#</cfoutput>
 <cfelse>
 <cfoutput>{"error": true,"message": "No location coordinates specified."}</cfoutput>
 </cfif>

@@ -7,7 +7,7 @@
  <cfif isDefined('url.stopid')>
 	<!--- If the url.stopid is not an int, make a version that has only the numeric part --->
 	<cfset stopidInt = REREplaceNoCase(url.stopid, "\D*(\d+)", "\1") /> 	
-	<cfinclude template="/AppsRoot/Includes/functions/QueryToStruct.cfm" />
+	<cfinclude template="/AppsRoot/Includes/functions/queryToStruct.cfm" />
 	<!--- Choose the active database to use. --->
 	<cfquery name="activedb" dbtype="ODBC" datasource="SecureSource">
 		SELECT TOP 1 * FROM vsd.ETS_activeDB WHERE active = 1
@@ -44,7 +44,7 @@
 		WHERE stop_id=#Mid(url.stopid, 4, 99)#
 		</cfif>
 	</cfquery>
-	<cfset stopInfoStruct = QueryToStruct(stopInfo) />
+	<cfset stopInfoStruct = queryToStruct(stopInfo) />
 
 	<!--- If there's a trip, we get the shape and convert it into JSON coordinates for Google Maps --->
 	<cfif isDefined('url.trip')>
@@ -95,7 +95,7 @@
 			</cfif>
 			ORDER BY stop_sequence
 		</cfquery>
-		<cfset nextStopInfoStruct = QueryToStruct(query=nextStops, forceArray=true) />
+		<cfset nextStopInfoStruct = queryToStruct(query=nextStops, forceArray=true) />
 	</cfif>
 
 <cfoutput>{"stop":#SerializeJSON(stopInfoStruct)#</cfoutput>
