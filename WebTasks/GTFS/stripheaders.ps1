@@ -22,6 +22,9 @@
 # Maybe this batch file will be quick?? Anything directly in powershell seems to suck
 & "D:\inetpub\www2.epl.ca\WebTasks\GTFS\stripheaders.bat"
 
+#Remove doublequotes from the transfers.txt file
+(gc D:\inetpub\temp\gtfs\Edmonton\transfers_noheader.txt) -replace '"', '' |Out-File D:\inetpub\temp\gtfs\Edmonton\transfers_noheader.txt -encoding ASCII
+
 # #Strathcona County
 (gc  D:\inetpub\temp\gtfs\Strathcona\stop_times_noblank.txt | select -Skip 1) | sc D:\inetpub\temp\gtfs\Strathcona\stop_times_noheader.txt
 (gc  D:\inetpub\temp\gtfs\Strathcona\shapes_noblank.txt | select -Skip 1) | sc D:\inetpub\temp\gtfs\Strathcona\shapes_noheader.txt
