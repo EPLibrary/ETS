@@ -54,11 +54,11 @@ description="Accepts FROM and TO station IDs, and a datetime and outputs a table
 	<cfquery name="validTrips" dbtype="ODBC" datasource="SecureSource">
 		SELECT trip_id FROM 
 			(SELECT trip_id, min(stop_id) as minStop FROM vsd.#dbprefix#_stop_times
-			WHERE stop_id IN (#fromStation.stop_id1#,#fromStation.stop_id2#)
+			WHERE stop_id IN ('#fromStation.stop_id1#','#fromStation.stop_id2#')
 			GROUP  BY trip_id
 			UNION ALL
 			SELECT trip_id, min(stop_id) as minStop FROM vsd.#dbprefix#_stop_times
-			WHERE stop_id IN (#toStation.stop_id1#,#toStation.stop_id2#)
+			WHERE stop_id IN ('#toStation.stop_id1#','#toStation.stop_id2#')
 		GROUP BY trip_id) stt
 		GROUP BY trip_id HAVING COUNT(*) > 1
 	</cfquery>
@@ -228,7 +228,7 @@ description="Accepts FROM and TO station IDs, and a datetime and outputs a table
 		<!--- This simple query is only valid if Churchill is the only connection station between lines.
 		This may not be true in the future, in which case we can use the above "MotherQuery" --->
 		<cfquery name="ConnectingStation" dbtype="ODBC" datasource="SecureSource">
-			SELECT * FROM vsd.EZLRTStations WHERE stop_id1=1691	OR stop_id2=1876
+			SELECT * FROM vsd.EZLRTStations WHERE stop_id1='1691' OR stop_id2='1876'
 		</cfquery>
 
 
@@ -247,7 +247,7 @@ description="Accepts FROM and TO station IDs, and a datetime and outputs a table
 				(
 					SELECT MAX(t.route_id) AS Route_ID FROM vsd.#dbprefix#_stop_times stime
 					JOIN vsd.#dbprefix#_trips t ON stime.trip_id=t.trip_id
-					WHERE stop_id IN (#fromStation.stop_id1#,#fromStation.stop_id2#)
+					WHERE stop_id IN ('#fromStation.stop_id1#','#fromStation.stop_id2#')
 				)
 			</cfquery>
 
@@ -259,7 +259,7 @@ description="Accepts FROM and TO station IDs, and a datetime and outputs a table
 				SELECT * FROM vsd.#dbprefix#_routes WHERE route_id=(
 					SELECT MAX(t.route_id) AS Route_ID FROM vsd.#dbprefix#_stop_times stime
 					JOIN vsd.#dbprefix#_trips t ON stime.trip_id=t.trip_id
-					WHERE stop_id IN (#toStation2.stop_id1#,#toStation2.stop_id2#)
+					WHERE stop_id IN ('#toStation2.stop_id1#','#toStation2.stop_id2#')
 				)
 			</cfquery>
 
@@ -279,32 +279,30 @@ description="Accepts FROM and TO station IDs, and a datetime and outputs a table
 
 	</cfif><!---validTrips.RecordCount IS 0--->
 
-
-
 	<!--- Query that should show the relevant schedule times. --->
 	<cfquery name="DepartureTimes" dbtype="ODBC" datasource="SecureSource">
 		SELECT
 		<cfif isDefined('url.destTime')>( -- As cool as it is to get the destination arrival time, it makes queries 10x slower :(
 			SELECT TOP 1 sdt2.ActualDateTime FROM vsd.#dbprefix#_trip_stop_datetimes sdt2
-			WHERE (stop_id=#toStation.stop_id1# OR stop_id=#toStation.stop_id2#)
+			WHERE (stop_id='#toStation.stop_id1#' OR stop_id='#toStation.stop_id2#')
 			AND trip_id=sdt.trip_id
 			AND stop_sequence > sdt.stop_sequence
 			AND ActualDateTime > #CurrentTime#
 			ORDER BY sdt2.ActualDateTime
 		) AS dest_arrival_datetime, </cfif>
 		* FROM vsd.#dbprefix#_trip_stop_datetimes sdt
-		WHERE pickup_type=0 AND (stop_id=#fromStation.stop_id1# OR stop_id=#fromStation.stop_id2#) --FROM station #fromStation.StationCode#, North OR South
-		AND trip_id IN (SELECT DISTINCT trip_id from vsd.#dbprefix#_stop_times stime2	WHERE stime2.stop_id=#toStation.stop_id1# OR stime2.stop_id=#toStation.stop_id2#) --TO station #toStation.StationCode#, North OR South
+		WHERE pickup_type=0 AND (stop_id='#fromStation.stop_id1#' OR stop_id='#fromStation.stop_id2#') --FROM station #fromStation.StationCode#, North OR South
+		AND trip_id IN (SELECT DISTINCT trip_id from vsd.#dbprefix#_stop_times stime2	WHERE stime2.stop_id='#toStation.stop_id1#' OR stime2.stop_id='#toStation.stop_id2#') --TO station #toStation.StationCode#, North OR South
 		AND ActualDateTime > #CurrentTime# AND ActualDateTime < #MaxFutureTime#
 		AND EXISTS --stop for destination station from same trip
 		(SELECT stop_sequence FROM vsd.#dbprefix#_stop_times stime3
-			WHERE (stop_id=#toStation.stop_id1# OR stop_id=#toStation.stop_id2#)
+			WHERE (stop_id='#toStation.stop_id1#' OR stop_id='#toStation.stop_id2#')
 			AND trip_id=sdt.trip_id
 			AND stop_sequence > sdt.stop_sequence
 			-- This clause is necessary to determine ensure we only get trains going the right direction
 			AND sdt.stop_sequence = (
 				SELECT max(stop_sequence) FROM vsd.#dbprefix#_stop_times
-				WHERE trip_id=sdt.trip_id AND (stop_id=#fromStation.stop_id1# OR stop_id=#fromStation.stop_id2#)
+				WHERE trip_id=sdt.trip_id AND (stop_id='#fromStation.stop_id1#' OR stop_id='#fromStation.stop_id2#')
 				AND stop_sequence < stime3.stop_sequence
 			)
 			AND drop_off_type=0 --this makes sure we can get off, won't show the pickup stop after train switches direction
@@ -319,15 +317,15 @@ description="Accepts FROM and TO station IDs, and a datetime and outputs a table
 			SELECT TOP 3 arrival_time, trip_id, stop_id, stop_sequence, stop_headsign,
 			(SELECT TOP 1 arrival_time FROM vsd.#dbprefix#_stop_times
 			WHERE trip_id='#validTrips.trip_id#' --from validTrips
-				AND stop_id IN (#toStation.stop_id1#,#toStation.stop_id2#)
+				AND stop_id IN ('#toStation.stop_id1#','#toStation.stop_id2#')
 				AND stop_sequence > sdt.stop_sequence
 				ORDER BY stop_sequence
 			) AS DestTime
 			FROM vsd.#dbprefix#_stop_times sdt WHERE trip_id='#validTrips.trip_id#'
-			AND stop_id IN (#fromStation.stop_id1#,#fromStation.stop_id2#)
+			AND stop_id IN ('#fromStation.stop_id1#','#fromStation.stop_id2#')
 			AND (SELECT TOP 1 arrival_time FROM vsd.#dbprefix#_stop_times
 			WHERE trip_id='#validTrips.trip_id#' --from validTrips
-				AND stop_id IN (#toStation.stop_id1#,#toStation.stop_id2#)
+				AND stop_id IN ('#toStation.stop_id1#','#toStation.stop_id2#')
 				AND stop_sequence > sdt.stop_sequence
 			) IS NOT NULL
 			ORDER BY arrival_time DESC
@@ -429,7 +427,7 @@ description="Accepts FROM and TO station IDs, and a datetime and outputs a table
 </cffunction><!---getDepartures--->
 
 
-<cfinclude template="/AppsRoot/Includes/functions/weekdayToNum.cfm" />
+<cfinclude template="#appsIncludes#/functions/weekdayToNum.cfm" />
 
 <cfif isDefined('url.from') AND isDefined('url.to')>
 	<cfif url.from IS url.to>

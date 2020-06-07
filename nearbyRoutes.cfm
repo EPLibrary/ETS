@@ -12,7 +12,7 @@ from a given point to the nearest route stop to that point --->
 <cfif isDefined('url.range')><cfset form.range = url.range /></cfif>
 
 <!--- Calculate the time we want to look at --->
-<cfinclude template="/AppsRoot/Includes/functions/weekdayToNum.cfm" />
+<cfinclude template="#appsIncludes#/functions/weekdayToNum.cfm" />
 
 <!--- Setting date variables for DepartureTimes query --->
 <!--- Set the Day of Week. Sunday is 1, Saturday is 7 --->
@@ -43,7 +43,7 @@ from a given point to the nearest route stop to that point --->
 	<!--- Allow the range from the current location to be customized --->
 	<cfparam name="form.range" default="0" />
 
-	<cfinclude template="/AppsRoot/Includes/functions/querytostruct.cfm" />
+	<cfinclude template="#appsIncludes#/functions/querytostruct.cfm" />
 
 	<!--- Choose the active database to use. --->
 	<cfquery name="activedb" dbtype="ODBC" datasource="SecureSource">

@@ -166,7 +166,8 @@ There was an issue unzipping one of the gtfs packages from an agency. This could
 		<cfdump var="#cfcatch#">
 		<cfmail to="jlien@epl.ca, weblogs@epl.ca" subject="Error Updating ETS Database" from="noreply@epl.ca">
 An attempt to update GTFS transit data from City of Edmonton failed.
-Please check that the vsd.ETS databases are functional and investigate this problem.
+Please check that the vsd.ETS databases are functional and use
+https://apps.epl.ca/web/gtfsDebug.cfm to test the import process.
 
 Typically this type of error occurs because the data provided by ETS has been changed in format such that it is no longer compatible with the existing database structure. Fixing his requires rebuilding the database with new field types.
 
@@ -204,7 +205,8 @@ The following messages have been returned from the server:
 		<cfdump var="#cfcatch#">
 		<cfmail to="jlien@epl.ca, weblogs@epl.ca" subject="Error Updating ETS Database" from="noreply@epl.ca">
 An attempt to update GTFS transit data from St. Albert failed.
-Please check that the vsd.ETS databases are functional and investigate this problem.
+Please check that the vsd.ETS databases are functional and use
+https://apps.epl.ca/web/gtfsDebug.cfm to test the import process.
 
 Typically this type of error occurs because the data provided by StAT has been changed in format such that it is no longer compatible with the existing database structure. Fixing his requires rebuilding the database with new field types.
 
@@ -243,7 +245,8 @@ The following messages have been returned from the server:
 		<cfdump var="#cfcatch#">
 		<cfmail to="jlien@epl.ca, weblogs@epl.ca" subject="Error Updating ETS Database" from="noreply@epl.ca">
 An attempt to update GTFS transit data from Strathcona County failed.
-Please check that the vsd.ETS databases are functional and investigate this problem.
+Please check that the vsd.ETS databases are functional and use
+https://apps.epl.ca/web/gtfsDebug.cfm to test the import process.
 
 Typically this type of error occurs because the data provided by Strathcona County Transit has been changed in format such that it is no longer compatible with the existing database structure. Fixing his requires rebuilding the database with new field types.
 

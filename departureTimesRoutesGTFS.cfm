@@ -67,7 +67,7 @@ description="Accepts FROM and TO stop IDs, and a datetime and outputs a table wi
 			SELECT * FROM (
 			SELECT
 				(SELECT TOP 1 sdt2.ActualDateTime FROM vsd.#dbprefix#_trip_stop_datetimes#agencysuffix# sdt2
-				WHERE stop_id=#to#
+				WHERE stop_id='#to#'
 				AND trip_id=sdt.trip_id
 				AND stop_sequence > sdt.stop_sequence
 				AND ActualDateTime > #CurrentTime#
@@ -75,7 +75,7 @@ description="Accepts FROM and TO stop IDs, and a datetime and outputs a table wi
 			) AS dest_arrival_datetime,
 			* FROM vsd.#dbprefix#_trip_stop_datetimes#agencysuffix# sdt
 			WHERE route_id='#rid#'
-			AND stop_id=#from#
+			AND stop_id='#from#'
 			AND ActualDateTime > #CurrentTime# AND ActualDateTime < #MaxFutureTime#
 			) AS stops WHERE dest_arrival_datetime IS NOT NULL
 			AND pickup_type = 0
@@ -85,7 +85,7 @@ description="Accepts FROM and TO stop IDs, and a datetime and outputs a table wi
 		<cfquery name="DepartureTimes" dbtype="ODBC" datasource="SecureSource">
 			SELECT NULL AS dest_arrival_datetime, * FROM vsd.#dbprefix#_trip_stop_datetimes#agencysuffix# sdt
 			WHERE route_id='#rid#'
-			AND stop_id=#from#
+			AND stop_id='#from#'
 			AND ActualDateTime > #CurrentTime# AND ActualDateTime < #MaxFutureTime#
 			AND pickup_type = 0
 			ORDER BY ActualDateTime

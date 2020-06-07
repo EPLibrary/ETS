@@ -76,21 +76,21 @@ description="Accepts FROM stop_id and a datetime and outputs a table with releva
 			SELECT * FROM vsd.#dbprefix#_trip_stop_datetimes_Strathcona
 			</cfif>
 			) AS AllDatetimes
-			WHERE stop_id=#fromStop# 
+			WHERE stop_id='#fromStop#' 
 			AND ActualDateTime > #CurrentTime#
 			AND ActualDateTime < #maxFutureTime#
 			AND pickup_type = 0
 			ORDER BY ActualDateTime
 		<cfelseif left(fromStop, 3) EQ "Str">
 			SELECT * FROM vsd.#dbprefix#_trip_stop_datetimes_Strathcona
-			WHERE stop_id=#Mid(fromStop, 4, 99)# 
+			WHERE stop_id='#Mid(fromStop, 4, 99)#' 
 			AND ActualDateTime > #CurrentTime#
 			AND ActualDateTime < #maxFutureTime#
 			AND pickup_type = 0
 			ORDER BY ActualDateTime
 		<cfelse><!--- otherwise it's St. Albert --->
 			SELECT * FROM vsd.#dbprefix#_trip_stop_datetimes_StAlbert
-			WHERE stop_id=#Mid(fromStop, 4, 99)# 
+			WHERE stop_id='#Mid(fromStop, 4, 99)#' 
 			AND ActualDateTime > #CurrentTime#
 			AND ActualDateTime < #maxFutureTime#
 			AND pickup_type = 0
@@ -101,7 +101,7 @@ description="Accepts FROM stop_id and a datetime and outputs a table with releva
 	<!--- This assumes a valid stop is given. I should handle this --->
 	<cfquery name="StopInfo" dbtype="ODBC" datasource="SecureSource">
 		<cfif isNumeric(fromStop)>
-		SELECT * FROM vsd.#dbprefix#_stops WHERE stop_id=#fromStop#
+		SELECT * FROM vsd.#dbprefix#_stops WHERE stop_id='#fromStop#'
 		<cfelseif left(fromStop, 3) EQ "Str">
 		SELECT * FROM vsd.#dbprefix#_stops_Strathcona WHERE stop_id='#mid(fromStop, 4, 99)#'
 		<cfelse>
