@@ -1044,6 +1044,12 @@ var markerCluster;
 // Filling in the seq and dest will allow subsequent stops on the trip to be shown
 function initMap(stop, trip, seq, dest) {
 
+var debug = false;
+debug = true; //Dump information to console for debugging
+if (debug) {
+	console.log('stop:'+stop+', trip:'+trip+', seq:'+seq+', dest:'+dest);
+}
+
 var needsRefresh = false;
 //Universal stuff for all types of calls
 var icons = {

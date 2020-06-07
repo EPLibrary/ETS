@@ -26,4 +26,9 @@ JOIN vsd.#dbprefix#_trips#agencysuffix# t ON s.shape_id=t.shape_id
 ) ORDER BY shape_pt_sequence
 </cfquery>
 <cfoutput>{"shape":[<cfloop query="RouteShape"><cfif currentRow GT 1>,</cfif>{"lng":#shape_pt_lon#,"lat":#shape_pt_lat#}</cfloop>]}</cfoutput>
+<cfelse>
+	<cfset data = structNew() />
+	<cfset data.error = true />
+	<cfset data.message = "no rid specified." />
+	<cfoutput>#serializeJSON(data)#</cfoutput>
 </cfif>

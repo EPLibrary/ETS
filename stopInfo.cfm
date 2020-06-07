@@ -1,7 +1,5 @@
 <!--- Returns JSON stop information for a given stop --->
-<cfsetting enablecfoutputonly="true" />
-
-<cfsetting showdebugoutput="false" />
+<cfsetting enablecfoutputonly="true" showdebugoutput="false" />
 <cfheader name="Content-Type" value="application/json">
  
  <cfif isDefined('url.stopid')>
@@ -35,13 +33,13 @@
 		<cfif isNumeric(url.stopid)>
 		SELECT stop_id, stop_name, stop_lat, stop_lon, abbr AS sc FROM vsd.#dbprefix#_stops s
 		LEFT OUTER JOIN vsd.EZLRTStations ls ON ls.stop_id1=s.stop_id OR ls.stop_id2=s.stop_id
-		WHERE stop_id=#url.stopid#
+		WHERE stop_id='#url.stopid#'
 		<cfelseif left(url.stopid, 3) EQ "Str">
 		SELECT stop_id, stop_name, stop_lat, stop_lon, '' AS sc FROM vsd.#dbprefix#_stops_Strathcona s
-		WHERE stop_id=#Mid(url.stopid, 4, 99)#
+		WHERE stop_id='#Mid(url.stopid, 4, 99)#'
 		<cfelse>
 		SELECT stop_id, stop_name, stop_lat, stop_lon, '' AS sc FROM vsd.#dbprefix#_stops_StAlbert s
-		WHERE stop_id=#Mid(url.stopid, 4, 99)#
+		WHERE stop_id='#Mid(url.stopid, 4, 99)#'
 		</cfif>
 	</cfquery>
 	<cfset stopInfoStruct = queryToStruct(stopInfo) />
@@ -88,9 +86,9 @@
 				<cfif isDefined('realStopIDs') AND realStopIDs.recordCount>
 				AND stop_sequence <= (ISNULL((SELECT TOP 1 stop_sequence FROM vsd.#dbprefix#_stop_times#agencySuffix# WHERE trip_id='#url.trip#'
 					<cfif isDefined('url.seq') AND isNumeric(url.seq)>AND stop_sequence > #url.seq#</cfif>
-					AND (stop_id=#realStopIDs.stop_id1# OR stop_id=#realStopIDs.stop_id2#) ORDER BY stop_sequence ASC),9999))
+					AND (stop_id='#realStopIDs.stop_id1#' OR stop_id='#realStopIDs.stop_id2#') ORDER BY stop_sequence ASC),9999))
 				<cfelse>
-				AND stop_sequence <= (ISNULL((SELECT TOP 1 stop_sequence FROM vsd.#dbprefix#_stop_times#agencySuffix# WHERE trip_id='#url.trip#' AND stop_id=#url.dest# ORDER BY stop_sequence DESC),9999))
+				AND stop_sequence <= (ISNULL((SELECT TOP 1 stop_sequence FROM vsd.#dbprefix#_stop_times#agencySuffix# WHERE trip_id='#url.trip#' AND stop_id='#url.dest#' ORDER BY stop_sequence DESC),9999))
 				</cfif>
 			</cfif>
 			ORDER BY stop_sequence

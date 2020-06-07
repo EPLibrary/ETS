@@ -332,7 +332,9 @@ CREATE TABLE vsd.ETS1_trips (
 	trip_headsign nvarchar(255) NULL,
 	direction_id bit NULL, --0 = outbound, 1 = inbound
 	block_id  varchar(30) NULL, /* Identifies the block to which the trip belongs. A block consists of two or more sequential trips made using the same vehicle, where a passenger can transfer from one trip to the next just by staying in the vehicle. The block_id must be referenced by two or more trips in trips.txt. */
-	shape_id varchar(255) NULL --REFERENCES vsd.ETS1_shapes(shape_id)
+	shape_id varchar(255) NULL, --REFERENCES vsd.ETS1_shapes(shape_id)
+	wheelchair_accessible BIT,
+	bikes_allowed BIT
 )
 --DROP TABLE vsd.ETS1_trips_StAlbert
 CREATE TABLE vsd.ETS1_trips_StAlbert (
@@ -342,7 +344,9 @@ CREATE TABLE vsd.ETS1_trips_StAlbert (
 	trip_headsign nvarchar(255) NULL,
 	direction_id bit NULL, --0 = outbound, 1 = inbound
 	block_id varchar(30) NULL, /* Identifies the block to which the trip belongs. A block consists of two or more sequential trips made using the same vehicle, where a passenger can transfer from one trip to the next just by staying in the vehicle. The block_id must be referenced by two or more trips in trips.txt. */
-	shape_id varchar(255) NULL --REFERENCES vsd.ETS1_shapes(shape_id)
+	shape_id varchar(255) NULL, --REFERENCES vsd.ETS1_shapes(shape_id)
+	wheelchair_accessible BIT,
+	bikes_allowed BIT
 )
 --DROP TABLE vsd.ETS1_trips_Strathcona
 CREATE TABLE vsd.ETS1_trips_Strathcona (
@@ -352,7 +356,9 @@ CREATE TABLE vsd.ETS1_trips_Strathcona (
 	trip_headsign nvarchar(255) NULL,
 	direction_id bit NULL, --0 = outbound, 1 = inbound
 	block_id varchar(30) NULL, /* Identifies the block to which the trip belongs. A block consists of two or more sequential trips made using the same vehicle, where a passenger can transfer from one trip to the next just by staying in the vehicle. The block_id must be referenced by two or more trips in trips.txt. */
-	shape_id varchar(255) NULL --REFERENCES vsd.ETS1_shapes(shape_id)
+	shape_id varchar(255) NULL, --REFERENCES vsd.ETS1_shapes(shape_id)
+	wheelchair_accessible BIT,
+	bikes_allowed BIT
 )
 
 
@@ -613,11 +619,11 @@ UNION SELECT stop_id, stop_code, stop_name, stop_desc, stop_lat, stop_lon, zone_
 
 --Create a view of all trips
 CREATE VIEW vsd.ETS1_trips_all_agencies WITH SCHEMABINDING AS
-SELECT route_id, service_id, trip_id, trip_headsign, direction_id, block_id, shape_id, 1 AS agency_id
+SELECT route_id, service_id, trip_id, trip_headsign, direction_id, block_id, shape_id, wheelchair_accessible, bikes_allowed, 1 AS agency_id
 FROM vsd.ETS1_trips
-UNION SELECT route_id, service_id, trip_id, trip_headsign, direction_id, block_id, shape_id, 2 AS agency_id
+UNION SELECT route_id, service_id, trip_id, trip_headsign, direction_id, block_id, shape_id, wheelchair_accessible, bikes_allowed, 2 AS agency_id
 FROM vsd.ETS1_trips_StAlbert
-UNION SELECT route_id, service_id, trip_id, trip_headsign, direction_id, block_id, shape_id, 3 AS agency_id
+UNION SELECT route_id, service_id, trip_id, trip_headsign, direction_id, block_id, shape_id, wheelchair_accessible, bikes_allowed, 3 AS agency_id
 FROM vsd.ETS1_trips_Strathcona
 
 --View of all shapes
@@ -983,7 +989,9 @@ CREATE TABLE vsd.ETS2_trips (
 	trip_headsign nvarchar(255) NULL,
 	direction_id bit NULL, --0 = outbound, 1 = inbound
 	block_id  varchar(30) NULL, /* Identifies the block to which the trip belongs. A block consists of two or more sequential trips made using the same vehicle, where a passenger can transfer from one trip to the next just by staying in the vehicle. The block_id must be referenced by two or more trips in trips.txt. */
-	shape_id varchar(255) NULL --REFERENCES vsd.ETS2_shapes(shape_id)
+	shape_id varchar(255) NULL, --REFERENCES vsd.ETS2_shapes(shape_id)
+	wheelchair_accessible BIT,
+	bikes_allowed BIT
 )
 --DROP TABLE vsd.ETS2_trips_StAlbert
 CREATE TABLE vsd.ETS2_trips_StAlbert (
@@ -993,7 +1001,9 @@ CREATE TABLE vsd.ETS2_trips_StAlbert (
 	trip_headsign nvarchar(255) NULL,
 	direction_id bit NULL, --0 = outbound, 1 = inbound
 	block_id varchar(30) NULL, /* Identifies the block to which the trip belongs. A block consists of two or more sequential trips made using the same vehicle, where a passenger can transfer from one trip to the next just by staying in the vehicle. The block_id must be referenced by two or more trips in trips.txt. */
-	shape_id varchar(255) NULL --REFERENCES vsd.ETS2_shapes(shape_id)
+	shape_id varchar(255) NULL, --REFERENCES vsd.ETS2_shapes(shape_id)
+	wheelchair_accessible BIT,
+	bikes_allowed BIT
 )
 --DROP TABLE vsd.ETS2_trips_Strathcona
 CREATE TABLE vsd.ETS2_trips_Strathcona (
@@ -1003,7 +1013,9 @@ CREATE TABLE vsd.ETS2_trips_Strathcona (
 	trip_headsign nvarchar(255) NULL,
 	direction_id bit NULL, --0 = outbound, 1 = inbound
 	block_id varchar(30) NULL, /* Identifies the block to which the trip belongs. A block consists of two or more sequential trips made using the same vehicle, where a passenger can transfer from one trip to the next just by staying in the vehicle. The block_id must be referenced by two or more trips in trips.txt. */
-	shape_id varchar(255) NULL --REFERENCES vsd.ETS2_shapes(shape_id)
+	shape_id varchar(255) NULL, --REFERENCES vsd.ETS2_shapes(shape_id)
+	wheelchair_accessible BIT,
+	bikes_allowed BIT
 )
 
 
@@ -1264,11 +1276,11 @@ UNION SELECT stop_id, stop_code, stop_name, stop_desc, stop_lat, stop_lon, zone_
 
 --Create a view of all trips
 CREATE VIEW vsd.ETS2_trips_all_agencies WITH SCHEMABINDING AS
-SELECT route_id, service_id, trip_id, trip_headsign, direction_id, block_id, shape_id, 1 AS agency_id
+SELECT route_id, service_id, trip_id, trip_headsign, direction_id, block_id, shape_id, wheelchair_accessible, bikes_allowed, 1 AS agency_id
 FROM vsd.ETS2_trips
-UNION SELECT route_id, service_id, trip_id, trip_headsign, direction_id, block_id, shape_id, 2 AS agency_id
+UNION SELECT route_id, service_id, trip_id, trip_headsign, direction_id, block_id, shape_id, wheelchair_accessible, bikes_allowed, 2 AS agency_id
 FROM vsd.ETS2_trips_StAlbert
-UNION SELECT route_id, service_id, trip_id, trip_headsign, direction_id, block_id, shape_id, 3 AS agency_id
+UNION SELECT route_id, service_id, trip_id, trip_headsign, direction_id, block_id, shape_id, wheelchair_accessible, bikes_allowed, 3 AS agency_id
 FROM vsd.ETS2_trips_Strathcona
 
 --View of all shapes
