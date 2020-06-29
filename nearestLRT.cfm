@@ -185,7 +185,7 @@ Note that a three-decimal place precision is sufficient here if one is concerned
 </cfif><!--- error --->
 
 <!--- Now calculate the nearest station to the specified coordinates --->
-<cfinclude template="#appsIncludes#/functions/geodistance.cfm" />
+<cfinclude template="#app.includes#/functions/geodistance.cfm" />
 
 
 <!--- Distance in meters. Initialize with circumference of the earth, as nothing should be further away than this. --->

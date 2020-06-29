@@ -5,7 +5,7 @@
  <cfif isDefined('url.stopid')>
 	<!--- If the url.stopid is not an int, make a version that has only the numeric part --->
 	<cfset stopidInt = REREplaceNoCase(url.stopid, "\D*(\d+)", "\1") /> 	
-	<cfinclude template="#appsIncludes#/functions/queryToStruct.cfm" />
+	<cfinclude template="#app.includes#/functions/queryToStruct.cfm" />
 	<!--- Choose the active database to use. --->
 	<cfquery name="activedb" dbtype="ODBC" datasource="SecureSource">
 		SELECT TOP 1 * FROM vsd.ETS_activeDB WHERE active = 1

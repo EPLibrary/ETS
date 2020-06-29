@@ -427,7 +427,7 @@ description="Accepts FROM and TO station IDs, and a datetime and outputs a table
 </cffunction><!---getDepartures--->
 
 
-<cfinclude template="#appsIncludes#/functions/weekdayToNum.cfm" />
+<cfinclude template="#app.includes#/functions/weekdayToNum.cfm" />
 
 <cfif isDefined('url.from') AND isDefined('url.to')>
 	<cfif url.from IS url.to>
