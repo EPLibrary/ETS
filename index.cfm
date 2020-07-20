@@ -36,8 +36,8 @@
 
 	<script src="/Javascript/selectize/dist/js/standalone/selectize.min.js"></script>
 
-	<link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
-	<link rel="icon" type="image/png" href="/favicon.png" />
+	<link rel="shortcut icon" type="image/x-icon" href="/images/favicon.ico" />
+	<link rel="icon" type="image/png" href="/images/favicon.png" />
 	<link rel="apple-touch-icon" sizes="180x180" href="touch-icon-iphone-retina.png" />
 	<link rel="apple-touch-icon" sizes="167x167" href="touch-icon-ipad-retina.png" />
 
@@ -286,9 +286,9 @@ SELECT * FROM vsd.#dbprefix#_stops_all_agencies_unique ORDER BY astop_id
 <div class="opMode">
 <p id="nightModeLink">
 	<cfif isDefined('cookie.lrt_dark') AND cookie.lrt_dark IS true>
-		<a href="javascript:void(0);"><img src="/Resources/images/sun.svg" /> Light Mode</a>
+		<a href="javascript:void(0);"><img src="/images/sun.svg" /> Light Mode</a>
 	<cfelse>
-		<a href="javascript:void(0);"><cfinclude template="/Resources/Images/moon.svg" /> Dark Mode</a>
+		<a href="javascript:void(0);"><cfinclude template="/images/moon.svg" /> Dark Mode</a>
 	</cfif>
 </p>
 </div>
@@ -820,11 +820,11 @@ function toggleDarkMode() {
 	$('body').toggleClass('darkMode');
 	if (getCookie('LRT_DARK') === "true") {
 		setCookie('LRT_DARK', "false");
-		$('#nightModeLink a').html('<cfinclude template="/Resources/Images/moon.svg" /> Dark Mode');
+		$('#nightModeLink a').html('<cfinclude template="/images/moon.svg" /> Dark Mode');
 	}
 	else {
 		setCookie('LRT_DARK', "true");
-		$('#nightModeLink a').html('<img src="/Resources/images/sun.svg" /> Light Mode');
+		$('#nightModeLink a').html('<img src="/images/sun.svg" /> Light Mode');
 	}
 }
 
@@ -966,7 +966,7 @@ $(document).ready(function() {
 	// This will result in the toggle link being wrong, though. This should fix it after the DOM is ready.
 	// This just makes sure the 
 	if (getCookie('LRT_DARK') === "true") {
-		$('#nightModeLink a').html('<img src="/Resources/images/sun.svg" /> Light Mode');
+		$('#nightModeLink a').html('<img src="/images/sun.svg" /> Light Mode');
 	}
 });
 
