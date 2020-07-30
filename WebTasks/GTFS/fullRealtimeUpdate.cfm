@@ -3,12 +3,16 @@
 <cfsetting showdebugoutput="false" />
 
 <!--- set to false to disable writing to the ETSRT_update_log database table --->
+
 <cfset logEnabled=true />
+<cfif isDefined('url.log') AND url.log NEQ true>
+	<cfset logEnabled=false />
+</cfif>
 
 <!--- Log update --->
 <cfif logEnabled>
-	<cfquery name="LogUpdate" dbtype="ODBC" datasource="ReadWriteSource">
-		INSERT INTO vsd.ETSRT_update_log (StartTime) VALUES(GETDATE())
+	<cfquery name="LogUpdate" dbtype="ODBC" datasource="ETSReadWrite">
+		INSERT INTO dbo.ETSRT_update_log (StartTime) VALUES(GETDATE())
 		SELECT scope_identity() AS UPID;
 	</cfquery>
 	<cfset upid=LogUpdate.UPID />
@@ -30,8 +34,8 @@
    <!--- Could do some fancier error handling here  --->
    <CFOUTPUT>#MSG#</CFOUTPUT>
    <cfif logEnabled>
-		<cfquery name="LogUpdate" dbtype="ODBC" datasource="ReadWriteSource">
-			UPDATE vsd.ETSRT_update_log SET Comment='Failure to download: #MSG#', Success=0 WHERE upid=#upid#
+		<cfquery name="LogUpdate" dbtype="ODBC" datasource="ETSReadWrite">
+			UPDATE dbo.ETSRT_update_log SET Comment='Failure to download: #MSG#', Success=0 WHERE upid=#upid#
 		</cfquery>
 	</cfif>   
    <CFABORT>
@@ -47,8 +51,8 @@
 
 <cfif len(error)>
 	<cfif logEnabled>
-		<cfquery name="LogUpdate" dbtype="ODBC" datasource="ReadWriteSource">
-			UPDATE vsd.ETSRT_update_log SET Comment='#error#', Success=0  WHERE upid=#upid#
+		<cfquery name="LogUpdate" dbtype="ODBC" datasource="ETSReadWrite">
+			UPDATE dbo.ETSRT_update_log SET Comment='#error#', Success=0  WHERE upid=#upid#
 		</cfquery>
 	</cfif>
 	ERROR: <cfoutput>#error#</cfoutput>
@@ -77,19 +81,19 @@ message
 --->
 
 <!--- Insert everything in one bigass query --->
-<cfquery name="InsertTRIPS" dbtype="ODBC" datasource="ReadWriteSource">
+<cfquery name="InsertTRIPS" dbtype="ODBC" datasource="ETSReadWrite">
 	DELETE FROM ETSRT1_stop_time_update;
 	<!--- Don't really need the trip_update table
 	DELETE FROM ETSRT1_trip_update;
 	<cfloop array="#RealTimeData.message.entity#" item="e" index="i">
-	<cfif i MOD 700 EQ 1>INSERT INTO vsd.ETSRT1_trip_update (id, route_id, schedule_relationship, start_datetime) VALUES</cfif>
+	<cfif i MOD 700 EQ 1>INSERT INTO dbo.ETSRT1_trip_update (id, route_id, schedule_relationship, start_datetime) VALUES</cfif>
 	<cfif i MOD 700 NEQ 1>,</cfif>('#e.id#', '#e.trip_update.route_id#', '#e.trip_update.schedule_relationship#', '#e.trip_update.start_date# #e.trip_update.start_time#')
 	</cfloop>
 	--->
 	<cfloop array="#RealTimeData.message.entity#" item="e" index="oi">
 		<cfloop array="#e.trip_update.stop_time_update#" item="stu" index="i">
 			<cfif i EQ 1>
-				INSERT INTO vsd.ETSRT1_stop_time_update (trip_id, delay, departure_uncertainty, time, schedule_relationship, stop_id, stop_sequence) VALUES
+				INSERT INTO dbo.ETSRT1_stop_time_update (trip_id, delay, departure_uncertainty, time, schedule_relationship, stop_id, stop_sequence) VALUES
 			</cfif>
 			<cfif i NEQ 1>,</cfif>('#e.trip_update.trip_id#',
 				<cfif isDefined('stu.departure')>
@@ -107,8 +111,8 @@ message
 <cfif logEnabled>
 	<!--- Get filesize of PB file for the log --->
 	<cfset filesize=GetFileInfo(PBFile).size />
-	<cfquery name="LogUpdate" dbtype="ODBC" datasource="ReadWriteSource">
-		UPDATE vsd.ETSRT_update_log SET EndTime=GETDATE(), Success=1, Filesize=#filesize# WHERE upid=#upid#
+	<cfquery name="LogUpdate" dbtype="ODBC" datasource="ETSReadWrite">
+		UPDATE dbo.ETSRT_update_log SET EndTime=GETDATE(), Success=1, Filesize=#filesize# WHERE upid=#upid#
 	</cfquery>
 </cfif>
 </body>

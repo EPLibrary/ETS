@@ -48,13 +48,13 @@ description="Accepts FROM stop_id and a datetime and outputs a table with releva
 
 
 	<!--- Below, I am unioning the stops if this is a numeric stop. Now... I only really need to do this
-	IF that stopid appears for another city IN SELECT * FROM vsd.ETSX_stops_all_agencies WHERE exclusive=0
+	IF that stopid appears for another city IN SELECT * FROM dbo.ETSX_stops_all_agencies WHERE exclusive=0
 	I should check for this first --->
 	<cfset useSTA = false />
 	<cfset useSTR = false />
 	<cfif isNumeric(fromStop)>
-		<cfquery name="checkForeignAgencies" dbtype="ODBC" datasource="SecureSource">
-			SELECT * FROM vsd.ETS1_stops_all_agencies WHERE stop_id='#fromStop#' AND exclusive=0
+		<cfquery name="checkForeignAgencies" dbtype="ODBC" datasource="ETSRead">
+			SELECT * FROM dbo.#dbprefix#_stops_all_agencies WHERE stop_id='#fromStop#' AND exclusive=0
 		</cfquery>
 		<cfloop query="checkForeignAgencies">
 			<cfif zone_id IS "St. Albert Transit"><cfset useSTA = true /></cfif>
@@ -63,17 +63,17 @@ description="Accepts FROM stop_id and a datetime and outputs a table with releva
 	</cfif>
 
 	<!--- Query that should show the relevant schedule times. --->
-	<cfquery name="DepartureTimes" dbtype="ODBC" datasource="SecureSource">
+	<cfquery name="DepartureTimes" dbtype="ODBC" datasource="ETSRead">
 		<!--- if fromStop is numeric, it's an ETS stop --->
 		<cfif isNumeric(fromStop)>
-			SELECT * FROM (SELECT * FROM vsd.#dbprefix#_trip_stop_datetimes
+			SELECT * FROM (SELECT * FROM dbo.#dbprefix#_trip_stop_datetimes
 			<cfif useSTA IS true>
 			UNION
-			SELECT * FROM vsd.#dbprefix#_trip_stop_datetimes_StAlbert
+			SELECT * FROM dbo.#dbprefix#_trip_stop_datetimes_StAlbert
 			</cfif>
 			<cfif useSTR IS true>
 			UNION
-			SELECT * FROM vsd.#dbprefix#_trip_stop_datetimes_Strathcona
+			SELECT * FROM dbo.#dbprefix#_trip_stop_datetimes_Strathcona
 			</cfif>
 			) AS AllDatetimes
 			WHERE stop_id='#fromStop#' 
@@ -82,14 +82,14 @@ description="Accepts FROM stop_id and a datetime and outputs a table with releva
 			AND pickup_type = 0
 			ORDER BY ActualDateTime
 		<cfelseif left(fromStop, 3) EQ "Str">
-			SELECT * FROM vsd.#dbprefix#_trip_stop_datetimes_Strathcona
+			SELECT * FROM dbo.#dbprefix#_trip_stop_datetimes_Strathcona
 			WHERE stop_id='#Mid(fromStop, 4, 99)#' 
 			AND ActualDateTime > #CurrentTime#
 			AND ActualDateTime < #maxFutureTime#
 			AND pickup_type = 0
 			ORDER BY ActualDateTime
 		<cfelse><!--- otherwise it's St. Albert --->
-			SELECT * FROM vsd.#dbprefix#_trip_stop_datetimes_StAlbert
+			SELECT * FROM dbo.#dbprefix#_trip_stop_datetimes_StAlbert
 			WHERE stop_id='#Mid(fromStop, 4, 99)#' 
 			AND ActualDateTime > #CurrentTime#
 			AND ActualDateTime < #maxFutureTime#
@@ -99,13 +99,13 @@ description="Accepts FROM stop_id and a datetime and outputs a table with releva
 	</cfquery>
 <!--- <cfdump var="#departureTimes#"> --->
 	<!--- This assumes a valid stop is given. I should handle this --->
-	<cfquery name="StopInfo" dbtype="ODBC" datasource="SecureSource">
+	<cfquery name="StopInfo" dbtype="ODBC" datasource="ETSRead">
 		<cfif isNumeric(fromStop)>
-		SELECT * FROM vsd.#dbprefix#_stops WHERE stop_id='#fromStop#'
+		SELECT * FROM dbo.#dbprefix#_stops WHERE stop_id='#fromStop#'
 		<cfelseif left(fromStop, 3) EQ "Str">
-		SELECT * FROM vsd.#dbprefix#_stops_Strathcona WHERE stop_id='#mid(fromStop, 4, 99)#'
+		SELECT * FROM dbo.#dbprefix#_stops_Strathcona WHERE stop_id='#mid(fromStop, 4, 99)#'
 		<cfelse>
-		SELECT * FROM vsd.#dbprefix#_stops_StAlbert WHERE stop_id='#mid(fromStop, 4, 99)#'
+		SELECT * FROM dbo.#dbprefix#_stops_StAlbert WHERE stop_id='#mid(fromStop, 4, 99)#'
 		</cfif>
 	</cfquery>
 	
@@ -157,8 +157,8 @@ description="Accepts FROM stop_id and a datetime and outputs a table with releva
 <cfif isDefined('url.fromStop') AND len(url.fromStop)>
 
 		<!--- Choose the active database to use. --->
-		<cfquery name="activedb" dbtype="ODBC" datasource="SecureSource">
-			SELECT TOP 1 * FROM vsd.ETS_activeDB WHERE active = 1
+		<cfquery name="activedb" dbtype="ODBC" datasource="ETSRead">
+			SELECT TOP 1 * FROM dbo.ETS_activeDB WHERE active = 1
 		</cfquery>
 
 		<cfset dbprefix = activedb.prefix />

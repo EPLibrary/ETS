@@ -12,7 +12,7 @@ This NEW version requests from the database which is populated approximately eve
 <cfif isDefined('form.tid') AND isDefined('form.stopID')>
 
 	<cfset i=0 />
-	<cfquery name="TripUpdate" dbtype="ODBC" datasource="SecureSource">
+	<cfquery name="TripUpdate" dbtype="ODBC" datasource="ETSRead">
 			SELECT * FROM ETSRT1_stop_time_update WHERE
 			(<cfloop list="#form.tid#" item="tripid">
 				<cfif IsNumeric(tripid)>

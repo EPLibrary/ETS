@@ -134,23 +134,23 @@ There was an issue unzipping one of the gtfs packages from an agency. This could
 <cfset gtfsFiles="agency" /> --->
 
 <!--- Choose the inactive database to be updated. --->
-<cfquery name="updatedb" dbtype="ODBC" datasource="SecureSource">
-	SELECT TOP 1 * FROM vsd.ETS_activeDB WHERE active = 0
+<cfquery name="updatedb" dbtype="ODBC" datasource="ETSRead">
+	SELECT TOP 1 * FROM dbo.ETS_activeDB WHERE active = 0
 </cfquery>
 
 <cfset dbprefix = updatedb.prefix />
 
 <!--- Edmonton --->
 <cftry>
-	<cfquery name="BulkInsert" dbtype="ODBC" datasource="ReadWriteSource">
+	<cfquery name="BulkInsert" dbtype="ODBC" datasource="ETSReadWrite">
 
 	<cfloop list="#gtfsFilesRev#" index="fileBase">
-	DELETE FROM vsd.#dbprefix#_#fileBase#
+	DELETE FROM dbo.#dbprefix#_#fileBase#
 
 	</cfloop>
 	<cfloop list="#gtfsFiles#" index="fileBase">
 		<cfif FileExists('\\epl-cf\gtfs$\Edmonton\#fileBase#_noheader.txt')>
-			BULK INSERT vsd.#dbprefix#_#fileBase# FROM '\\epl-cf\gtfs$\Edmonton\#fileBase#_noheader.txt'
+			BULK INSERT dbo.#dbprefix#_#fileBase# FROM '\\epl-cf\gtfs$\Edmonton\#fileBase#_noheader.txt'
 			WITH (
 			FIRSTROW=1,
 			FIELDTERMINATOR = ',',
@@ -166,10 +166,13 @@ There was an issue unzipping one of the gtfs packages from an agency. This could
 		<cfdump var="#cfcatch#">
 		<cfmail to="jlien@epl.ca, weblogs@epl.ca" subject="Error Updating ETS Database" from="noreply@epl.ca">
 An attempt to update GTFS transit data from City of Edmonton failed.
-Please check that the vsd.ETS databases are functional and use
+Please check that the ETS databases are functional and use
 https://apps.epl.ca/web/gtfsDebug.cfm to test the import process.
 
-Typically this type of error occurs because the data provided by ETS has been changed in format such that it is no longer compatible with the existing database structure. Fixing his requires rebuilding the database with new field types.
+Typically this type of error occurs because the data provided by ETS has been changed in format such that it is no longer compatible with the existing database structure. Fixing this likely either requires
+* altering the .fmt file for the affected gtfs .txt file
+* or rebuilding the database with new field types
+
 
 The following messages have been returned from the server:
 
@@ -182,14 +185,14 @@ The following messages have been returned from the server:
 
 <!--- St. Albert --->
 <cftry>
-	<cfquery name="BulkInsert" dbtype="ODBC" datasource="ReadWriteSource">
+	<cfquery name="BulkInsert" dbtype="ODBC" datasource="ETSReadWrite">
 
 	<cfloop list="#gtfsFilesRev#" index="fileBase">
-	DELETE FROM vsd.#dbprefix#_#fileBase#_StAlbert
+	DELETE FROM dbo.#dbprefix#_#fileBase#_StAlbert
 	</cfloop>
 	<cfloop list="#gtfsFiles#" index="fileBase">
 		<cfif FileExists('\\epl-cf\gtfs$\StAlbert\#fileBase#_noheader.txt')>
-			BULK INSERT vsd.#dbprefix#_#fileBase#_StAlbert FROM '\\epl-cf\gtfs$\StAlbert\#fileBase#_noheader.txt'
+			BULK INSERT dbo.#dbprefix#_#fileBase#_StAlbert FROM '\\epl-cf\gtfs$\StAlbert\#fileBase#_noheader.txt'
 			WITH (
 			FIRSTROW=1,
 			FIELDTERMINATOR = ',',
@@ -205,10 +208,12 @@ The following messages have been returned from the server:
 		<cfdump var="#cfcatch#">
 		<cfmail to="jlien@epl.ca, weblogs@epl.ca" subject="Error Updating ETS Database" from="noreply@epl.ca">
 An attempt to update GTFS transit data from St. Albert failed.
-Please check that the vsd.ETS databases are functional and use
+Please check that the ETS databases are functional and use
 https://apps.epl.ca/web/gtfsDebug.cfm to test the import process.
 
-Typically this type of error occurs because the data provided by StAT has been changed in format such that it is no longer compatible with the existing database structure. Fixing his requires rebuilding the database with new field types.
+Typically this type of error occurs because the data provided by StAT has been changed in format such that it is no longer compatible with the existing database structure. Fixing this likely either requires
+* altering the .fmt file for the affected gtfs .txt file
+* or rebuilding the database with new field types
 
 The following messages have been returned from the server:
 
@@ -222,14 +227,14 @@ The following messages have been returned from the server:
 
 <!--- Strathcona County --->
 <cftry>
-	<cfquery name="BulkInsert" dbtype="ODBC" datasource="ReadWriteSource">
+	<cfquery name="BulkInsert" dbtype="ODBC" datasource="ETSReadWrite">
 
 	<cfloop list="#gtfsFilesRev#" index="fileBase">
-	DELETE FROM vsd.#dbprefix#_#fileBase#_Strathcona
+	DELETE FROM dbo.#dbprefix#_#fileBase#_Strathcona
 	</cfloop>
 	<cfloop list="#gtfsFiles#" index="fileBase">
 		<cfif FileExists('\\epl-cf\gtfs$\Strathcona\#fileBase#_noheader.txt')>
-			BULK INSERT vsd.#dbprefix#_#fileBase#_Strathcona FROM '\\epl-cf\gtfs$\Strathcona\#fileBase#_noheader.txt'
+			BULK INSERT dbo.#dbprefix#_#fileBase#_Strathcona FROM '\\epl-cf\gtfs$\Strathcona\#fileBase#_noheader.txt'
 			WITH (
 			FIRSTROW=1,
 			FIELDTERMINATOR = ',',
@@ -245,10 +250,12 @@ The following messages have been returned from the server:
 		<cfdump var="#cfcatch#">
 		<cfmail to="jlien@epl.ca, weblogs@epl.ca" subject="Error Updating ETS Database" from="noreply@epl.ca">
 An attempt to update GTFS transit data from Strathcona County failed.
-Please check that the vsd.ETS databases are functional and use
+Please check that the ETS databases are functional and use
 https://apps.epl.ca/web/gtfsDebug.cfm to test the import process.
 
-Typically this type of error occurs because the data provided by Strathcona County Transit has been changed in format such that it is no longer compatible with the existing database structure. Fixing his requires rebuilding the database with new field types.
+Typically this type of error occurs because the data provided by Strathcona County Transit has been changed in format such that it is no longer compatible with the existing database structure.  Fixing this likely either requires
+* altering the .fmt file for the affected gtfs .txt file
+* or rebuilding the database with new field types
 
 The following messages have been returned from the server:
 
@@ -261,76 +268,76 @@ The following messages have been returned from the server:
 
 
 <!--- There are a few stray double-quotes that I want to get rid of --->
-<cfquery name="CleanUp" dbtype="ODBC" datasource="ReadWriteSource">
+<cfquery name="CleanUp" dbtype="ODBC" datasource="ETSReadWrite">
 	<!--- only LRT route short names have double quotes ("Capital", "Metro"). Remove them. --->
-	UPDATE vsd.#dbprefix#_routes SET route_short_name=REPLACE(route_short_name, '"', '')
+	UPDATE dbo.#dbprefix#_routes SET route_short_name=REPLACE(route_short_name, '"', '')
 	--run this after the update process runs to set a bit indicating which stops are LRT stations
-	UPDATE vsd.#dbprefix#_stops SET is_lrt=1
+	UPDATE dbo.#dbprefix#_stops SET is_lrt=1
 	WHERE stop_id IN (
 		SELECT s.stop_id
-		FROM vsd.#dbprefix#_stop_times stime
-		JOIN vsd.#dbprefix#_trips t ON t.trip_id=stime.trip_id
-		JOIN vsd.#dbprefix#_calendar_dates c ON c.service_id=t.service_id
-		JOIN vsd.#dbprefix#_stops s ON stime.stop_id=s.stop_id
-		JOIN vsd.#dbprefix#_routes r ON r.route_id=t.route_id
+		FROM dbo.#dbprefix#_stop_times stime
+		JOIN dbo.#dbprefix#_trips t ON t.trip_id=stime.trip_id
+		JOIN dbo.#dbprefix#_calendar_dates c ON c.service_id=t.service_id
+		JOIN dbo.#dbprefix#_stops s ON stime.stop_id=s.stop_id
+		JOIN dbo.#dbprefix#_routes r ON r.route_id=t.route_id
 		WHERE r.route_type=0
 		GROUP BY s.stop_id
 	)	
 </cfquery>
 
 <!--- Clean up Strathcona Stops and flag stops that are exclusively Strathcona and not ETS --->
-<cfquery name="CleanOutsideStops" dbtype="ODBC" datasource="ReadWriteSource">
+<cfquery name="CleanOutsideStops" dbtype="ODBC" datasource="ETSReadWrite">
 --This will ensure that the stop_name of stops with same ID and similar coordinates (within about ten metres) match exactly
-UPDATE vsd.#dbprefix#_stops_Strathcona SET stop_name = (SELECT stop_name FROM vsd.#dbprefix#_stops WHERE stop_id=vsd.#dbprefix#_stops_Strathcona.stop_id)
-WHERE vsd.#dbprefix#_stops_Strathcona.stop_id IN (SELECT stop_id FROM vsd.#dbprefix#_stops)
-AND vsd.#dbprefix#_stops_Strathcona.stop_lat-.0001 < (SELECT s.stop_lat FROM vsd.#dbprefix#_stops s WHERE stop_id=vsd.#dbprefix#_stops_Strathcona.stop_id)
-AND vsd.#dbprefix#_stops_Strathcona.stop_lat+.0001 > (SELECT s.stop_lat FROM vsd.#dbprefix#_stops s WHERE stop_id=vsd.#dbprefix#_stops_Strathcona.stop_id)
-AND vsd.#dbprefix#_stops_Strathcona.stop_lon-.0001 < (SELECT s.stop_lon FROM vsd.#dbprefix#_stops s WHERE stop_id=vsd.#dbprefix#_stops_Strathcona.stop_id)
-AND vsd.#dbprefix#_stops_Strathcona.stop_lon+.0001 > (SELECT s.stop_lon FROM vsd.#dbprefix#_stops s WHERE stop_id=vsd.#dbprefix#_stops_Strathcona.stop_id)
+UPDATE dbo.#dbprefix#_stops_Strathcona SET stop_name = (SELECT stop_name FROM dbo.#dbprefix#_stops WHERE stop_id=dbo.#dbprefix#_stops_Strathcona.stop_id)
+WHERE dbo.#dbprefix#_stops_Strathcona.stop_id IN (SELECT stop_id FROM dbo.#dbprefix#_stops)
+AND dbo.#dbprefix#_stops_Strathcona.stop_lat-.0001 < (SELECT s.stop_lat FROM dbo.#dbprefix#_stops s WHERE stop_id=dbo.#dbprefix#_stops_Strathcona.stop_id)
+AND dbo.#dbprefix#_stops_Strathcona.stop_lat+.0001 > (SELECT s.stop_lat FROM dbo.#dbprefix#_stops s WHERE stop_id=dbo.#dbprefix#_stops_Strathcona.stop_id)
+AND dbo.#dbprefix#_stops_Strathcona.stop_lon-.0001 < (SELECT s.stop_lon FROM dbo.#dbprefix#_stops s WHERE stop_id=dbo.#dbprefix#_stops_Strathcona.stop_id)
+AND dbo.#dbprefix#_stops_Strathcona.stop_lon+.0001 > (SELECT s.stop_lon FROM dbo.#dbprefix#_stops s WHERE stop_id=dbo.#dbprefix#_stops_Strathcona.stop_id)
 
 --This misses about 12. I need to refine this to match stops with the same ID but are within ~3 10,000ths of a degree on each axis
 --Should have 37 matches.
 
 --Clean up strathcona street and avenue abbreviations
-UPDATE vsd.#dbprefix#_stops_Strathcona SET stop_name = REPLACE(stop_name, ' St', ' Street') WHERE stop_name like '% St'
-UPDATE vsd.#dbprefix#_stops_Strathcona SET stop_name = REPLACE(stop_name, ' St ', ' Street ') WHERE stop_name like '% St %'
-UPDATE vsd.#dbprefix#_stops_Strathcona SET stop_name = REPLACE(stop_name, ' St. ', ' Street ') WHERE stop_name like '% St. %'
-UPDATE vsd.#dbprefix#_stops_Strathcona SET stop_name = REPLACE(stop_name, ' St.', ' Street') WHERE stop_name like '% St.'
-UPDATE vsd.#dbprefix#_stops_Strathcona SET stop_name = REPLACE(stop_name, ' Av', ' Avenue') WHERE stop_name like '% Av'
-UPDATE vsd.#dbprefix#_stops_Strathcona SET stop_name = REPLACE(stop_name, ' Av ', ' Avenue ') WHERE stop_name like '% Av %'
-UPDATE vsd.#dbprefix#_stops_Strathcona SET stop_name = REPLACE(stop_name, ' Ave', ' Avenue') WHERE stop_name like '% Ave'
-UPDATE vsd.#dbprefix#_stops_Strathcona SET stop_name = REPLACE(stop_name, ' Ave ', ' Avenue ') WHERE stop_name like '% Ave %'
-UPDATE vsd.#dbprefix#_stops_Strathcona SET stop_name = REPLACE(stop_name, ' Ave. ', ' Avenue ') WHERE stop_name like '% Ave. %'
-UPDATE vsd.#dbprefix#_stops_Strathcona SET stop_name = REPLACE(stop_name, ' Ave.', ' Avenue') WHERE stop_name like '% Ave.'
+UPDATE dbo.#dbprefix#_stops_Strathcona SET stop_name = REPLACE(stop_name, ' St', ' Street') WHERE stop_name like '% St'
+UPDATE dbo.#dbprefix#_stops_Strathcona SET stop_name = REPLACE(stop_name, ' St ', ' Street ') WHERE stop_name like '% St %'
+UPDATE dbo.#dbprefix#_stops_Strathcona SET stop_name = REPLACE(stop_name, ' St. ', ' Street ') WHERE stop_name like '% St. %'
+UPDATE dbo.#dbprefix#_stops_Strathcona SET stop_name = REPLACE(stop_name, ' St.', ' Street') WHERE stop_name like '% St.'
+UPDATE dbo.#dbprefix#_stops_Strathcona SET stop_name = REPLACE(stop_name, ' Av', ' Avenue') WHERE stop_name like '% Av'
+UPDATE dbo.#dbprefix#_stops_Strathcona SET stop_name = REPLACE(stop_name, ' Av ', ' Avenue ') WHERE stop_name like '% Av %'
+UPDATE dbo.#dbprefix#_stops_Strathcona SET stop_name = REPLACE(stop_name, ' Ave', ' Avenue') WHERE stop_name like '% Ave'
+UPDATE dbo.#dbprefix#_stops_Strathcona SET stop_name = REPLACE(stop_name, ' Ave ', ' Avenue ') WHERE stop_name like '% Ave %'
+UPDATE dbo.#dbprefix#_stops_Strathcona SET stop_name = REPLACE(stop_name, ' Ave. ', ' Avenue ') WHERE stop_name like '% Ave. %'
+UPDATE dbo.#dbprefix#_stops_Strathcona SET stop_name = REPLACE(stop_name, ' Ave.', ' Avenue') WHERE stop_name like '% Ave.'
 -- Replace and with ampersand to be consistent with 99.5% of other records
-UPDATE vsd.#dbprefix#_stops_Strathcona SET stop_name = REPLACE(stop_name, ' and ', ' & ') WHERE stop_name like '% and %'
+UPDATE dbo.#dbprefix#_stops_Strathcona SET stop_name = REPLACE(stop_name, ' and ', ' & ') WHERE stop_name like '% and %'
 
-UPDATE vsd.#dbprefix#_stops_Strathcona SET exclusive=1
+UPDATE dbo.#dbprefix#_stops_Strathcona SET exclusive=1
 
 --Set the exclusive flag to 0 for strathcona stops that are actually ETS stops
-UPDATE vsd.#dbprefix#_stops_Strathcona SET exclusive=0
-WHERE stop_id IN (SELECT stop_id FROM vsd.#dbprefix#_stops)
-AND vsd.#dbprefix#_stops_Strathcona.stop_name=(SELECT stop_name FROM vsd.#dbprefix#_stops WHERE stop_id = vsd.#dbprefix#_stops_Strathcona.stop_id)
+UPDATE dbo.#dbprefix#_stops_Strathcona SET exclusive=0
+WHERE stop_id IN (SELECT stop_id FROM dbo.#dbprefix#_stops)
+AND dbo.#dbprefix#_stops_Strathcona.stop_name=(SELECT stop_name FROM dbo.#dbprefix#_stops WHERE stop_id = dbo.#dbprefix#_stops_Strathcona.stop_id)
 
 --Looks like St. Albert is a lot better about using their own stop IDs, so this is way easier...
-UPDATE vsd.#dbprefix#_stops_StAlbert SET exclusive=1
-UPDATE vsd.#dbprefix#_stops_StAlbert SET exclusive=0
-WHERE stop_id IN (SELECT stop_id FROM vsd.#dbprefix#_stops)
-AND vsd.#dbprefix#_stops_StAlbert.stop_name=(SELECT stop_name FROM vsd.#dbprefix#_stops WHERE stop_id = vsd.#dbprefix#_stops_StAlbert.stop_id)
+UPDATE dbo.#dbprefix#_stops_StAlbert SET exclusive=1
+UPDATE dbo.#dbprefix#_stops_StAlbert SET exclusive=0
+WHERE stop_id IN (SELECT stop_id FROM dbo.#dbprefix#_stops)
+AND dbo.#dbprefix#_stops_StAlbert.stop_name=(SELECT stop_name FROM dbo.#dbprefix#_stops WHERE stop_id = dbo.#dbprefix#_stops_StAlbert.stop_id)
 
 --For now, we consider all ETS stops exclusive - we want to show them all in the view of all stops
-UPDATE vsd.#dbprefix#_stops SET exclusive=1
+UPDATE dbo.#dbprefix#_stops SET exclusive=1
 </cfquery>
 
 
 
-<cfquery name="UpdateRouteStops" dbtype="ODBC" datasource="ReadWriteSource">
-	DELETE FROM vsd.#dbprefix#_stop_routes_all_agencies
+<cfquery name="UpdateRouteStops" dbtype="ODBC" datasource="ETSReadWrite">
+	DELETE FROM dbo.#dbprefix#_stop_routes_all_agencies
 
-	INSERT INTO vsd.#dbprefix#_stop_routes_all_agencies (stop_id, route_id, agency_id)
-	SELECT st.stop_id, t.route_id, t.agency_id FROM vsd.#dbprefix#_routes_all_agencies r
-	JOIN vsd.#dbprefix#_trips_all_agencies t ON r.route_id=t.route_id
-	JOIN vsd.#dbprefix#_stop_times_all_agencies st ON st.trip_id=t.trip_id
+	INSERT INTO dbo.#dbprefix#_stop_routes_all_agencies (stop_id, route_id, agency_id)
+	SELECT st.stop_id, t.route_id, t.agency_id FROM dbo.#dbprefix#_routes_all_agencies r
+	JOIN dbo.#dbprefix#_trips_all_agencies t ON r.route_id=t.route_id
+	JOIN dbo.#dbprefix#_stop_times_all_agencies st ON st.trip_id=t.trip_id
 	GROUP BY st.stop_id, t.route_id, t.agency_id
 </cfquery>
 
@@ -340,13 +347,13 @@ UPDATE vsd.#dbprefix#_stops SET exclusive=1
 	Loops through every entry of a "calendar" table, and inserts each date from the range into the calendar_dates_complete
 	table for StAlbert and Strathcona, accounting for any exceptions in the calendar_dates table.
  --->
-<cfquery name="calendarStA" dbtype="ODBC" datasource="SecureSource">
-	SELECT * FROM vsd.#dbprefix#_calendar_StAlbert
+<cfquery name="calendarStA" dbtype="ODBC" datasource="ETSRead">
+	SELECT * FROM dbo.#dbprefix#_calendar_StAlbert
 </cfquery>
 
 <!--- Clean out previous entries in calendar_dates_complete --->
-<cfquery name="DeleteCalendarDatesComplete" dbtype="ODBC" datasource="ReadWriteSource">
-	DELETE FROM vsd.#dbprefix#_calendar_dates_complete_StAlbert
+<cfquery name="DeleteCalendarDatesComplete" dbtype="ODBC" datasource="ETSReadWrite">
+	DELETE FROM dbo.#dbprefix#_calendar_dates_complete_StAlbert
 </cfquery>
 
 <cfloop query="calendarStA">
@@ -356,20 +363,20 @@ UPDATE vsd.#dbprefix#_stops SET exclusive=1
 	<cfloop from="#start_date#" to="#end_date#" index="day" step="#CreateTimeSpan(1,0,0,0)#"> 
 		<!--- <cfoutput>#dateformat(day, "mm/dd/yyyy")# - #LCase(DayOfWeekAsString(DayOfWeek(day)))#<br /></cfoutput> --->
 		<!--- Now query for the service_ids for this date --->
-		<cfquery name="DayServiceIds" dbtype="ODBC" datasource="SecureSource">
+		<cfquery name="DayServiceIds" dbtype="ODBC" datasource="ETSRead">
 			SELECT ISNULL(cdserviceid, cserviceid) AS service_id FROM (
-			SELECT c.service_id AS cserviceid, cd.service_id AS cdserviceid, exception_type FROM vsd.#dbprefix#_calendar_StAlbert c
-			LEFT OUTER JOIN vsd.#dbprefix#_calendar_dates_StAlbert cd ON cd.date='#DateFormat(day, "YYYY-MM-DD")#'
+			SELECT c.service_id AS cserviceid, cd.service_id AS cdserviceid, exception_type FROM dbo.#dbprefix#_calendar_StAlbert c
+			LEFT OUTER JOIN dbo.#dbprefix#_calendar_dates_StAlbert cd ON cd.date='#DateFormat(day, "YYYY-MM-DD")#'
 			WHERE start_date <= '#DateFormat(day, "YYYY-MM-DD")#' AND end_date >= '#DateFormat(day, "YYYY-MM-DD")#' AND #LCase(DayOfWeekAsString(DayOfWeek(day)))#=1
 			) AS subq WHERE exception_type = 1 OR exception_type IS NULL
 		</cfquery>
 		<!--- Now insert the service Ids into the calendar_dates_complete table --->
 		<cfif DayServiceIds.RecordCount GT 0 AND isDefined('DayServiceIds.service_id') AND len(DayServiceIDs.service_id)>
-			<cfquery name="InsertComplete" dbtype="ODBC" datasource="ReadWriteSource">
+			<cfquery name="InsertComplete" dbtype="ODBC" datasource="ETSReadWrite">
 				<cfloop query="DayServiceIds">
 					<!--- Check that there is no unique key violation. This must be horribly inefficient --->
 					BEGIN TRY
-					INSERT INTO vsd.#dbprefix#_calendar_dates_complete_StAlbert (service_id, date, exception_type)
+					INSERT INTO dbo.#dbprefix#_calendar_dates_complete_StAlbert (service_id, date, exception_type)
 					VALUES('#DayServiceIds.service_id#', '#DateFormat(day, "YYYYMMDD")#', 1)
 					END TRY BEGIN CATCH END CATCH
 				</cfloop>
@@ -381,13 +388,13 @@ UPDATE vsd.#dbprefix#_stops SET exclusive=1
 
 <!--- Now do the Strathcona Calendar --->
 
-<cfquery name="calendarStr" dbtype="ODBC" datasource="SecureSource">
-	SELECT * FROM vsd.#dbprefix#_calendar_Strathcona
+<cfquery name="calendarStr" dbtype="ODBC" datasource="ETSRead">
+	SELECT * FROM dbo.#dbprefix#_calendar_Strathcona
 </cfquery>
 
 <!--- Clean out previous entries in calendar_dates_complete --->
-<cfquery name="DeleteCalendarDatesComplete" dbtype="ODBC" datasource="ReadWriteSource">
-	DELETE FROM vsd.#dbprefix#_calendar_dates_complete_Strathcona
+<cfquery name="DeleteCalendarDatesComplete" dbtype="ODBC" datasource="ETSReadWrite">
+	DELETE FROM dbo.#dbprefix#_calendar_dates_complete_Strathcona
 </cfquery>
 
 <cfloop query="calendarStr">
@@ -397,20 +404,20 @@ UPDATE vsd.#dbprefix#_stops SET exclusive=1
 	<cfloop from="#start_date#" to="#end_date#" index="day" step="#CreateTimeSpan(1,0,0,0)#"> 
 		<!--- <cfoutput>#dateformat(day, "mm/dd/yyyy")# - #LCase(DayOfWeekAsString(DayOfWeek(day)))#<br /></cfoutput> --->
 		<!--- Now query for the service_ids for this date --->
-		<cfquery name="DayServiceIds" dbtype="ODBC" datasource="SecureSource">
+		<cfquery name="DayServiceIds" dbtype="ODBC" datasource="ETSRead">
 			SELECT ISNULL(cdserviceid, cserviceid) AS service_id FROM (
-			SELECT c.service_id AS cserviceid, cd.service_id AS cdserviceid, exception_type FROM vsd.#dbprefix#_calendar_Strathcona c
-			LEFT OUTER JOIN vsd.#dbprefix#_calendar_dates_Strathcona cd ON cd.date='#DateFormat(day, "YYYY-MM-DD")#'
+			SELECT c.service_id AS cserviceid, cd.service_id AS cdserviceid, exception_type FROM dbo.#dbprefix#_calendar_Strathcona c
+			LEFT OUTER JOIN dbo.#dbprefix#_calendar_dates_Strathcona cd ON cd.date='#DateFormat(day, "YYYY-MM-DD")#'
 			WHERE start_date <= '#DateFormat(day, "YYYY-MM-DD")#' AND end_date >= '#DateFormat(day, "YYYY-MM-DD")#' AND #LCase(DayOfWeekAsString(DayOfWeek(day)))#=1
 			) AS subq WHERE exception_type = 1 OR exception_type IS NULL
 		</cfquery>
 		<!--- Now insert the service Ids into the calendar_dates_complete table --->
 		<cfif DayServiceIds.RecordCount GT 0 AND isDefined('DayServiceIds.service_id') AND len(DayServiceIDs.service_id)>
-			<cfquery name="InsertComplete" dbtype="ODBC" datasource="ReadWriteSource">
+			<cfquery name="InsertComplete" dbtype="ODBC" datasource="ETSReadWrite">
 				<cfloop query="DayServiceIds">
 					<!--- Check that there is no unique key violation. This must be horribly inefficient --->
 					BEGIN TRY
-					INSERT INTO vsd.#dbprefix#_calendar_dates_complete_Strathcona (service_id, date, exception_type)
+					INSERT INTO dbo.#dbprefix#_calendar_dates_complete_Strathcona (service_id, date, exception_type)
 					VALUES('#DayServiceIds.service_id#', '#DateFormat(day, "YYYYMMDD")#', 1)
 					END TRY BEGIN CATCH END CATCH
 				</cfloop>
@@ -424,9 +431,9 @@ UPDATE vsd.#dbprefix#_stops SET exclusive=1
 
 <!--- If everything seems to be working, now let's switch the active database to the newly updated one. --->
 
-<cfquery name="SwapDBs" dbtype="ODBC" datasource="ReadWriteSource">
-	UPDATE vsd.ETS_activeDB SET active=1, updated=GETDATE() WHERE dbid=#updatedb.dbid#
-	UPDATE vsd.ETS_activeDB SET active=0 WHERE dbid!=#updatedb.dbid#
+<cfquery name="SwapDBs" dbtype="ODBC" datasource="ETSReadWrite">
+	UPDATE dbo.ETS_activeDB SET active=1, updated=GETDATE() WHERE dbid=#updatedb.dbid#
+	UPDATE dbo.ETS_activeDB SET active=0 WHERE dbid!=#updatedb.dbid#
 </cfquery>
 
 

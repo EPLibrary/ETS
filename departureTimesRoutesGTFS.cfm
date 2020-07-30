@@ -51,29 +51,29 @@ description="Accepts FROM and TO stop IDs, and a datetime and outputs a table wi
 	<cfset MaxFutureTime = DateAdd('n', maxDepartureMins, CurrentTime)>
 
 
-	<cfquery name="fromStop" dbtype="ODBC" datasource="SecureSource">
-		SELECT * FROM vsd.#dbprefix#_stops_all_agencies_unique WHERE stop_id='#from#'
+	<cfquery name="fromStop" dbtype="ODBC" datasource="ETSRead">
+		SELECT * FROM dbo.#dbprefix#_stops_all_agencies_unique WHERE stop_id='#from#'
 	</cfquery>
 	
 	<cfif isDefined('to') AND isNumeric(to)>
-		<cfquery name="toStop" dbtype="ODBC" datasource="SecureSource">
-			SELECT * FROM vsd.#dbprefix#_stops_all_agencies_unique WHERE stop_id='#to#'
+		<cfquery name="toStop" dbtype="ODBC" datasource="ETSRead">
+			SELECT * FROM dbo.#dbprefix#_stops_all_agencies_unique WHERE stop_id='#to#'
 		</cfquery>
 	</cfif>
 
 	<!--- Query that should show the relevant schedule times. --->
 	<cfif isDefined('to') AND isNumeric(to)>
-		<cfquery name="DepartureTimes" dbtype="ODBC" datasource="SecureSource">
+		<cfquery name="DepartureTimes" dbtype="ODBC" datasource="ETSRead">
 			SELECT * FROM (
 			SELECT
-				(SELECT TOP 1 sdt2.ActualDateTime FROM vsd.#dbprefix#_trip_stop_datetimes#agencysuffix# sdt2
+				(SELECT TOP 1 sdt2.ActualDateTime FROM dbo.#dbprefix#_trip_stop_datetimes#agencysuffix# sdt2
 				WHERE stop_id='#to#'
 				AND trip_id=sdt.trip_id
 				AND stop_sequence > sdt.stop_sequence
 				AND ActualDateTime > #CurrentTime#
 				ORDER BY sdt2.ActualDateTime
 			) AS dest_arrival_datetime,
-			* FROM vsd.#dbprefix#_trip_stop_datetimes#agencysuffix# sdt
+			* FROM dbo.#dbprefix#_trip_stop_datetimes#agencysuffix# sdt
 			WHERE route_id='#rid#'
 			AND stop_id='#from#'
 			AND ActualDateTime > #CurrentTime# AND ActualDateTime < #MaxFutureTime#
@@ -82,8 +82,8 @@ description="Accepts FROM and TO stop IDs, and a datetime and outputs a table wi
 			ORDER BY ActualDateTime
 		</cfquery>	
 	<cfelse>
-		<cfquery name="DepartureTimes" dbtype="ODBC" datasource="SecureSource">
-			SELECT NULL AS dest_arrival_datetime, * FROM vsd.#dbprefix#_trip_stop_datetimes#agencysuffix# sdt
+		<cfquery name="DepartureTimes" dbtype="ODBC" datasource="ETSRead">
+			SELECT NULL AS dest_arrival_datetime, * FROM dbo.#dbprefix#_trip_stop_datetimes#agencysuffix# sdt
 			WHERE route_id='#rid#'
 			AND stop_id='#from#'
 			AND ActualDateTime > #CurrentTime# AND ActualDateTime < #MaxFutureTime#
@@ -146,8 +146,8 @@ description="Accepts FROM and TO stop IDs, and a datetime and outputs a table wi
 	
 	<cfelse>
 		<!--- Choose the active database to use. --->
-		<cfquery name="activedb" dbtype="ODBC" datasource="SecureSource">
-			SELECT TOP 1 * FROM vsd.ETS_activeDB WHERE active = 1
+		<cfquery name="activedb" dbtype="ODBC" datasource="ETSRead">
+			SELECT TOP 1 * FROM dbo.ETS_activeDB WHERE active = 1
 		</cfquery>
 
 		<cfset dbprefix = activedb.prefix />
@@ -155,8 +155,8 @@ description="Accepts FROM and TO stop IDs, and a datetime and outputs a table wi
 		<!--- <cfset dbprefix = 'ETS2' /> --->
 
 		<!--- Get the prefix for the particular agency this route is for --->
-		<cfquery name="RouteAgency" dbtype="ODBC" datasource="SecureSource">
-			SELECT agency_id FROM vsd.#dbprefix#_routes_all_agencies WHERE route_id='#url.rid#'
+		<cfquery name="RouteAgency" dbtype="ODBC" datasource="ETSRead">
+			SELECT agency_id FROM dbo.#dbprefix#_routes_all_agencies WHERE route_id='#url.rid#'
 		</cfquery>
 		<cfset agencyid = RouteAgency.agency_id />
 		<cfset agencysuffix = "" />

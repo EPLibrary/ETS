@@ -1,8 +1,8 @@
 9.0
 10
 1	SQLCHAR	0	9999	","		1	stop_id	""
-2	SQLCHAR	0	9999	",\""		2	stop_code	""
-3	SQLCHAR	0	9999	"\","		3	stop_name	""
+2	SQLCHAR	0	9999	",\""	2	stop_code	""
+3	SQLCHAR	0	9999	"\","	3	stop_name	""
 4	SQLCHAR	0	9999	","		4	stop_desc	""
 5	SQLCHAR	0	9999	","		5	stop_lat	""
 6	SQLCHAR	0	9999	","		6	stop_lon	""

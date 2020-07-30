@@ -138,15 +138,15 @@
 <cfparam name="url.from" default="1">
 <cfparam name="url.to" default="15">
 
-<cfquery name="Stations" dbtype="ODBC" datasource="SecureSource">
-	SELECT * FROM vsd.EZLRTStations
+<cfquery name="Stations" dbtype="ODBC" datasource="ETSRead">
+	SELECT * FROM dbo.ETS_LRTStations
 	ORDER BY CostFromOrigin
 </cfquery>
 
 
 <!--- Choose the active database to use. --->
-<cfquery name="activedb" dbtype="ODBC" datasource="SecureSource">
-	SELECT TOP 1 * FROM vsd.ETS_activeDB WHERE active = 1
+<cfquery name="activedb" dbtype="ODBC" datasource="ETSRead">
+	SELECT TOP 1 * FROM dbo.ETS_activeDB WHERE active = 1
 </cfquery>
 
 <cfset dbprefix = activedb.prefix />
@@ -158,8 +158,8 @@
 
 <cfif isDefined('url.fromStop')>
 <!--- 6500 stops! --->
-<cfquery name="Stops" dbtype="ODBC" datasource="SecureSource">
-SELECT * FROM vsd.#dbprefix#_stops_all_agencies_unique ORDER BY astop_id
+<cfquery name="Stops" dbtype="ODBC" datasource="ETSRead">
+SELECT * FROM dbo.#dbprefix#_stops_all_agencies_unique ORDER BY astop_id
 </cfquery>
 <!--- This makes for a massive 6500 item select --->
 <label for="fromStop" id="fromStopLabel" class="selectizeLabel"><a href="javascript:void(0);" id="busStopLabelText" class="labelText" title="Click to show stops near your location">Bus Stops <!---<svg id="geoIcon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 960"><path d="M500 258.6l-490 245 9.6 1.2c5.2.5 107 8.2 226 16.8 133 9.8 217.5 16.5 218.8 18 1.2 1.2 8.3 87 18 219.6 8.5 119.7 16.4 221.3 17 226 1.3 7.7 6.3-1.8 246-482 135-269.4 245-490 244.6-489.7l-490 245z" /></svg>---><span class="nearestLink">&#x1f5fa; Select a Nearby Stop </span></a>
@@ -176,8 +176,8 @@ SELECT * FROM vsd.#dbprefix#_stops_all_agencies_unique ORDER BY astop_id
 <!--- If url.rid is specified, we show the interface for selecting a route --->
 <cfelseif isDefined('url.rid')>
 
-<cfquery name="Routes" dbtype="ODBC" datasource="SecureSource">
-	SELECT * FROM vsd.#dbprefix#_routes_all_agencies ORDER BY route_id
+<cfquery name="Routes" dbtype="ODBC" datasource="ETSRead">
+	SELECT * FROM dbo.#dbprefix#_routes_all_agencies ORDER BY route_id
 </cfquery>
 <!--- This makes for a massive 6500 item select --->
 <label for="rid" id="ridLabel" class="selectizeLabel"><a href="javascript:void(0);" id="nearbyRouteText"  class="labelText" title="Click to show nearby routes"><span id="mainBusRouteLabel">Bus Route</span> <svg id="geoIcon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 960"><path d="M500 258.6l-490 245 9.6 1.2c5.2.5 107 8.2 226 16.8 133 9.8 217.5 16.5 218.8 18 1.2 1.2 8.3 87 18 219.6 8.5 119.7 16.4 221.3 17 226 1.3 7.7 6.3-1.8 246-482 135-269.4 245-490 244.6-489.7l-490 245z" /></svg><span id="nearestRouteLink">Sort by Nearest</span></a>
@@ -719,16 +719,16 @@ $('#toLabelText').click(function(){
 
 
 <!--- Returns coordinates for the most complex shapes for each LRT line --->
-<cfquery name="CapitalShape" dbtype="ODBC" datasource="SecureSource">
-  SELECT * FROM vsd.#dbprefix#_shapes
-  WHERE shape_id=(SELECT TOP 1 shape_id AS ptQty FROM vsd.#dbprefix#_shapes 
+<cfquery name="CapitalShape" dbtype="ODBC" datasource="ETSRead">
+  SELECT * FROM dbo.#dbprefix#_shapes
+  WHERE shape_id=(SELECT TOP 1 shape_id AS ptQty FROM dbo.#dbprefix#_shapes 
   		WHERE shape_id like '501-%' GROUP BY shape_id ORDER BY count(*) DESC
   )
 </cfquery>
 
-<cfquery name="MetroShape" dbtype="ODBC" datasource="SecureSource">
-  SELECT * FROM vsd.#dbprefix#_shapes
-  WHERE shape_id=(SELECT TOP 1 shape_id AS ptQty FROM vsd.#dbprefix#_shapes 
+<cfquery name="MetroShape" dbtype="ODBC" datasource="ETSRead">
+  SELECT * FROM dbo.#dbprefix#_shapes
+  WHERE shape_id=(SELECT TOP 1 shape_id AS ptQty FROM dbo.#dbprefix#_shapes 
   		WHERE shape_id like '502-%' GROUP BY shape_id ORDER BY count(*) DESC
   )
 </cfquery>

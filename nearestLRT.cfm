@@ -6,8 +6,8 @@ https://apps.epl.ca/dev/ets/?from=2&to=1
 Note that a three-decimal place precision is sufficient here if one is concerned about privacy of specific coordinates
  --->
 
-<cfquery name="stations" dbtype="ODBC" datasource="SecureSource">
-	SELECT * FROM vsd.EZLRTStations
+<cfquery name="stations" dbtype="ODBC" datasource="ETSRead">
+	SELECT * FROM dbo.ETS_LRTStations
 </cfquery>
 
 
