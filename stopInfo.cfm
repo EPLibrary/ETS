@@ -4,7 +4,6 @@
  
  <cfif isDefined('url.stopid')>
 	<!--- If the url.stopid is not an int, make a version that has only the numeric part --->
-	<cfset stopidInt = REREplaceNoCase(url.stopid, "\D*(\d+)", "\1") /> 	
 	<cfinclude template="#app.includes#/functions/queryToStruct.cfm" />
 	<!--- Choose the active database to use. --->
 	<cfquery name="activedb" dbtype="ODBC" datasource="ETSRead">
@@ -65,7 +64,7 @@
 			<cfif isDefined('url.seq') AND isNumeric(url.seq)>
 				#url.seq#
 			<cfelse>
-				(SELECT TOP 1 stop_sequence FROM dbo.#dbprefix#_stop_times WHERE trip_id='#url.trip#' AND stop_id='#stopidInt#' ORDER BY stop_sequence DESC)
+				(SELECT TOP 1 stop_sequence FROM dbo.#dbprefix#_stop_times WHERE trip_id='#url.trip#' AND stop_id='#url.stopid#' ORDER BY stop_sequence DESC)
 			</cfif>
 			<cfif isDefined('url.dest') AND isNumeric(url.dest)>
 				<cfif isDefined('realStopIDs') AND realStopIDs.recordCount>
