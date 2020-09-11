@@ -47,66 +47,22 @@ description="Accepts FROM stop_id and a datetime and outputs a table with releva
 	<cfset MaxFutureTime = DateAdd('n', maxDepartureMins, CurrentTime)>
 
 
-	<!--- Below, I am unioning the stops if this is a numeric stop. Now... I only really need to do this
-	IF that stopid appears for another city IN SELECT * FROM dbo.ETSX_stops_all_agencies WHERE exclusive=0
-	I should check for this first --->
-	<cfset useSTA = false />
-	<cfset useSTR = false />
-	<cfif isNumeric(fromStop)>
-		<cfquery name="checkForeignAgencies" dbtype="ODBC" datasource="ETSRead">
-			SELECT * FROM dbo.#dbprefix#_stops_all_agencies WHERE stop_id='#fromStop#' AND exclusive=0
-		</cfquery>
-		<cfloop query="checkForeignAgencies">
-			<cfif zone_id IS "St. Albert Transit"><cfset useSTA = true /></cfif>
-			<cfif zone_id IS ""><cfset useSTR = true /></cfif>
-		</cfloop>
-	</cfif>
+	<!--- 2020-09-11: Removing support for foreign agencies as they are now all incorporated into ETS data --->
 
 	<!--- Query that should show the relevant schedule times. --->
 	<cfquery name="DepartureTimes" dbtype="ODBC" datasource="ETSRead">
 		<!--- if fromStop is numeric, it's an ETS stop --->
-		<cfif isNumeric(fromStop)>
-			SELECT * FROM (SELECT * FROM dbo.#dbprefix#_trip_stop_datetimes
-			<cfif useSTA IS true>
-			UNION
-			SELECT * FROM dbo.#dbprefix#_trip_stop_datetimes_StAlbert
-			</cfif>
-			<cfif useSTR IS true>
-			UNION
-			SELECT * FROM dbo.#dbprefix#_trip_stop_datetimes_Strathcona
-			</cfif>
-			) AS AllDatetimes
+			SELECT * FROM (SELECT * FROM dbo.#dbprefix#_trip_stop_datetimes) AS AllDatetimes
 			WHERE stop_id='#fromStop#' 
 			AND ActualDateTime > #CurrentTime#
 			AND ActualDateTime < #maxFutureTime#
 			AND pickup_type = 0
 			ORDER BY ActualDateTime
-		<cfelseif left(fromStop, 3) EQ "Str">
-			SELECT * FROM dbo.#dbprefix#_trip_stop_datetimes_Strathcona
-			WHERE stop_id='#Mid(fromStop, 4, 99)#' 
-			AND ActualDateTime > #CurrentTime#
-			AND ActualDateTime < #maxFutureTime#
-			AND pickup_type = 0
-			ORDER BY ActualDateTime
-		<cfelse><!--- otherwise it's St. Albert --->
-			SELECT * FROM dbo.#dbprefix#_trip_stop_datetimes_StAlbert
-			WHERE stop_id='#Mid(fromStop, 4, 99)#' 
-			AND ActualDateTime > #CurrentTime#
-			AND ActualDateTime < #maxFutureTime#
-			AND pickup_type = 0
-			ORDER BY ActualDateTime
-		</cfif>
 	</cfquery>
 <!--- <cfdump var="#departureTimes#"> --->
 	<!--- This assumes a valid stop is given. I should handle this --->
 	<cfquery name="StopInfo" dbtype="ODBC" datasource="ETSRead">
-		<cfif isNumeric(fromStop)>
 		SELECT * FROM dbo.#dbprefix#_stops WHERE stop_id='#fromStop#'
-		<cfelseif left(fromStop, 3) EQ "Str">
-		SELECT * FROM dbo.#dbprefix#_stops_Strathcona WHERE stop_id='#mid(fromStop, 4, 99)#'
-		<cfelse>
-		SELECT * FROM dbo.#dbprefix#_stops_StAlbert WHERE stop_id='#mid(fromStop, 4, 99)#'
-		</cfif>
 	</cfquery>
 	
 	<cfoutput>

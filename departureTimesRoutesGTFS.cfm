@@ -52,12 +52,12 @@ description="Accepts FROM and TO stop IDs, and a datetime and outputs a table wi
 
 
 	<cfquery name="fromStop" dbtype="ODBC" datasource="ETSRead">
-		SELECT * FROM dbo.#dbprefix#_stops_all_agencies_unique WHERE stop_id='#from#'
+		SELECT * FROM dbo.#dbprefix#_stops WHERE stop_id='#from#'
 	</cfquery>
 	
 	<cfif isDefined('to') AND isNumeric(to)>
 		<cfquery name="toStop" dbtype="ODBC" datasource="ETSRead">
-			SELECT * FROM dbo.#dbprefix#_stops_all_agencies_unique WHERE stop_id='#to#'
+			SELECT * FROM dbo.#dbprefix#_stops WHERE stop_id='#to#'
 		</cfquery>
 	</cfif>
 
@@ -66,14 +66,14 @@ description="Accepts FROM and TO stop IDs, and a datetime and outputs a table wi
 		<cfquery name="DepartureTimes" dbtype="ODBC" datasource="ETSRead">
 			SELECT * FROM (
 			SELECT
-				(SELECT TOP 1 sdt2.ActualDateTime FROM dbo.#dbprefix#_trip_stop_datetimes#agencysuffix# sdt2
+				(SELECT TOP 1 sdt2.ActualDateTime FROM dbo.#dbprefix#_trip_stop_datetimes sdt2
 				WHERE stop_id='#to#'
 				AND trip_id=sdt.trip_id
 				AND stop_sequence > sdt.stop_sequence
 				AND ActualDateTime > #CurrentTime#
 				ORDER BY sdt2.ActualDateTime
 			) AS dest_arrival_datetime,
-			* FROM dbo.#dbprefix#_trip_stop_datetimes#agencysuffix# sdt
+			* FROM dbo.#dbprefix#_trip_stop_datetimes sdt
 			WHERE route_id='#rid#'
 			AND stop_id='#from#'
 			AND ActualDateTime > #CurrentTime# AND ActualDateTime < #MaxFutureTime#
@@ -83,7 +83,7 @@ description="Accepts FROM and TO stop IDs, and a datetime and outputs a table wi
 		</cfquery>	
 	<cfelse>
 		<cfquery name="DepartureTimes" dbtype="ODBC" datasource="ETSRead">
-			SELECT NULL AS dest_arrival_datetime, * FROM dbo.#dbprefix#_trip_stop_datetimes#agencysuffix# sdt
+			SELECT NULL AS dest_arrival_datetime, * FROM dbo.#dbprefix#_trip_stop_datetimes sdt
 			WHERE route_id='#rid#'
 			AND stop_id='#from#'
 			AND ActualDateTime > #CurrentTime# AND ActualDateTime < #MaxFutureTime#
@@ -153,15 +153,7 @@ description="Accepts FROM and TO stop IDs, and a datetime and outputs a table wi
 		<cfset dbprefix = activedb.prefix />
 		<!--- TEMPORARILY SET THIS MANUALLY FOR TESTING. REMOVE THIS LINE FOR PRODUCTION!!! --->
 		<!--- <cfset dbprefix = 'ETS2' /> --->
-
-		<!--- Get the prefix for the particular agency this route is for --->
-		<cfquery name="RouteAgency" dbtype="ODBC" datasource="ETSRead">
-			SELECT agency_id FROM dbo.#dbprefix#_routes_all_agencies WHERE route_id='#url.rid#'
-		</cfquery>
-		<cfset agencyid = RouteAgency.agency_id />
-		<cfset agencysuffix = "" />
-		<cfif agencyid EQ 2><cfset agencysuffix = "_StAlbert" /></cfif>
-		<cfif agencyid EQ 3><cfset agencySuffix = "_Strathcona" /></cfif>			
+		
 		<!--- Setting date variables for DepartureTimes query --->
 		<!--- Set the Day of Week. Sunday is 1, Saturday is 7 --->
 		<cfif isDefined('url.dow') AND len(url.dow) GTE 3>

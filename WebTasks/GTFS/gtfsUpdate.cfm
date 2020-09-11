@@ -35,9 +35,11 @@ The following message was returned from the server:
    <cfabort />
 </CFIF>
 
+<!--- 2020-09-11: Edmonton GTFS data now includes data for St. Albert and Strathcona (among others)
+Download Strathcona County zip file
+New URL as of September 11, 2020
 
-<!--- Download Strathcona County zip file --->
-<cfset gtfsUrl = "http://webpub2.strathcona.ab.ca/GTFS/Google_Transit.zip" />
+<cfset gtfsUrl = "https://gtfs.edmonton.ca/TMGTFSRealTimeWebService/GTFS/GTFS.zip" />
 <cfx_http5 url="#gtfsUrl#" ssl="5" async="n" out="D:\inetpub\temp\gtfs\Strathcona\gtfs.zip" file="y">
 
 <CFIF STATUS EQ "ER">
@@ -77,6 +79,7 @@ The following message was returned from the server:
 </cfmail>   
    <cfabort />
 </CFIF>
+--->
 
 <!--- Unzip all gtfs packages --->
 <cftry>
@@ -86,18 +89,12 @@ The following message was returned from the server:
 	<!--- Delete the original zip as we do not need it anymore --->
 	<cffile action="delete" file="D:\inetpub\temp\gtfs\Edmonton\gtfs.zip" />
 
-	<!--- Extract zip into gtfs directory --->
+	<!--- No longer need to handle St. Albert and Strathcona
 	<cfzip action="unzip" file="D:\inetpub\temp\gtfs\Strathcona\gtfs.zip" overwrite="true" destination="D:\inetpub\temp\gtfs\Strathcona\" />
-
-	<!--- Delete the original zip as we do not need it anymore --->
 	<cffile action="delete" file="D:\inetpub\temp\gtfs\Strathcona\gtfs.zip" />
-
-	<!--- Extract zip into gtfs directory --->
 	<cfzip action="unzip" file="D:\inetpub\temp\gtfs\StAlbert\gtfs.zip" overwrite="true" destination="D:\inetpub\temp\gtfs\StAlbert\" />
-
-	<!--- Delete the original zip as we do not need it anymore --->
 	<cffile action="delete" file="D:\inetpub\temp\gtfs\StAlbert\gtfs.zip" />
-
+	--->
 	<cfcatch type="any">
 
 		<h1>ERROR: Update Failed</h1>		
@@ -183,6 +180,7 @@ The following messages have been returned from the server:
 	</cfcatch>
 </cftry>
 
+<!--- No longer need to handle St. Albert and Strathcona County
 <!--- St. Albert --->
 <cftry>
 	<cfquery name="BulkInsert" dbtype="ODBC" datasource="ETSReadWrite">
@@ -331,18 +329,6 @@ UPDATE dbo.#dbprefix#_stops SET exclusive=1
 
 
 
-<cfquery name="UpdateRouteStops" dbtype="ODBC" datasource="ETSReadWrite">
-	DELETE FROM dbo.#dbprefix#_stop_routes_all_agencies
-
-	INSERT INTO dbo.#dbprefix#_stop_routes_all_agencies (stop_id, route_id, agency_id)
-	SELECT st.stop_id, t.route_id, t.agency_id FROM dbo.#dbprefix#_routes_all_agencies r
-	JOIN dbo.#dbprefix#_trips_all_agencies t ON r.route_id=t.route_id
-	JOIN dbo.#dbprefix#_stop_times_all_agencies st ON st.trip_id=t.trip_id
-	GROUP BY st.stop_id, t.route_id, t.agency_id
-</cfquery>
-
-
-
 <!--- 
 	Loops through every entry of a "calendar" table, and inserts each date from the range into the calendar_dates_complete
 	table for StAlbert and Strathcona, accounting for any exceptions in the calendar_dates table.
@@ -426,7 +412,17 @@ UPDATE dbo.#dbprefix#_stops SET exclusive=1
 	</cfloop>
 </cfloop>
 
+--->
 
+<cfquery name="UpdateRouteStops" dbtype="ODBC" datasource="ETSReadWrite">
+	DELETE FROM dbo.#dbprefix#_stop_routes
+
+	INSERT INTO dbo.#dbprefix#_stop_routes (stop_id, route_id, agency_id)
+	SELECT st.stop_id, t.route_id, r.agency_id FROM dbo.#dbprefix#_routes r
+	JOIN dbo.#dbprefix#_trips t ON r.route_id=t.route_id
+	JOIN dbo.#dbprefix#_stop_times st ON st.trip_id=t.trip_id
+	GROUP BY st.stop_id, t.route_id, r.agency_id
+</cfquery>
 
 
 <!--- If everything seems to be working, now let's switch the active database to the newly updated one. --->

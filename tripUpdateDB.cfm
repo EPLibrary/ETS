@@ -1,6 +1,4 @@
-<cfsetting enablecfoutputonly="true" />
-<cfsetting showdebugoutput="false" />
-
+<cfsetting enablecfoutputonly="true" showdebugoutput="false" />
 <cfheader name="Content-Type" value="application/json" />
 
 <!--- TripUpdateDB.cfm allows a page to request a trip update for a list of tripIDs and a stop.

@@ -159,13 +159,13 @@
 <cfif isDefined('url.fromStop')>
 <!--- 6500 stops! --->
 <cfquery name="Stops" dbtype="ODBC" datasource="ETSRead">
-SELECT * FROM dbo.#dbprefix#_stops_all_agencies_unique ORDER BY astop_id
+SELECT * FROM dbo.#dbprefix#_stops ORDER BY stop_id
 </cfquery>
 <!--- This makes for a massive 6500 item select --->
 <label for="fromStop" id="fromStopLabel" class="selectizeLabel"><a href="javascript:void(0);" id="busStopLabelText" class="labelText" title="Click to show stops near your location">Bus Stops <!---<svg id="geoIcon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 960"><path d="M500 258.6l-490 245 9.6 1.2c5.2.5 107 8.2 226 16.8 133 9.8 217.5 16.5 218.8 18 1.2 1.2 8.3 87 18 219.6 8.5 119.7 16.4 221.3 17 226 1.3 7.7 6.3-1.8 246-482 135-269.4 245-490 244.6-489.7l-490 245z" /></svg>---><span class="nearestLink">&#x1f5fa; Select a Nearby Stop </span></a>
 	<select name="fromStop" id="fromStop" class="selectizeField" multiple="multiple">
 		<cfoutput query="Stops">
-			<option value="#astop_id#" <cfloop list="#url.fromStop#" index="i"><cfif i EQ astop_id>selected</cfif></cfloop>>#astop_id# #stop_name#</option>
+			<option value="#stop_id#" <cfloop list="#url.fromStop#" index="i"><cfif i EQ stop_id>selected</cfif></cfloop>>#stop_id# #stop_name#</option>
 		</cfoutput>
 	</select>
 </label>
@@ -177,7 +177,7 @@ SELECT * FROM dbo.#dbprefix#_stops_all_agencies_unique ORDER BY astop_id
 <cfelseif isDefined('url.rid')>
 
 <cfquery name="Routes" dbtype="ODBC" datasource="ETSRead">
-	SELECT * FROM dbo.#dbprefix#_routes_all_agencies ORDER BY route_id
+	SELECT * FROM dbo.#dbprefix#_routes ORDER BY route_id
 </cfquery>
 <!--- This makes for a massive 6500 item select --->
 <label for="rid" id="ridLabel" class="selectizeLabel"><a href="javascript:void(0);" id="nearbyRouteText"  class="labelText" title="Click to show nearby routes"><span id="mainBusRouteLabel">Bus Route</span> <svg id="geoIcon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 960"><path d="M500 258.6l-490 245 9.6 1.2c5.2.5 107 8.2 226 16.8 133 9.8 217.5 16.5 218.8 18 1.2 1.2 8.3 87 18 219.6 8.5 119.7 16.4 221.3 17 226 1.3 7.7 6.3-1.8 246-482 135-269.4 245-490 244.6-489.7l-490 245z" /></svg><span id="nearestRouteLink">Sort by Nearest</span></a>
@@ -602,7 +602,7 @@ setInterval(function(){updateArrivalTimes();}, 2000);
 	var selectize;
 	var stopCoords = [
 	<cfoutput query="Stops">
-	<cfif CurrentRow GT 1>,</cfif>{id:"#astop_id#", lat:#trim(stop_lat)#, lon:#trim(stop_lon)#}
+	<cfif CurrentRow GT 1>,</cfif>{id:"#stop_id#", lat:#trim(stop_lat)#, lon:#trim(stop_lon)#}
 	</cfoutput>];
 	var stopsByDist = stopCoords;
 	$(document).ready(function() {
