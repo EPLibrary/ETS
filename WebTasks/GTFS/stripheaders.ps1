@@ -27,6 +27,10 @@ Write-Host "Running stripheaders.bat for Edmonton data..."
 Write-Host "Removing doublequotes from Edmonton transfers.txt..."
 (gc D:\inetpub\temp\gtfs\Edmonton\transfers_noheader.txt) -replace '"', '' |Out-File D:\inetpub\temp\gtfs\Edmonton\transfers_noheader.txt -encoding ASCII
 
+#Remove doublequotes from stops.txt. God forbid they ever have a stop name with a comma in it as that will break the import.
+Write-Host "Removing doublequotes from Edmonton stops.txt..."
+(gc D:\inetpub\temp\gtfs\Edmonton\stops_noheader.txt) -replace '"', '' |Out-File D:\inetpub\temp\gtfs\Edmonton\stops_noheader.txt -encoding ASCII
+
 ## These lines are no longer necessary as all the GTFS data is now aggregated under City of Edmonton's data.
 # #Strathcona County
 #Write-Host "Removing top lines from Strathcona GTFS files..."

@@ -9,93 +9,39 @@ USE ETS;
 
 IF OBJECT_ID('ETS1_trip_stop_datetimes') IS NOT NULL
 	DROP VIEW ETS1_trip_stop_datetimes;
-IF OBJECT_ID('ETS1_trip_stop_datetimes_StAlbert') IS NOT NULL
-	DROP VIEW ETS1_trip_stop_datetimes_StAlbert;
-IF OBJECT_ID('ETS1_trip_stop_datetimes_Strathcona') IS NOT NULL
-	DROP VIEW ETS1_trip_stop_datetimes_Strathcona;
 IF OBJECT_ID('ETS1_stop_times') IS NOT NULL
 	DROP TABLE ETS1_stop_times;
-IF OBJECT_ID('ETS1_stop_times_StAlbert') IS NOT NULL
-	DROP TABLE ETS1_stop_times_StAlbert;
-IF OBJECT_ID('ETS1_stop_times_Strathcona') IS NOT NULL
-	DROP TABLE ETS1_stop_times_Strathcona;
 IF OBJECT_ID('ETS1_drop_off_types') IS NOT NULL
 	DROP TABLE ETS1_drop_off_types;
 IF OBJECT_ID('ETS1_pickup_types') IS NOT NULL
 	DROP TABLE ETS1_pickup_types;
 IF OBJECT_ID('ETS1_transfers') IS NOT NULL
 	DROP TABLE ETS1_transfers;
-IF OBJECT_ID('ETS1_transfers_StAlbert') IS NOT NULL
-	DROP TABLE ETS1_transfers_StAlbert;
-IF OBJECT_ID('ETS1_transfers_Strathcona') IS NOT NULL
-	DROP TABLE ETS1_transfers_Strathcona;
 IF OBJECT_ID('ETS1_transfer_types') IS NOT NULL
 	DROP TABLE ETS1_transfer_types;
+IF OBJECT_ID('ETS1_location_types') IS NOT NULL
+	DROP TABLE ETS1_location_types;
 IF OBJECT_ID('ETS1_trips') IS NOT NULL
 	DROP TABLE ETS1_trips;
-IF OBJECT_ID('ETS1_trips_StAlbert') IS NOT NULL
-	DROP TABLE ETS1_trips_StAlbert;
-IF OBJECT_ID('ETS1_trips_Strathcona') IS NOT NULL
-	DROP TABLE ETS1_trips_Strathcona;
 IF OBJECT_ID('ETS1_stops') IS NOT NULL
 	DROP TABLE ETS1_stops;
-IF OBJECT_ID('ETS1_stops_StAlbert') IS NOT NULL
-	DROP TABLE ETS1_stops_StAlbert;
-IF OBJECT_ID('ETS1_stops_Strathcona') IS NOT NULL
-	DROP TABLE ETS1_stops_Strathcona;
 IF OBJECT_ID('ETS1_shapes') IS NOT NULL
 	DROP TABLE ETS1_shapes;
-IF OBJECT_ID('ETS1_shapes_StAlbert') IS NOT NULL
-	DROP TABLE ETS1_shapes_StAlbert;
-IF OBJECT_ID('ETS1_shapes_Strathcona') IS NOT NULL
-	DROP TABLE ETS1_shapes_Strathcona;
 IF OBJECT_ID('ETS1_routes') IS NOT NULL
 	DROP TABLE ETS1_routes;
-IF OBJECT_ID('ETS1_routes_StAlbert') IS NOT NULL
-	DROP TABLE ETS1_routes_StAlbert;
-IF OBJECT_ID('ETS1_routes_Strathcona') IS NOT NULL
-	DROP TABLE ETS1_routes_Strathcona;
 IF OBJECT_ID('ETS1_route_types') IS NOT NULL
 	DROP TABLE ETS1_route_types;
 IF OBJECT_ID('ETS1_stop_routes') IS NOT NULL
 	DROP TABLE ETS1_stop_routes;
 IF OBJECT_ID('ETS1_calendar') IS NOT NULL
 	DROP TABLE ETS1_calendar;
-IF OBJECT_ID('ETS1_calendar_StAlbert') IS NOT NULL
-	DROP TABLE ETS1_calendar_StAlbert;
-IF OBJECT_ID('ETS1_calendar_Strathcona') IS NOT NULL
-	DROP TABLE ETS1_calendar_Strathcona;
 IF OBJECT_ID('ETS1_calendar_dates') IS NOT NULL
 	DROP TABLE ETS1_calendar_dates;
-IF OBJECT_ID('ETS1_calendar_dates_StAlbert') IS NOT NULL
-	DROP TABLE ETS1_calendar_dates_StAlbert;
-IF OBJECT_ID('ETS1_calendar_dates_Strathcona') IS NOT NULL
-	DROP TABLE ETS1_calendar_dates_Strathcona;
-IF OBJECT_ID('ETS1_calendar_dates_complete_StAlbert') IS NOT NULL
-	DROP TABLE ETS1_calendar_dates_complete_StAlbert;
-IF OBJECT_ID('ETS1_calendar_dates_complete_Strathcona') IS NOT NULL
-	DROP TABLE ETS1_calendar_dates_complete_Strathcona;
 IF OBJECT_ID('ETS1_agency') IS NOT NULL
 	DROP TABLE ETS1_agency;
-IF OBJECT_ID('ETS1_agency_StAlbert') IS NOT NULL
-	DROP TABLE ETS1_agency_StAlbert;
-IF OBJECT_ID('ETS1_agency_Strathcona') IS NOT NULL
-	DROP TABLE ETS1_agency_Strathcona;
 
 
 CREATE TABLE ETS1_agency (
-	aID INT NOT NULL IDENTITY PRIMARY KEY,
-	agency_id varchar(511) NULL, -- Typically 1, 2, 3, but I learned my lesson, so varchar it is.
-	agency_name nvarchar(255) NOT NULL,
-	agency_url nvarchar(1024) NOT NULL,
-	agency_timezone nvarchar(255) NOT NULL,
-	agency_lang varchar(15) NULL,
-	agency_phone varchar(16) NULL,
-	agency_fare_url varchar(1024) NULL,
-	agency_email varchar(1024) NULL
-)
-
-CREATE TABLE ETS1_agency_StAlbert (
 	aID INT NOT NULL IDENTITY PRIMARY KEY,
 	agency_id varchar(511) NULL, -- Typically 1, 2, 3, but I learned my lesson, so varchar it is.
 	agency_name nvarchar(255) NOT NULL,
@@ -121,21 +67,6 @@ CREATE TABLE ETS1_calendar (
 	end_date DATE NOT NULL
 )
 
-CREATE TABLE ETS1_calendar_StAlbert (
-	cID INT NOT NULL IDENTITY PRIMARY KEY,
-	service_id varchar(255) NOT NULL,
-	monday BIT NOT NULL,
-	tuesday BIT NOT NULL,
-	wednesday BIT NOT NULL,
-	thursday BIT NOT NULL,
-	friday BIT NOT NULL,
-	saturday BIT NOT NULL,
-	sunday BIT NOT NULL,
-	start_date DATE NOT NULL,
-	end_date DATE NOT NULL
-)
-
-
 CREATE TABLE ETS1_calendar_dates (
 	cdID INT NOT NULL IDENTITY PRIMARY KEY,
 	service_id varchar(255) NOT NULL,
@@ -144,37 +75,9 @@ CREATE TABLE ETS1_calendar_dates (
 	UNIQUE(service_id,date)
 )
 
-CREATE TABLE ETS1_calendar_dates_StAlbert (
-	cdID INT NOT NULL IDENTITY PRIMARY KEY,
-	service_id varchar(255) NOT NULL,
-	date DATE NOT NULL,
-	exception_type INT NOT NULL,
-	UNIQUE(service_id,date)
-)
-
---calendar_dates_complete is a version of calendar dates that just has every date in it, like Edmonton's, so this can be used in the main view
-CREATE TABLE ETS1_calendar_dates_complete_StAlbert (
-	cdcID INT NOT NULL IDENTITY PRIMARY KEY,
-	service_id varchar(255) NOT NULL,
-	date DATE NOT NULL,
-	exception_type INT NOT NULL,
-	UNIQUE(service_id,date)
-)
-
-
 CREATE INDEX ix_ETS1_C_service_id ON ETS1_calendar_dates(service_id)
 CREATE INDEX ix_ETS1_C_date ON ETS1_calendar_dates(date)
 
-CREATE INDEX ix_ETS1_C_service_id_SA ON ETS1_calendar_dates_StAlbert(service_id)
-CREATE INDEX ix_ETS1_C_date_SA ON ETS1_calendar_dates_StAlbert(date)
-
-CREATE INDEX ix_ETS1_CC_service_id_SA ON ETS1_calendar_dates_complete_StAlbert(service_id)
-CREATE INDEX ix_ETS1_CC_date_SA ON ETS1_calendar_dates_complete_StAlbert(date)
-
---INSERT INTO ETS1_calendar_dates VALUES('1-Saturday-1-JUN17-0000010',	'20170715',	1)
---SELECT * FROM ETS1_calendar_dates
-
---
 CREATE TABLE ETS1_route_types (
 	route_type INT PRIMARY KEY,
 	route_type_name nvarchar(255) NOT NULL,
@@ -208,31 +111,7 @@ CREATE TABLE ETS1_routes (
 	--UNIQUE(route_id)
 )
 
-CREATE TABLE ETS1_routes_StAlbert (
-	route_id VARCHAR(20) PRIMARY KEY,
-	agency_id VARCHAR(511) NULL,
-	route_short_name nvarchar(511) NOT NULL,
-	route_long_name nvarchar(1023) NOT NULL,
-	route_desc nvarchar(1023) NULL,
-	route_type INT NOT NULL FOREIGN KEY REFERENCES ETS1_route_types(route_type),
-	route_url nvarchar(1023) NULL,
-	route_color varchar(20),
-	route_text_color varchar(20)
-	--UNIQUE(route_id)
-)
-
---SELECT * FROM ETS1_routes
---INSERT INTO ETS1_routes VALUES(1,1,'West Edmonton Mall - Downtown - Capilano',NULL,3,NULL)
-
 CREATE TABLE ETS1_shapes (
-	shape_id varchar(255),
-	shape_pt_lat float(8) NOT NULL,
-	shape_pt_lon float(8) NOT NULL,
-	shape_pt_sequence INT NOT NULL,
-	PRIMARY KEY (shape_id, shape_pt_sequence)
-)
-
-CREATE TABLE ETS1_shapes_StAlbert (
 	shape_id varchar(255),
 	shape_pt_lat float(8) NOT NULL,
 	shape_pt_lon float(8) NOT NULL,
@@ -243,35 +122,20 @@ CREATE TABLE ETS1_shapes_StAlbert (
 --INSERT INTO ETS1_shapes VALUES('1-89-1',53.53864,-113.42325,1)
 CREATE TABLE ETS1_stops (
 	stop_id VARCHAR(20) PRIMARY KEY,
-	stop_code INT NULL,
+	stop_code VARCHAR(20) NULL,
 	stop_name nvarchar(512) NOT NULL,
 	stop_desc nvarchar(1023) NULL,
 	stop_lat float(8) NOT NULL,
 	stop_lon float(8) NOT NULL,
 	zone_id varchar(30) NULL,
 	stop_url nvarchar(1023) NULL,
-	location_type bit NULL, --0/blank = stop, 1 = Station
+	location_type INT NULL, --0/blank = stop, 1 = Station, 2 = Entrance/Exit, 3 = Generic Node, 4 Boarding Area
 	parent_station VARCHAR(20) NULL,
+	level_id varchar(20) NULL, -- This is new, not sure what will be stored here, likely INT but I'm not making that mistake again.
 	is_lrt bit NULL, --optional field added after import by my own code for simplicity
 	exclusive bit NULL --can specify that this stop is not used by other agencies
 )
 
---Experimental tables for other transit agencies
---DROP TABLE ETS1_stops_StAlbert
-CREATE TABLE ETS1_stops_StAlbert (
-	stop_id VARCHAR(20) PRIMARY KEY,
-	stop_code INT NULL,
-	stop_name nvarchar(512) NOT NULL,
-	stop_desc nvarchar(1023) NULL,
-	stop_lat float(8) NOT NULL,
-	stop_lon float(8) NOT NULL,
-	zone_id varchar(30) NULL,
-	stop_url nvarchar(1023) NULL,
-	location_type bit NULL, --0/blank = stop, 1 = Station
-	parent_station VARCHAR(20) NULL,
-	is_lrt bit NULL, --optional field added after import by my own code for simplicity
-	exclusive bit NULL --can specify that this stop is not used by other agencies
-)
 
 CREATE TABLE ETS1_trips (
 	route_id VARCHAR(20) FOREIGN KEY REFERENCES ETS1_routes(route_id),
@@ -280,18 +144,6 @@ CREATE TABLE ETS1_trips (
 	trip_headsign nvarchar(255) NULL,
 	direction_id bit NULL, --0 = outbound, 1 = inbound
 	block_id  varchar(30) NULL, /* Identifies the block to which the trip belongs. A block consists of two or more sequential trips made using the same vehicle, where a passenger can transfer from one trip to the next just by staying in the vehicle. The block_id must be referenced by two or more trips in trips.txt. */
-	shape_id varchar(255) NULL, --REFERENCES ETS1_shapes(shape_id)
-	wheelchair_accessible BIT,
-	bikes_allowed BIT
-)
---DROP TABLE ETS1_trips_StAlbert
-CREATE TABLE ETS1_trips_StAlbert (
-	route_id VARCHAR(20) FOREIGN KEY REFERENCES ETS1_routes_StAlbert(route_id),
-	service_id varchar(255), --FOREIGN KEY REFERENCES ETS1_calendar_dates(service_id),
-	trip_id VARCHAR(255) PRIMARY KEY,
-	trip_headsign nvarchar(255) NULL,
-	direction_id bit NULL, --0 = outbound, 1 = inbound
-	block_id varchar(30) NULL, /* Identifies the block to which the trip belongs. A block consists of two or more sequential trips made using the same vehicle, where a passenger can transfer from one trip to the next just by staying in the vehicle. The block_id must be referenced by two or more trips in trips.txt. */
 	shape_id varchar(255) NULL, --REFERENCES ETS1_shapes(shape_id)
 	wheelchair_accessible BIT,
 	bikes_allowed BIT
@@ -312,6 +164,19 @@ INSERT INTO ETS1_transfer_types VALUES
 (2, 'Requires Min. Time', 'This transfer requires a minimum amount of time between arrival and departure to ensure a connection. The time  by ,min_transfer_time.'),
 (3, 'Not Possible', 'Transfers are not possible between routes at this location.')
 
+CREATE TABLE ETS1_location_types (
+	location_type INT PRIMARY KEY,
+	location_type_name nvarchar(255) NOT NULL,
+	location_type_desc nvarchar(1024) NULL
+)
+INSERT INTO ETS1_location_types VALUES
+(0, 'Stop/Platform', 'A location where passengers board or disembark from a transit vehicle. Is called a platform when defined within a parent_station.'),
+(1, 'Station', 'A physical structure or area that contains one or more platform.'),
+(2, 'Entrance/Exit', 'A location where passengers can enter or exit a station from the street. If an entrance/exit belongs to multiple stations, it can be linked by pathways to both, but the data provider must pick one of them as parent.'),
+(3, 'Generic Node', 'A location within a station, not matching any other location_type, which can be used to link together pathways define in pathways.txt.'),
+(4, 'Boarding Area', 'A specific location on a platform, where passengers can board and/or alight vehicles.')
+
+
 CREATE TABLE ETS1_transfers (
 	from_stop_id VARCHAR(255) NOT NULL REFERENCES ETS1_trips(trip_id),
 	to_stop_id VARCHAR(255) NOT NULL REFERENCES ETS1_trips(trip_id),
@@ -320,13 +185,6 @@ CREATE TABLE ETS1_transfers (
 	PRIMARY KEY (from_stop_id, to_stop_id)
 )
 
-CREATE TABLE ETS1_transfers_StAlbert (
-	from_stop_id VARCHAR(255) NOT NULL REFERENCES ETS1_trips_StAlbert(trip_id),
-	to_stop_id VARCHAR(255) NOT NULL REFERENCES ETS1_trips_StAlbert(trip_id),
-	transfer_type INT NULL REFERENCES ETS1_transfer_types(transfer_type),
-	min_transfer_time INT NULL, -- value in seconds
-	PRIMARY KEY (from_stop_id, to_stop_id)
-)
 
 --WTH is trip_pattern.txt? It doesn't have a header and isn't documented in https://developers.google.com/transit/gtfs/reference/
 
@@ -374,23 +232,6 @@ CREATE TABLE ETS1_stop_times (
 	timepoint BIT NULL -- This should only ever be 1 or 0
 )
 
-CREATE TABLE ETS1_stop_times_StAlbert (
-	--stimeID INT IDENTITY PRIMARY KEY, --I don't use this so removing it might save me from running out of keys later
-	trip_id VARCHAR(255) NOT NULL REFERENCES ETS1_trips_StAlbert(trip_id),
-	arrival_time varchar(8) NOT NULL, ---not used in practice. Can't store as time because they can go over 24:00 (even over 25:00)
-	departure_hour int NOT NULL, --The hour and minute will be broken up here so they can be stored as INT for faster sorting
-	departure_minute int NOT NULL,
-	departure_second int NOT NULL,
-	--departure_time varchar(8) NOT NULL, --Removed because this will now be split into hour/minute integers for smaller storage and faster operation
-	stop_id VARCHAR(20) NOT NULL FOREIGN KEY REFERENCES ETS1_stops_StAlbert(stop_id),
-	stop_sequence int NOT NULL, --integer
-	--for proper normalization, stop_sequence really should be another DB table, but since it only seems to ever be one number, that's not so necesssary
-	stop_headsign nvarchar(255) NULL,
-	pickup_type INT DEFAULT 0 FOREIGN KEY REFERENCES ETS1_pickup_types(pickup_type),
-	drop_off_type INT DEFAULT 0 FOREIGN KEY REFERENCES ETS1_drop_off_types(drop_off_type),
-	shape_dist_traveled FLOAT(8) NULL, --theoretically could be a float, but is only ever int LOOKS LIKE I WAS WRONG ABOUT THIS!
-	timepoint BIT NULL -- This should only ever be 1 or 0
-)
 
 --Table that allows quickly sorting nearby stops. This gets recreated every time the update is done.
 CREATE TABLE ETS1_stop_routes (
@@ -425,13 +266,6 @@ CREATE NONCLUSTERED INDEX ix_ETS1_stop_id ON [dbo].[ETS1_stop_times] ([stop_id])
 CREATE NONCLUSTERED INDEX ix_ETS1_trip_id_stop_id_stop_sequence ON [dbo].[ETS1_stop_times] ([trip_id],[stop_id],[stop_sequence])
 
 
-CREATE NONCLUSTERED INDEX ix_ETS1_STIME_trip_id_stop_id_stop_sequence_SA ON [dbo].[ETS1_stop_times_StAlbert] ([trip_id],[stop_id],[stop_sequence])
---This index also speeds up the query a fair bit more
-CREATE NONCLUSTERED INDEX ix_ETS1_stop_id_SA ON [dbo].[ETS1_stop_times_StAlbert] ([stop_id]) INCLUDE ([trip_id])
---The benefits of this one seem insignificant
---CREATE NONCLUSTERED INDEX ix_ETS1_stopId_pickup_type ON [dbo].[ETS_stop_times] ([stop_id],[pickup_type]) INCLUDE ([trip_id],[arrival_time],[departure_hour],[departure_minute],[stop_sequence],[stop_headsign],[drop_off_type],[shape_dist_traveled])
-CREATE NONCLUSTERED INDEX ix_ETS1_trip_id_stop_id_stop_sequence_SA ON [dbo].[ETS1_stop_times_StAlbert] ([trip_id],[stop_id],[stop_sequence])
-
 GO
 
 --DROP VIEW ETS1_trip_stop_datetimes
@@ -453,22 +287,6 @@ JOIN dbo.ETS1_calendar_dates c ON c.service_id=t.service_id
 
 GO
 
-CREATE VIEW ETS1_trip_stop_datetimes_StAlbert WITH SCHEMABINDING AS
-SELECT --TOP 10000
-CASE WHEN departure_hour > 23 THEN
-CONVERT(datetime, DATEADD(d, 1, date), 121)+CONVERT(datetime, CAST(departure_hour%24 AS varchar)+':'+CAST(departure_minute AS varchar), 121)
-ELSE
-CONVERT(datetime, date, 121)+CONVERT(datetime, CAST(departure_hour AS varchar)+':'+CAST(departure_minute AS varchar), 121)
-END --CASE
-AS ActualDateTime,
-stime.trip_id, stime.arrival_time, stime.departure_hour, stime.departure_minute,stop_id, stime.stop_sequence, stime.stop_headsign, stime.pickup_type, stime.drop_off_type,
-stime.shape_dist_traveled, stime.timepoint,  t.route_id, t.service_id, t.trip_headsign, t.direction_id, t.block_id, t.shape_id, r.route_short_name, r.route_long_name, c.date, c.exception_type
-FROM dbo.ETS1_stop_times_StAlbert stime
-JOIN dbo.ETS1_trips_StAlbert t ON stime.trip_id=t.trip_id
-JOIN dbo.ETS1_routes_StAlbert r ON t.route_id=r.route_id
-JOIN dbo.ETS1_calendar_dates_complete_StAlbert c ON c.service_id=t.service_id
-
-GO
 
 
 
@@ -481,78 +299,37 @@ GO
 
 IF OBJECT_ID('ETS2_trip_stop_datetimes') IS NOT NULL
 	DROP VIEW ETS2_trip_stop_datetimes;
-IF OBJECT_ID('ETS2_trip_stop_datetimes_StAlbert') IS NOT NULL
-	DROP VIEW ETS2_trip_stop_datetimes_StAlbert;
-IF OBJECT_ID('ETS2_trip_stop_datetimes_Strathcona') IS NOT NULL
-	DROP VIEW ETS2_trip_stop_datetimes_Strathcona;
 IF OBJECT_ID('ETS2_stop_times') IS NOT NULL
 	DROP TABLE ETS2_stop_times;
-IF OBJECT_ID('ETS2_stop_times_StAlbert') IS NOT NULL
-	DROP TABLE ETS2_stop_times_StAlbert;
-IF OBJECT_ID('ETS2_stop_times_Strathcona') IS NOT NULL
-	DROP TABLE ETS2_stop_times_Strathcona;
 IF OBJECT_ID('ETS2_drop_off_types') IS NOT NULL
 	DROP TABLE ETS2_drop_off_types;
 IF OBJECT_ID('ETS2_pickup_types') IS NOT NULL
 	DROP TABLE ETS2_pickup_types;
 IF OBJECT_ID('ETS2_transfers') IS NOT NULL
 	DROP TABLE ETS2_transfers;
-IF OBJECT_ID('ETS2_transfers_StAlbert') IS NOT NULL
-	DROP TABLE ETS2_transfers_StAlbert;
-IF OBJECT_ID('ETS2_transfers_Strathcona') IS NOT NULL
-	DROP TABLE ETS2_transfers_Strathcona;
 IF OBJECT_ID('ETS2_transfer_types') IS NOT NULL
 	DROP TABLE ETS2_transfer_types;
+IF OBJECT_ID('ETS2_location_types') IS NOT NULL
+	DROP TABLE ETS2_location_types;
 IF OBJECT_ID('ETS2_trips') IS NOT NULL
 	DROP TABLE ETS2_trips;
-IF OBJECT_ID('ETS2_trips_StAlbert') IS NOT NULL
-	DROP TABLE ETS2_trips_StAlbert;
-IF OBJECT_ID('ETS2_trips_Strathcona') IS NOT NULL
-	DROP TABLE ETS2_trips_Strathcona;
 IF OBJECT_ID('ETS2_stops') IS NOT NULL
 	DROP TABLE ETS2_stops;
-IF OBJECT_ID('ETS2_stops_StAlbert') IS NOT NULL
-	DROP TABLE ETS2_stops_StAlbert;
-IF OBJECT_ID('ETS2_stops_Strathcona') IS NOT NULL
-	DROP TABLE ETS2_stops_Strathcona;
 IF OBJECT_ID('ETS2_shapes') IS NOT NULL
 	DROP TABLE ETS2_shapes;
-IF OBJECT_ID('ETS2_shapes_StAlbert') IS NOT NULL
-	DROP TABLE ETS2_shapes_StAlbert;
-IF OBJECT_ID('ETS2_shapes_Strathcona') IS NOT NULL
-	DROP TABLE ETS2_shapes_Strathcona;
 IF OBJECT_ID('ETS2_routes') IS NOT NULL
 	DROP TABLE ETS2_routes;
-IF OBJECT_ID('ETS2_routes_StAlbert') IS NOT NULL
-	DROP TABLE ETS2_routes_StAlbert;
-IF OBJECT_ID('ETS2_routes_Strathcona') IS NOT NULL
-	DROP TABLE ETS2_routes_Strathcona;
 IF OBJECT_ID('ETS2_route_types') IS NOT NULL
 	DROP TABLE ETS2_route_types;
 IF OBJECT_ID('ETS2_stop_routes') IS NOT NULL
 	DROP TABLE ETS2_stop_routes;
 IF OBJECT_ID('ETS2_calendar') IS NOT NULL
 	DROP TABLE ETS2_calendar;
-IF OBJECT_ID('ETS2_calendar_StAlbert') IS NOT NULL
-	DROP TABLE ETS2_calendar_StAlbert;
-IF OBJECT_ID('ETS2_calendar_Strathcona') IS NOT NULL
-	DROP TABLE ETS2_calendar_Strathcona;
 IF OBJECT_ID('ETS2_calendar_dates') IS NOT NULL
 	DROP TABLE ETS2_calendar_dates;
-IF OBJECT_ID('ETS2_calendar_dates_StAlbert') IS NOT NULL
-	DROP TABLE ETS2_calendar_dates_StAlbert;
-IF OBJECT_ID('ETS2_calendar_dates_Strathcona') IS NOT NULL
-	DROP TABLE ETS2_calendar_dates_Strathcona;
-IF OBJECT_ID('ETS2_calendar_dates_complete_StAlbert') IS NOT NULL
-	DROP TABLE ETS2_calendar_dates_complete_StAlbert;
-IF OBJECT_ID('ETS2_calendar_dates_complete_Strathcona') IS NOT NULL
-	DROP TABLE ETS2_calendar_dates_complete_Strathcona;
 IF OBJECT_ID('ETS2_agency') IS NOT NULL
 	DROP TABLE ETS2_agency;
-IF OBJECT_ID('ETS2_agency_StAlbert') IS NOT NULL
-	DROP TABLE ETS2_agency_StAlbert;
-IF OBJECT_ID('ETS2_agency_Strathcona') IS NOT NULL
-	DROP TABLE ETS2_agency_Strathcona;
+
 
 CREATE TABLE ETS2_agency (
 	aID INT NOT NULL IDENTITY PRIMARY KEY,
@@ -566,17 +343,6 @@ CREATE TABLE ETS2_agency (
 	agency_email varchar(1024) NULL
 )
 
-CREATE TABLE ETS2_agency_StAlbert (
-	aID INT NOT NULL IDENTITY PRIMARY KEY,
-	agency_id varchar(511) NULL, -- Typically 1, 2, 3, but I learned my lesson, so varchar it is.
-	agency_name nvarchar(255) NOT NULL,
-	agency_url nvarchar(1024) NOT NULL,
-	agency_timezone nvarchar(255) NOT NULL,
-	agency_lang varchar(15) NULL,
-	agency_phone varchar(16) NULL,
-	agency_fare_url varchar(1024) NULL,
-	agency_email varchar(1024) NULL
-)
 
 CREATE TABLE ETS2_calendar (
 	cID INT NOT NULL IDENTITY PRIMARY KEY,
@@ -592,40 +358,9 @@ CREATE TABLE ETS2_calendar (
 	end_date DATE NOT NULL
 )
 
-CREATE TABLE ETS2_calendar_StAlbert (
-	cID INT NOT NULL IDENTITY PRIMARY KEY,
-	service_id varchar(255) NOT NULL,
-	monday BIT NOT NULL,
-	tuesday BIT NOT NULL,
-	wednesday BIT NOT NULL,
-	thursday BIT NOT NULL,
-	friday BIT NOT NULL,
-	saturday BIT NOT NULL,
-	sunday BIT NOT NULL,
-	start_date DATE NOT NULL,
-	end_date DATE NOT NULL
-)
 
 CREATE TABLE ETS2_calendar_dates (
 	cdID INT NOT NULL IDENTITY PRIMARY KEY,
-	service_id varchar(255) NOT NULL,
-	date DATE NOT NULL,
-	exception_type INT NOT NULL,
-	UNIQUE(service_id,date)
-)
-
-CREATE TABLE ETS2_calendar_dates_StAlbert (
-	cdID INT NOT NULL IDENTITY PRIMARY KEY,
-	service_id varchar(255) NOT NULL,
-	date DATE NOT NULL,
-	exception_type INT NOT NULL,
-	UNIQUE(service_id,date)
-)
-
-
---calendar_dates_complete is a version of calendar dates that just has every date in it, like Edmonton's, so this can be used in the main view
-CREATE TABLE ETS2_calendar_dates_complete_StAlbert (
-	cdcID INT NOT NULL IDENTITY PRIMARY KEY,
 	service_id varchar(255) NOT NULL,
 	date DATE NOT NULL,
 	exception_type INT NOT NULL,
@@ -637,16 +372,7 @@ CREATE TABLE ETS2_calendar_dates_complete_StAlbert (
 CREATE INDEX ix_ETS2_C_service_id ON ETS2_calendar_dates(service_id)
 CREATE INDEX ix_ETS2_C_date ON ETS2_calendar_dates(date)
 
-CREATE INDEX ix_ETS2_C_service_id_SA ON ETS2_calendar_dates_StAlbert(service_id)
-CREATE INDEX ix_ETS2_C_date_SA ON ETS2_calendar_dates_StAlbert(date)
 
-CREATE INDEX ix_ETS2_CC_service_id_SA ON ETS2_calendar_dates_complete_StAlbert(service_id)
-CREATE INDEX ix_ETS2_CC_date_SA ON ETS2_calendar_dates_complete_StAlbert(date)
-
---INSERT INTO ETS2_calendar_dates VALUES('1-Saturday-1-JUN17-0000010',	'20170715',	1)
---SELECT * FROM ETS2_calendar_dates
-
---
 CREATE TABLE ETS2_route_types (
 	route_type INT PRIMARY KEY,
 	route_type_name nvarchar(255) NOT NULL,
@@ -680,19 +406,6 @@ CREATE TABLE ETS2_routes (
 	--UNIQUE(route_id)
 )
 
-CREATE TABLE ETS2_routes_StAlbert (
-	route_id VARCHAR(20) PRIMARY KEY,
-	agency_id varchar(255) NULL,
-	route_short_name nvarchar(511) NOT NULL,
-	route_long_name nvarchar(1023) NOT NULL,
-	route_desc nvarchar(1023) NULL,
-	route_type INT NOT NULL FOREIGN KEY REFERENCES ETS2_route_types(route_type),
-	route_url nvarchar(1023) NULL,
-	route_color varchar(20),
-	route_text_color varchar(20)
-	--UNIQUE(route_id)
-)
-
 --SELECT * FROM ETS2_routes
 --INSERT INTO ETS2_routes VALUES(1,1,'West Edmonton Mall - Downtown - Capilano',NULL,3,NULL)
 
@@ -704,46 +417,24 @@ CREATE TABLE ETS2_shapes (
 	PRIMARY KEY (shape_id, shape_pt_sequence)
 )
 
-CREATE TABLE ETS2_shapes_StAlbert (
-	shape_id varchar(255),
-	shape_pt_lat float(8) NOT NULL,
-	shape_pt_lon float(8) NOT NULL,
-	shape_pt_sequence INT NOT NULL,
-	PRIMARY KEY (shape_id, shape_pt_sequence)
-)
 
 --INSERT INTO ETS2_shapes VALUES('1-89-1',53.53864,-113.42325,1)
 CREATE TABLE ETS2_stops (
 	stop_id VARCHAR(20) PRIMARY KEY,
-	stop_code INT NULL,
+	stop_code VARCHAR(20) NULL,
 	stop_name nvarchar(512) NOT NULL,
 	stop_desc nvarchar(1023) NULL,
 	stop_lat float(8) NOT NULL,
 	stop_lon float(8) NOT NULL,
 	zone_id varchar(30) NULL,
 	stop_url nvarchar(1023) NULL,
-	location_type bit NULL, --0/blank = stop, 1 = Station
+	location_type INT NULL, --0/blank = stop, 1 = Station, 2 = Entrance/Exit, 3 = Generic Node, 4 Boarding Area
 	parent_station VARCHAR(20) NULL,
+	level_id varchar(20) NULL, -- This is new, not sure what will be stored here, likely INT but I'm not making that mistake again.
 	is_lrt bit NULL, --optional field added after import by my own code for simplicity
 	exclusive bit NULL --can specify that this stop is not used by other agencies
 )
 
---Experimental tables for other transit agencies
---DROP TABLE ETS2_stops_StAlbert
-CREATE TABLE ETS2_stops_StAlbert (
-	stop_id VARCHAR(20) PRIMARY KEY,
-	stop_code INT NULL,
-	stop_name nvarchar(512) NOT NULL,
-	stop_desc nvarchar(1023) NULL,
-	stop_lat float(8) NOT NULL,
-	stop_lon float(8) NOT NULL,
-	zone_id varchar(30) NULL,
-	stop_url nvarchar(1023) NULL,
-	location_type bit NULL, --0/blank = stop, 1 = Station
-	parent_station VARCHAR(20) NULL,
-	is_lrt bit NULL, --optional field added after import by my own code for simplicity
-	exclusive bit NULL --can specify that this stop is not used by other agencies
-)
 
 CREATE TABLE ETS2_trips (
 	route_id VARCHAR(20) FOREIGN KEY REFERENCES ETS2_routes(route_id),
@@ -752,18 +443,6 @@ CREATE TABLE ETS2_trips (
 	trip_headsign nvarchar(255) NULL,
 	direction_id bit NULL, --0 = outbound, 1 = inbound
 	block_id  varchar(30) NULL, /* Identifies the block to which the trip belongs. A block consists of two or more sequential trips made using the same vehicle, where a passenger can transfer from one trip to the next just by staying in the vehicle. The block_id must be referenced by two or more trips in trips.txt. */
-	shape_id varchar(255) NULL, --REFERENCES ETS2_shapes(shape_id)
-	wheelchair_accessible BIT,
-	bikes_allowed BIT
-)
---DROP TABLE ETS2_trips_StAlbert
-CREATE TABLE ETS2_trips_StAlbert (
-	route_id VARCHAR(20) FOREIGN KEY REFERENCES ETS2_routes_StAlbert(route_id),
-	service_id varchar(255), --FOREIGN KEY REFERENCES ETS2_calendar_dates(service_id),
-	trip_id VARCHAR(255) PRIMARY KEY,
-	trip_headsign nvarchar(255) NULL,
-	direction_id bit NULL, --0 = outbound, 1 = inbound
-	block_id varchar(30) NULL, /* Identifies the block to which the trip belongs. A block consists of two or more sequential trips made using the same vehicle, where a passenger can transfer from one trip to the next just by staying in the vehicle. The block_id must be referenced by two or more trips in trips.txt. */
 	shape_id varchar(255) NULL, --REFERENCES ETS2_shapes(shape_id)
 	wheelchair_accessible BIT,
 	bikes_allowed BIT
@@ -783,17 +462,22 @@ INSERT INTO ETS2_transfer_types VALUES
 (2, 'Requires Min. Time', 'This transfer requires a minimum amount of time between arrival and departure to ensure a connection. The time  by ,min_transfer_time.'),
 (3, 'Not Possible', 'Transfers are not possible between routes at this location.')
 
+CREATE TABLE ETS2_location_types (
+	location_type INT PRIMARY KEY,
+	location_type_name nvarchar(255) NOT NULL,
+	location_type_desc nvarchar(1024) NULL
+)
+INSERT INTO ETS2_location_types VALUES
+(0, 'Stop/Platform', 'A location where passengers board or disembark from a transit vehicle. Is called a platform when defined within a parent_station.'),
+(1, 'Station', 'A physical structure or area that contains one or more platform.'),
+(2, 'Entrance/Exit', 'A location where passengers can enter or exit a station from the street. If an entrance/exit belongs to multiple stations, it can be linked by pathways to both, but the data provider must pick one of them as parent.'),
+(3, 'Generic Node', 'A location within a station, not matching any other location_type, which can be used to link together pathways define in pathways.txt.'),
+(4, 'Boarding Area', 'A specific location on a platform, where passengers can board and/or alight vehicles.')
+
+
 CREATE TABLE ETS2_transfers (
 	from_stop_id VARCHAR(255) NOT NULL REFERENCES ETS2_trips(trip_id),
 	to_stop_id VARCHAR(255) NOT NULL REFERENCES ETS2_trips(trip_id),
-	transfer_type INT NULL REFERENCES ETS2_transfer_types(transfer_type),
-	min_transfer_time INT NULL, -- value in seconds
-	PRIMARY KEY (from_stop_id, to_stop_id)
-)
-
-CREATE TABLE ETS2_transfers_StAlbert (
-	from_stop_id VARCHAR(255) NOT NULL REFERENCES ETS2_trips_StAlbert(trip_id),
-	to_stop_id VARCHAR(255) NOT NULL REFERENCES ETS2_trips_StAlbert(trip_id),
 	transfer_type INT NULL REFERENCES ETS2_transfer_types(transfer_type),
 	min_transfer_time INT NULL, -- value in seconds
 	PRIMARY KEY (from_stop_id, to_stop_id)
@@ -845,24 +529,6 @@ CREATE TABLE ETS2_stop_times (
 	timepoint BIT NULL -- This should only ever be 1 or 0
 )
 
-CREATE TABLE ETS2_stop_times_StAlbert (
-	--stimeID INT IDENTITY PRIMARY KEY, --I don't use this so removing it might save me from running out of keys later
-	trip_id VARCHAR(255) NOT NULL REFERENCES ETS2_trips_StAlbert(trip_id),
-	arrival_time varchar(8) NOT NULL, ---not used in practice. Can't store as time because they can go over 24:00 (even over 25:00)
-	departure_hour int NOT NULL, --The hour and minute will be broken up here so they can be stored as INT for faster sorting
-	departure_minute int NOT NULL,
-	departure_second int NOT NULL,
-	--departure_time varchar(8) NOT NULL, --Removed because this will now be split into hour/minute integers for smaller storage and faster operation
-	stop_id VARCHAR(20) NOT NULL FOREIGN KEY REFERENCES ETS2_stops_StAlbert(stop_id),
-	stop_sequence int NOT NULL, --integer
-	--for proper normalization, stop_sequence really should be another DB table, but since it only seems to ever be one number, that's not so necesssary
-	stop_headsign nvarchar(255) NULL,
-	pickup_type INT DEFAULT 0 FOREIGN KEY REFERENCES ETS2_pickup_types(pickup_type),
-	drop_off_type INT DEFAULT 0 FOREIGN KEY REFERENCES ETS2_drop_off_types(drop_off_type),
-	shape_dist_traveled FLOAT(8) NULL, --theoretically could be a float, but is only ever int LOOKS LIKE I WAS WRONG ABOUT THIS!
-	timepoint BIT NULL -- This should only ever be 1 or 0
-)
-
 --Table that allows quickly sorting nearby stops. This gets recreated every time the update is done.
 CREATE TABLE ETS2_stop_routes (
 stop_id VARCHAR(20) NOT NULL,
@@ -896,14 +562,6 @@ CREATE NONCLUSTERED INDEX ix_ETS2_stop_id ON [dbo].[ETS2_stop_times] ([stop_id])
 CREATE NONCLUSTERED INDEX ix_ETS2_trip_id_stop_id_stop_sequence ON [dbo].[ETS2_stop_times] ([trip_id],[stop_id],[stop_sequence])
 
 
-CREATE NONCLUSTERED INDEX ix_ETS2_STIME_trip_id_stop_id_stop_sequence_SA ON [dbo].[ETS2_stop_times_StAlbert] ([trip_id],[stop_id],[stop_sequence])
---This index also speeds up the query a fair bit more
-CREATE NONCLUSTERED INDEX ix_ETS2_stop_id_SA ON [dbo].[ETS2_stop_times_StAlbert] ([stop_id]) INCLUDE ([trip_id])
---The benefits of this one seem insignificant
---CREATE NONCLUSTERED INDEX ix_ETS2_stopId_pickup_type ON [dbo].[ETS_stop_times] ([stop_id],[pickup_type]) INCLUDE ([trip_id],[arrival_time],[departure_hour],[departure_minute],[stop_sequence],[stop_headsign],[drop_off_type],[shape_dist_traveled])
-CREATE NONCLUSTERED INDEX ix_ETS2_trip_id_stop_id_stop_sequence_SA ON [dbo].[ETS2_stop_times_StAlbert] ([trip_id],[stop_id],[stop_sequence])
-
-
 GO
 
 --DROP VIEW ETS2_trip_stop_datetimes
@@ -922,23 +580,6 @@ FROM dbo.ETS2_stop_times stime
 JOIN dbo.ETS2_trips t ON stime.trip_id=t.trip_id
 JOIN dbo.ETS2_routes r ON t.route_id=r.route_id
 JOIN dbo.ETS2_calendar_dates c ON c.service_id=t.service_id
-
-GO
-
-CREATE VIEW ETS2_trip_stop_datetimes_StAlbert WITH SCHEMABINDING AS
-SELECT --TOP 10000
-CASE WHEN departure_hour > 23 THEN
-CONVERT(datetime, DATEADD(d, 1, date), 121)+CONVERT(datetime, CAST(departure_hour%24 AS varchar)+':'+CAST(departure_minute AS varchar), 121)
-ELSE
-CONVERT(datetime, date, 121)+CONVERT(datetime, CAST(departure_hour AS varchar)+':'+CAST(departure_minute AS varchar), 121)
-END --CASE
-AS ActualDateTime,
-stime.trip_id, stime.arrival_time, stime.departure_hour, stime.departure_minute,stop_id, stime.stop_sequence, stime.stop_headsign, stime.pickup_type, stime.drop_off_type,
-stime.shape_dist_traveled, stime.timepoint,  t.route_id, t.service_id, t.trip_headsign, t.direction_id, t.block_id, t.shape_id, r.route_short_name, r.route_long_name, c.date, c.exception_type
-FROM dbo.ETS2_stop_times_StAlbert stime
-JOIN dbo.ETS2_trips_StAlbert t ON stime.trip_id=t.trip_id
-JOIN dbo.ETS2_routes_StAlbert r ON t.route_id=r.route_id
-JOIN dbo.ETS2_calendar_dates_complete_StAlbert c ON c.service_id=t.service_id
 
 GO
 
